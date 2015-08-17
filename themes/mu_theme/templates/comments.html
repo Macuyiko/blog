@@ -1,0 +1,37 @@
+<div class="article-comments">Care to Comment?</div>
+
+<!--
+<div>
+<ul id="commenttabs" style="clear: both;">
+    <li class="active"><a href="#googleplus">Google+</a></li>
+    <li><a href="#facebook">Facebook</a></li>
+    <li><a href="#disqus">Disqus</a></li>
+</ul>
+</div>
+
+<div style="clear: both;"> </div>
+
+<div class="commenttab" id="googleplus">
+	<div class="g-comments" data-href="{{ SITEURL }}/{{ article.url }}" data-first_party_property="BLOGGER" data-view_type="FILTERED_POSTMOD">Loading Google+ comments...</div>
+</div>
+
+<div class="commenttab" id="facebook">
+	<div id="fb-root"><div class="fb-comments" data-href="{{ SITEURL }}/{{ article.url }}" data-num-posts="20" data-colorscheme="light" data-mobile="auto"></div></div>
+</div>
+-->
+
+<div class="commenttab" id="disqus">
+	<div id="disqus_thread"></div>
+		<script type="text/javascript">
+	    var disqus_shortname = 'macuyiko';
+	    var disqus_identifier = '{{ article.url }}';
+	    var disqus_title = '{{ article.title|striptags }}';
+	    var disqus_url = '{{ SITEURL }}/{{ article.url }}';
+
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+</div>

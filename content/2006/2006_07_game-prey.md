@@ -1,0 +1,15 @@
+Title: Game: Prey
+Date: 2006-07-16
+Author: Seppe "Macuyiko" vanden Broucke
+
+So, Prey it is: the newest first person action game from [3D Realms](http://www.3drealms.com/) (that's right, the same guys who'll hopefully deliver Duke Nukem Forever at some point in time).  
+As always, I'll keep it short since you probably know enough about this game already. As always: check out the [Gamespot Review](http://www.gamespot.com/pc/action/prey/review.html) for a full quality in-depth review.  
+I've been playing this game for a few hours now, and after finishing a few levels it leaves me with mixed feelings... (So no Pro's and Con's this time, but slightly different: using "feelings".)  
+Feeling 1: "Wow, this runs smooth!" It runs smoother than Quake 4 and especially Doom 3, it looks better too in my opinion. Although everything still looks like it's made from plastic.  
+Feeling 2: "Oh there's a story?" But it's a FPS-one, so it tries to throw in some Cherokee-mysteries in the mix together with an alien invasion (woops, was that a spoiler?). So you'll probably end up ignoring the story and blasting stuff. Which doesn't have to be a bad thing.  
+Feeling 3: "Oooh, weapons!" And they're nice, they're just your basic rifle/sniper/bazooka/grenade/yadda yadda type of stuff, but instead of the basic "marine"-look they come with a nice "alien-technology"-outfit, since you steal them from fallen enemies.  
+Feeling 4: "Portals are wicked." They are, you might have seen the trailer/review where you can see a supercool-looking portal effect in action (you shrink and walk on a sphere, I'm not going to spoil more here, since you have to see that for yourself). Another thing worth mentioning is that the transition from area to area through the portal is unbelievably fast. I would like to know how these things were implemented technically.  
+Feeling 5: "Gravity is wicked, too." There are some gravity-based puzzles and traps. Also the walkways provide some interesting gameplay opportunities ("Am I walking on the ceiling?") and looks amazing. People who get sick fast: be warned, it looks real and there are people who do get sick from the views.  
+Feeling 6: "The main character uses other words to describe the above." Instead of "wicked" you hear "This is really fucked up!" from some weird voice actor. This is definitely 3D Realms here, all their game characters talk like they have been listening to Nukem too much, which is somewhat funny.  
+Feeling 7: "And now you shoot, again." This was my main problem with Quake 4 and Doom 3 too: since there is no real compelling story (like in Half Life), you get bored with shooting stuff quite easy. The game itself however is more than long enough for real action fans to enjoy thoroughly.  
+Well, that's about it. If you're a fan of good action shooters, you should consider picking up this game. If you must choose between Prey, Doom 3 and Quake 4, choose Prey. Throw F.E.A.R. in the list and the choose might get more difficult (depends if you like scary stuff or prefer shooting aliens or commandos). Finally: if you add Half Life 2 (Episode 1) to the list: my choose is quickly made...  
