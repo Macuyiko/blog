@@ -27,10 +27,5 @@
 	
 	    {{ article.content }}
 	</article>
-
-	{% if article.status != "draft" %}
-		<hr  class="gradient"/>
-		{% include 'comments.html' %}
-	{% endif %}
 </div>
 {% endblock %}
