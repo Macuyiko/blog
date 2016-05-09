@@ -1,4 +1,4 @@
-Title: List of Apps
+Title: List of Apps (Updated)
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2015-09-27 15:21
 
