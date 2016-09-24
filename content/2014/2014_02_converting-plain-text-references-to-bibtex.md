@@ -2,6 +2,8 @@ Title: Converting Plain Text References To BibTeX (or Endnote, or...)
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2014-02-26 20:21
 
+**Update:** [new post and source code here](|filename|/2016/2016_10_plain-text-to-bibtex.md).
+
 So last weekend, I'd almost finished editing a Word manuscript draft to submit to a particular journal, except for one final item on the todo list: converting the existing list of references (inserted and formatted as a plain text list) to another style.
 
 I planned on using Word's built-in reference manager to add all 40+ references to the bibliography, but even in Word's latest incarnation, the "Here are 20 text boxes squished together, have fun!"-interface remains a pain to use.
