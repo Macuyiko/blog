@@ -2,7 +2,7 @@ Title: How-to: Send HTML Mails with OAuth2 and Gmail in Python
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2016-09-24 15:59
 
-If you're been trying to send e-mails from a program using your Gmail account, you'll probably have encountered the following error message:
+If you've been trying to send e-mails from a program using your Gmail account, you'll probably have encountered the following error message:
 
 	SMTP Error: Could not authenticate. Error: SMTP Error: Could not authenticate.
 	535 5.7.1 Username and Password not accepted. Learn more at 
