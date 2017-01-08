@@ -4,7 +4,7 @@ Date: 2017-01-08 17:44
 
 Conway’s [Game of Life](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) is one of the most popular examples of cellular automaton. However, did you know that [Stephan Rafler](http://arxiv.org/abs/1111.1567) proposed a version of Game of Life in 2011 which works over a contious domain, called SmoothLife?
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/KJe9H6qS82I" frameborder="0" allowfullscreen></iframe>
+<iframe width="500" height="300" src="https://www.youtube.com/embed/KJe9H6qS82I" frameborder="0" allowfullscreen></iframe>
 
 Cool, isn't it? The basic idea is that the grid of cells is replaced here with an effective grid where each cell occupies a continuous coordinate with a very small finite size and with the neighbors calculated based on a radius around that cell.
 
