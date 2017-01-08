@@ -18,4 +18,4 @@ Here's what the results look like. Higher resolutions are possible but can't be 
 
 Here's what the result looks like:
 
-![](/images/2017/spatial.png)
+![](/images/2017/output.gif)
