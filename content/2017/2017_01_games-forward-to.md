@@ -8,7 +8,7 @@ Subtitle: Most of these are indie titles, again
 Which games am I looking forward to in 2017? Below follows my personal list.
 
 * Big budget titles: [**Prey**](https://prey.bethesda.net/) and [**Red Dead Redemption 2**](https://www.rockstargames.com/reddeadredemption2/), of course, as well as [**Warhammer 40,000: Dawn of war III**](https://www.dawnofwar.com/).
-* I might give [Tales of Berseria](http://store.steampowered.com/app/429660/) as spin, though I'm not normally one for JRPG's.
+* I might give [**Tales of Berseria**](http://store.steampowered.com/app/429660/) a spin, though I'm not normally one for JRPG's.
 * [**Yooka-Laylee**](http://www.playtonicgames.com/games/yooka-laylee/): hope this one will be a lot of childlike fun.
 * [**The Church In The Darkness**](http://www.paranoidproductions.com/church/) looks interesting thanks to its procedurally-generated cult story.
 * Described as a love child between GTA I and Syndicate Wars, [**Tokyo 42**](http://www.tokyo42.com/) certainly looks interesting.
