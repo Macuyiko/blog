@@ -12,13 +12,13 @@ Which games am I looking forward to in 2017? Below follows my personal list.
 * [**Yooka-Laylee**](http://www.playtonicgames.com/games/yooka-laylee/): hope this one will be a lot of childlike fun.
 * [**The Church In The Darkness**](http://www.paranoidproductions.com/church/) looks interesting thanks to its procedurally-generated cult story.
 * Described as a love child between GTA I and Syndicate Wars, [**Tokyo 42**](http://www.tokyo42.com/) certainly looks interesting.
-* [**Thimbleweed Park**] might be one of the adventure games I try this year, thanks to Ron Gilbert being at the helm and Mark Ferrari doing the visuals. Mark has a [great talk about 8bit art that you absolutely should watch right now](https://www.youtube.com/watch?v=bRwHpU_kcPE)!
+* [**Thimbleweed Park**](https://blog.thimbleweedpark.com/) might be one of the adventure games I try this year, thanks to Ron Gilbert being at the helm and Mark Ferrari doing the visuals. Mark has a [great talk about 8bit art that you absolutely should watch right now](https://www.youtube.com/watch?v=bRwHpU_kcPE)!
 * [**Frozen Synapse 2**](http://www.frozensynapse2.com/); I was a fan of the original so this will be worth checking out.
 * [**Constructor HD**](http://www.system3.com/games/constructor-hd/), as I'm a sucker for nostalgia-meets-HD releases.
 
 ![Constructor HD](/images/2017/ConstructorHD.jpg)
 
-*[**Kingdoms and Castles**](https://www.fig.co/campaigns/kingdoms-and-castles?media_id=382#updates), mainly since its art direction is positively adorable.
+* [**Kingdoms and Castles**](https://www.fig.co/campaigns/kingdoms-and-castles?media_id=382#updates), mainly since its art direction is positively adorable.
 
 ![Kingdoms and Castles](/images/2017/Kingdoms-and-Castles.jpg)
 
