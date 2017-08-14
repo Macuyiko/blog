@@ -117,7 +117,7 @@ I'm only fetching the unique id here, together with the from and subject headers
 
 ![](/images/2017/gmail1.png)
 
-A few hours later, the database is filled up and ready for use. A simple SQL statement can immediately provided a grouped overview of e-mails per sender:
+A few hours later, the database is filled up and ready for use. A simple SQL statement can immediately provide a grouped overview of e-mails per sender:
 
     SELECT header_from, count(*) AS "amount" FROM "email"
     WHERE "trashed" = 0 
