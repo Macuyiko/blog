@@ -322,4 +322,4 @@ E-mails that are trashed will get a flag in the local database in order to preve
 
 Using this overview, I was able to delete about twenty thousand e-mails in half an hour or so.
 
-The code is still relatively messy (and unpythonic) places, though I might think about putting this up on GitHub at some later point, after which I'll update this post with a link.
+The code is still relatively messy (and unpythonic) in places, though I might think about putting this up on GitHub at some later point, after which I'll update this post with a link.
