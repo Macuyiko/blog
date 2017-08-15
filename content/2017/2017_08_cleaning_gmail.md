@@ -120,8 +120,8 @@ I'm only fetching the unique id here, together with the from and subject headers
 A few hours later, the database is filled up and ready for use. A simple SQL statement can immediately provide a grouped overview of e-mails per sender:
 
     SELECT header_from, count(*) AS "amount" FROM "email"
-    WHERE "trashed" = 0 
-    GROUP BY "header_from" 
+    WHERE "trashed" = 0
+    GROUP BY "header_from"
     ORDER BY "amount" DESC
 
 Next up is making trying to group e-mails (for a particular sender) based on their subjects to make it easier to spot repeating e-mails. Doing so using a string identity based aggregation is easy, though the issue is that subjects will be slightly different over time for many senders, e.g. compary "your weekly digest for 11/2017" verus "your weekly digest for 12/2017" or "12 friends have liked your profile" versus "1 friend has liked your profile".
@@ -192,7 +192,7 @@ The full Agglomerative Hierarchical Clustering setup then looks like this:
                 if r > best_abval[2] and r >= ratio_threshold:
                     best_abval = (i, j, r, s.get_matching_blocks())
         return best_abval
-                
+
 
     def cluster_strings(strings, ratio_threshold=0.6, combiner=combine_strings, matcher=find_best_match):
         Cluster = namedtuple('Cluster', 'centroid members parents')
@@ -214,7 +214,7 @@ The full Agglomerative Hierarchical Clustering setup then looks like this:
             first_centroid = dendrogram[-1][best_abval[0]].centroid
             second_centroid = dendrogram[-1][best_abval[1]].centroid
             merged_centroid = combiner(best_abval[3], first_centroid, second_centroid)
-            new_level.append(Cluster(centroid=merged_centroid, 
+            new_level.append(Cluster(centroid=merged_centroid,
                 members=dendrogram[-1][best_abval[0]].members + dendrogram[-1][best_abval[1]].members,
                 parents=(best_abval[0], best_abval[1])))
             dendrogram.append(new_level)
@@ -277,7 +277,7 @@ We'll also refactor the code to do away with keeping track of the different leve
         s = SequenceMatcher()
         s.set_seq1(a)
         s.set_seq2(b)
-        return s.ratio() 
+        return s.ratio()
 
     def find_best_match(clusters, ratio_threshold):
         s = SequenceMatcher()
@@ -287,7 +287,7 @@ We'll also refactor the code to do away with keeping track of the different leve
                 r = min([get_ratio(a, b) for a in clusters[i] for b in clusters[j]])
                 if r > best_abval[2] and r >= ratio_threshold:
                     best_abval = (i, j, r)
-        return best_abval     
+        return best_abval
 
     def cluster_strings(strings, ratio_threshold=0.6, combiner=combine_clusters, matcher=find_best_match):
         clusters = [[x] for x in strings]

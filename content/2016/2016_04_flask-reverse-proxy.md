@@ -42,7 +42,7 @@ Next up, you'll might notice that `url_for` is not working as expected, and is r
 	        self.script_name = script_name
 	        self.scheme = scheme
 	        self.server = server
-	        
+
 	    def __call__(self, environ, start_response):
 	        script_name = environ.get('HTTP_X_SCRIPT_NAME', '') or self.script_name
 	        if script_name:

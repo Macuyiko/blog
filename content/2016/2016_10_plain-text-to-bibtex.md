@@ -90,7 +90,7 @@ So, the updated Python 3 script:
 	        citations[tag.text] = tag.get('href')
 	        if resolve:
 	            citations[tag.text] = http_get(citations[tag.text]).text
-	    return citations    
+	    return citations
 
 	# Put references here:
 	references = """Ribeiro, Bruno, and Towsley. Don. “Estimating and sampling graphs with multidimensional random walks”, Proceedings of the 10th ACM SIGCOMM conference on Internet measurement. ACM, 2010.

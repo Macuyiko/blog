@@ -8,7 +8,7 @@ I though it was just me, what with being busy and older and all, but it kind of 
 * Triple-A titles are released on-schedule, instead of on a "when it's ready"-basis, leading to horrendously glitchy titles.
 	* Cases in point: Tetris Ultimate, Assassin's Creed: Unity, Halo: The Master Chief Collection, Watch_Dogs, San Andreas Xbox One release.
 * Big hyped titles fail to deliver. These usually get accompanied by huge advertising budgets but are just... well... boring and more of the same.  [Yahtzee's Zero Punctuation series](http://www.escapistmagazine.com/videos/view/zero-punctuation) reviewed many such titles this year (even although the review style generally aims to entertain rather than inform and loves to take a stab at any target, the general gist of the argument is shared by many).
-	* Cases in point: Watch_Dogs, Dragon Age: Inquisition (depending on who you ask, admittedly), The Crew, The Sims 4, Call of Duty: Advanced Warfare, Destiny, 
+	* Cases in point: Watch_Dogs, Dragon Age: Inquisition (depending on who you ask, admittedly), The Crew, The Sims 4, Call of Duty: Advanced Warfare, Destiny,
 * *Steam is messing up its reputation* with Greenlight, Early Access, Curator gaming, all leading to sub-par games which try to extract as much money as possible as soon as possible without delivering.
 	* Cases in point: Starforge, Windborne, Spacebase DF-9, H1Z1, and many others.
 * Controversies such as [Gamergate](http://en.wikipedia.org/wiki/Gamergate_controversy) are polluting the community, involving all sides of the spectrum ranging from developers, publishers, gamers, journalists, PR, and everything in between.

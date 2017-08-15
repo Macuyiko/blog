@@ -5,7 +5,7 @@ Date: 2016-09-24 15:59
 If you've been trying to send e-mails from a program using your Gmail account, you'll probably have encountered the following error message:
 
 	SMTP Error: Could not authenticate. Error: SMTP Error: Could not authenticate.
-	535 5.7.1 Username and Password not accepted. Learn more at 
+	535 5.7.1 Username and Password not accepted. Learn more at
 	535 5.7.1 http://mail.google.com/support/bin/answer.py?answer=14257 p38sm2467302ybk.16
 
 In fact, the internet is flooded with people searching to figure out how to get their Wordpress mailer plugin working with Gmail's SMTP. The answer most people give is to just enable the "Allow less secure apps"-option in your Google account settings:
@@ -188,12 +188,12 @@ Don't forget to change:
 
 	GOOGLE_CLIENT_ID = '<FILL ME IN>'
 	GOOGLE_CLIENT_SECRET = '<FILL ME IN>'
-	
+
 Next, just simply run the code. Since we don't have a `GOOGLE_REFRESH_TOKEN` yet, the following will appear on the screen:
 
 	No refresh token found, obtaining one
 	Navigate to the following URL to auth: https://accounts.google.com/o/oauth2/auth?client_id= [...]
-	Enter verification code: 
+	Enter verification code:
 
 Open the URL in your browser, you will be greeted with this:
 

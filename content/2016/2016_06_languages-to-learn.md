@@ -15,7 +15,7 @@ This list basically serves as a note to myself to start experimenting with some 
 - [Scala](http://www.scala-lang.org/) -- not really "new", as I've been using Scala before (together with Spark), but I definitely need to grok it more.
 - Erlang and [Elexir](http://elixir-lang.org/) -- which look like being an incredible robust solution towards building server apps.
 - [Io](http://iolanguage.org/) -- more as a research exercise.
-- [Lua](https://www.lua.org/) -- in a similar realm as Haxe, to use in combination with the [LÖVE](https://love2d.org/) framework, though I always find the language to be messy to work with once projects get large.
+- [Lua](https://www.lua.org/) -- in a similar realm as Haxe, to use in combination with the [LÃ–VE](https://love2d.org/) framework, though I always find the language to be messy to work with once projects get large.
 - [Crystal](https://crystal-lang.org/) -- a Ruby-like language with strict syntax and checking.
 - [Julia](http://julialang.org/) -- as a potential R replacement, though the ecosystem is still quite far behind.
 

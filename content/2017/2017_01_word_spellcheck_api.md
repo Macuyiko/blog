@@ -14,12 +14,12 @@ Here's an example of how it works:
 	>>> get_corrections("Let's see if it catchez the spell errrors in this text. Their is also the option to do grammer checking.")
 
 	{
-		'text': "Let's see if it catchez the spell errrors in this text. Their is also the option to do grammer checking.", 
+		'text': "Let's see if it catchez the spell errrors in this text. Their is also the option to do grammer checking.",
 
 		'grammarcount': 1,
-		'grammar': [{'end': 104, 'text': 'Their is also the option to do grammer checking.', 'start': 56, 'suggestions': ['There']}], 
+		'grammar': [{'end': 104, 'text': 'Their is also the option to do grammer checking.', 'start': 56, 'suggestions': ['There']}],
 
-		'spellingcount': 4, 
+		'spellingcount': 4,
 		'spelling': [{'end': 23, 'text': 'catchez', 'start': 16, 'suggestions': ['catches', 'catcher', "catches'"]}, {'end': 41, 'text': 'errrors', 'start': 34, 'suggestions': ['errors', "error's", "errors'"]}, {'end': 61, 'text': 'Their', 'start': 56, 'suggestions': ['There']}, {'end': 94, 'text': 'grammer', 'start': 87, 'suggestions': ['grammar', 'grimmer', 'grammars', 'gramper', 'rammer']}]
 	}
 

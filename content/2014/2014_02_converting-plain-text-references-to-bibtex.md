@@ -76,7 +76,7 @@ First issue: Google Scholar does not provide an API. Luckily, there's `scholar.p
 
 ## Hours 4-5: Getting Citation Results
 
-Second issue, `scholar.py` does not provide support to retrieve citation entries from Google Scholar (i.e. what you see when you click the "Cite" link under an article). 
+Second issue, `scholar.py` does not provide support to retrieve citation entries from Google Scholar (i.e. what you see when you click the "Cite" link under an article).
 
 Getting this information is a little bit tricky, because we first have to retrieve the Google Scholar ID for the article, and then perform a second HTTP request using a unique token in the URL. I've modified `scholar.py` to look as follows (now also using the `requests` library instead of the whole `urllib` soup:
 
@@ -106,7 +106,7 @@ Getting this information is a little bit tricky, because we first have to retrie
 	# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
 	# IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	# POSSIBILITY OF SUCH DAMAGE.
-	
+
 	import optparse
 	import sys
 	import codecs
@@ -116,7 +116,7 @@ Getting this information is a little bit tricky, because we first have to retrie
 	except ImportError:
 	    from urllib import quote
 	import requests
-	
+
 	# Import BeautifulSoup -- try 4 first, fall back to older
 	try:
 		from bs4 import BeautifulSoup
@@ -126,17 +126,17 @@ Getting this information is a little bit tricky, because we first have to retrie
 		except:
 			print('We need BeautifulSoup, sorry...')
 			sys.exit(1)
-	
+
 	# Support unicode in both Python 2 and 3. In Python 3, unicode is str.
 	if sys.version_info[0] == 3:
 		unicode = str # pylint: disable-msg=W0622
 		encode = lambda s: s # pylint: disable-msg=C0103
 	else:
 		encode = lambda s: s.encode('utf-8') # pylint: disable-msg=C0103
-		
+
 	class CookieJar(object):
 		COOKIE_JAR = {}
-	
+
 	class Article(object):
 		def __init__(self):
 			self.attrs = {'id':            [None, 'ID',              0],
@@ -149,25 +149,25 @@ Getting this information is a little bit tricky, because we first have to retrie
 						  'url_cite':      [None, 'Cite URL',        7],
 						  'url_related':   [None, 'Related list',    8],
 						  'year':          [None, 'Year',            9]}
-	
+
 		def __getitem__(self, key):
 			if key in self.attrs:
 				return self.attrs[key][0]
 			return None
-	
+
 		def __len__(self):
 			return len(self.attrs)
-	
+
 		def __setitem__(self, key, item):
 			if key in self.attrs:
 				self.attrs[key][0] = item
 			else:
 				self.attrs[key] = [item, key, len(self.attrs)]
-	
+
 		def __delitem__(self, key):
 			if key in self.attrs:
 				del self.attrs[key]
-	
+
 		def as_txt(self):
 			# Get items sorted in specified order:
 			items = sorted(list(self.attrs.values()), key=lambda item: item[2])
@@ -175,7 +175,7 @@ Getting this information is a little bit tricky, because we first have to retrie
 			max_label_len = max([len(str(item[1])) for item in items])
 			fmt = '%%%ds %%s' % max_label_len
 			return '\n'.join([fmt % (item[1], item[0]) for item in items])
-	
+
 		def as_csv(self, header=False, sep='|'):
 			# Get keys sorted in specified order:
 			keys = [pair[0] for pair in \
@@ -186,21 +186,21 @@ Getting this information is a little bit tricky, because we first have to retrie
 				res.append(sep.join(keys))
 			res.append(sep.join([unicode(self.attrs[key][0]) for key in keys]))
 			return '\n'.join(res)
-			
+
 	class ScholarParser(object):
 		SCHOLAR_SITE = 'http://scholar.google.com'
-	
+
 		def __init__(self, site=None):
 			self.soup = None
 			self.article = None
 			self.site = site or self.SCHOLAR_SITE
 			self.year_re = re.compile(r'\b(?:20|19)\d{2}\b')
-	
+
 		def handle_article(self, art):
 			"""
 			In this base class, the callback does nothing.
 			"""
-	
+
 		def parse(self, html):
 			"""
 			This method initiates parsing of HTML content.
@@ -208,48 +208,48 @@ Getting this information is a little bit tricky, because we first have to retrie
 			self.soup = BeautifulSoup(html)
 			for div in self.soup.findAll(ScholarParser._tag_checker):
 				self._parse_article(div)
-	
+
 		def _parse_article(self, div):
 			self.article = Article()
-			
+
 			for tag in div:
 				if not hasattr(tag, 'name'):
 					continue
-					
+
 				if tag.name == 'div' and self._tag_has_class(tag, 'gs_rt') and \
 						tag.h3 and tag.h3.a:
 					self.article['title'] = ''.join(tag.h3.a.findAll(text=True))
 					self.article['url'] = self._path2url(tag.h3.a['href'])
-	
+
 				if tag.name == 'font':
 					for tag2 in tag:
 						if not hasattr(tag2, 'name'):
 							continue
 						if tag2.name == 'span' and self._tag_has_class(tag2, 'gs_fl'):
 							self._parse_links(tag2)
-			
+
 			if self.article['title']:
 				self.handle_article(self.article)
-	
+
 		def _parse_links(self, span):
 			for tag in span:
 				if not hasattr(tag, 'name'):
 					continue
 				if tag.name != 'a' or tag.get('href') == None:
 					continue
-					
+
 				if tag.get('href').startswith('/scholar?cites'):
 					if hasattr(tag, 'string') and tag.string.startswith('Cited by'):
 						self.article['num_citations'] = \
 							self._as_int(tag.string.split()[-1])
 					self.article['url_citations'] = self._path2url(tag.get('href'))
-	
+
 				if tag.get('href').startswith('/scholar?cluster'):
 					if hasattr(tag, 'string') and tag.string.startswith('All '):
 						self.article['num_versions'] = \
 							self._as_int(tag.string.split()[1])
 					self.article['url_versions'] = self._path2url(tag.get('href'))
-	
+
 		@staticmethod
 		def _tag_has_class(tag, klass):
 			"""
@@ -262,53 +262,53 @@ Getting this information is a little bit tricky, because we first have to retrie
 				# so split -- conveniently produces a list in any case
 				res = res.split()
 			return klass in res
-	
+
 		@staticmethod
 		def _tag_checker(tag):
 			return tag.name == 'div' and ScholarParser._tag_has_class(tag, 'gs_r')
-	
+
 		@staticmethod
 		def _as_int(obj):
 			try:
 				return int(obj)
 			except ValueError:
 				return None
-	
+
 		def _path2url(self, path):
 			if path.startswith('http://'):
 				return path
 			if not path.startswith('/'):
 				path = '/' + path
 			return self.site + path
-	
-	
+
+
 	class ScholarParser120201(ScholarParser):
 		def _parse_article(self, div):
 			self.article = Article()
-	
+
 			for tag in div:
 				if not hasattr(tag, 'name'):
 					continue
-	
+
 				if tag.name == 'h3' and self._tag_has_class(tag, 'gs_rt') and tag.a:
 					self.article['title'] = ''.join(tag.a.findAll(text=True))
 					self.article['url'] = self._path2url(tag.a['href'])
-	
+
 				if tag.name == 'div' and self._tag_has_class(tag, 'gs_a'):
 					year = self.year_re.findall(tag.text)
 					self.article['year'] = year[0] if len(year) > 0 else None
-	
+
 				if tag.name == 'div' and self._tag_has_class(tag, 'gs_fl'):
 					self._parse_links(tag)
-	
+
 			if self.article['title']:
 				self.handle_article(self.article)
-	
-	
+
+
 	class ScholarParser120726(ScholarParser):
 		def _parse_article(self, div):
 			self.article = Article()
-	
+
 			for tag in div:
 				if not hasattr(tag, 'name'):
 					continue
@@ -316,52 +316,52 @@ Getting this information is a little bit tricky, because we first have to retrie
 					if tag.a:
 						self.article['title'] = ''.join(tag.a.findAll(text=True))
 						self.article['url'] = self._path2url(tag.a['href'])
-	
+
 					if tag.find('div', {'class': 'gs_a'}):
 						year = self.year_re.findall(tag.find('div', {'class': 'gs_a'}).text)
 						self.article['year'] = year[0] if len(year) > 0 else None
-	
+
 					if tag.find('div', {'class': 'gs_fl'}):
 						ltag = tag.find('div', {'class': 'gs_fl'})
 						self._parse_links(ltag)
-						
+
 						id_re = re.compile(r'gs_ocit\(event,\'(.*?)\',')
 						id = id_re.findall(str(ltag))
 						self.article['id'] = id[0] if len(id) > 0 else None
 						self.article['url_cite'] = self._path2url('/scholar?q=info:' + self.article['id'] + ':scholar.google.com/&output=cite&scirp=0&hl=en')
-	
+
 			if self.article['title']:
 				self.handle_article(self.article)
-	
+
 		def _parse_links(self, span):
 			for tag in span:
 				if not hasattr(tag, 'name'):
 					continue
 				if tag.name != 'a' or tag.get('href') == None:
 					continue
-	
+
 				if tag.get('href').startswith('/scholar?q=related'):
 					self.article['url_related'] = self._path2url(tag.get('href'))
-					
+
 				if tag.get('href').startswith('/scholar?cites'):
 					if hasattr(tag, 'string') and tag.string.startswith('Cited by'):
 						self.article['num_citations'] = \
 							self._as_int(tag.string.split()[-1])
 					self.article['url_citations'] = self._path2url(tag.get('href'))
-	
+
 				if tag.get('href').startswith('/scholar?cluster'):
 					if hasattr(tag, 'string') and tag.string.startswith('All '):
 						self.article['num_versions'] = \
 							self._as_int(tag.string.split()[1])
 					self.article['url_versions'] = self._path2url(tag.get('href'))
-	
+
 	class CiteParser(ScholarParser):
 		def __init__(self, site=None):
 			self.site = site or self.SCHOLAR_SITE
 			self.soup = None
 			self.export = {}
 			self.text = {}
-	
+
 		def parse(self, html):
 			"""
 			This method initiates parsing of HTML content.
@@ -369,50 +369,50 @@ Getting this information is a little bit tricky, because we first have to retrie
 			self.soup = BeautifulSoup(html)
 			self._parse_text(self.soup.find("div", {"id": "gs_citt"}))
 			self._parse_export(self.soup.find("div", {"id": "gs_citi"}))
-	
+
 		def _parse_text(self, div):
 			for tag in div.findAll('tr'):
 				self.text[tag.find('th').text] = tag.find('div').text
-				
+
 		def _parse_export(self, div):
 			for tag in div.findAll('a'):
 				if not hasattr(tag, 'name'):
 					continue
 				if tag.name != 'a' or tag.get('href') == None:
 					continue
-	
+
 				if tag.get('href').startswith('/scholar'):
 					if hasattr(tag, 'string') and tag.string.startswith('Import into'):
 						n = tag.string.split()[-1]
 						self.export[n] = self._path2url(tag.get('href'))
-	
+
 	class ScholarQuerier(object):
 		SCHOLAR_URL = 'http://scholar.google.be/scholar?hl=en&q=%(query)s+author:%(author)s&btnG=Search&as_subj=eng&as_sdt=1,5&as_ylo=&as_vis=0'
 		NOAUTH_URL = 'http://scholar.google.be/scholar?hl=en&q=%(query)s&btnG=Search&as_subj=eng&as_std=1,5&as_ylo=&as_vis=0'
 		USER_AGENT = 'Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36'
-	
+
 		class Parser(ScholarParser120726):
 			def __init__(self, querier):
 				ScholarParser120726.__init__(self)
 				self.querier = querier
-	
+
 			def handle_article(self, art):
 				self.querier.add_article(art)
-	
+
 		def __init__(self, author='', scholar_url=None, count=0):
 			self.articles = []
 			self.author = author
 			# Clip to 100, as Google doesn't support more anyway
 			self.count = min(count, 100)
-	
+
 			if author == '':
 				self.scholar_url = self.NOAUTH_URL
 			else:
 				self.scholar_url = scholar_url or self.SCHOLAR_URL
-	
+
 			if self.count != 0:
 				self.scholar_url += '&num=%d' % self.count
-	
+
 		def query(self, search):
 			self.clear_articles()
 			url = self.scholar_url % {'query': quote(encode(search)), 'author': quote(self.author)}
@@ -423,47 +423,47 @@ Getting this information is a little bit tricky, because we first have to retrie
 				print "*** Google is throttling"
 			else:
 				self.parse(r.text)
-	
+
 		def parse(self, html):
 			parser = self.Parser(self)
 			parser.parse(html)
-	
+
 		def add_article(self, art):
 			self.articles.append(art)
-	
+
 		def clear_articles(self):
 			self.status = True
 			self.articles = []
-	
+
 	class CiteQuerier(ScholarQuerier):
 		CITE_URL = 'http://scholar.google.com/scholar?q=info:%(id)s:scholar.google.com/&output=cite&scirp=0&hl=en'
-		
+
 		class Parser(CiteParser):
 			def __init__(self, querier):
 				CiteParser.__init__(self)
 				self.querier = querier
-	
+
 		def __init__(self, id):
 			self.id = id
 			self.parser = self.Parser(self)
 			self.query()
-	
+
 		def query(self):
 			url_cite = self.CITE_URL % {'id': quote(encode(self.id))}
 			r = requests.get(url_cite, headers={'User-Agent': self.USER_AGENT}, cookies=CookieJar.COOKIE_JAR)
 			CookieJar.COOKIE_JAR = r.cookies
 			self.parse(r.text)
-	
+
 		def parse(self, html):
 			self.parser.parse(html)
-	
+
 	def cite(id):
 		querier = CiteQuerier(id)
 		r = requests.get(querier.parser.export['EndNote'], headers={'User-Agent': querier.USER_AGENT}, cookies=CookieJar.COOKIE_JAR)
 		myFile = codecs.open('end.enw', 'w','utf-8')
 		myFile.write(r.text)
 		myFile.close()
-		
+
 	def articles(query, author, count):
 		querier = ScholarQuerier(author=author, count=count)
 		querier.query(query)
@@ -471,7 +471,7 @@ Getting this information is a little bit tricky, because we first have to retrie
 		if count > 0:
 			articles = articles[:count]
 		return articles
-			
+
 	def txt(query, author, count):
 		querier = ScholarQuerier(author=author, count=count)
 		querier.query(query)
@@ -484,7 +484,7 @@ Getting this information is a little bit tricky, because we first have to retrie
 			c += 1
 			print(art.as_txt() + '\n')
 		return articles
-	
+
 	def csv(query, author, count, header=False, sep='|'):
 		querier = ScholarQuerier(author=author, count=count)
 		querier.query(query)
@@ -496,13 +496,13 @@ Getting this information is a little bit tricky, because we first have to retrie
 			print(encode(result))
 			header = False
 		return articles
-	
+
 	def main():
 		usage = """scholar.py [options] <query string>
 	A command-line interface to Google Scholar.
-	
+
 	Example: scholar.py -c 1 --txt --author einstein quantum"""
-	
+
 		fmt = optparse.IndentedHelpFormatter(max_help_position=50, width=100)
 		parser = optparse.OptionParser(usage=usage, formatter=fmt)
 		parser.add_option('-a', '--author',
@@ -518,14 +518,14 @@ Getting this information is a little bit tricky, because we first have to retrie
 						  help='Maximum number of results')
 		parser.set_defaults(count=0, author='')
 		options, args = parser.parse_args()
-	
+
 		# Show help if we have neither keyword search nor author name
 		if len(args) == 0 and options.author == '':
 			parser.print_help()
 			return 1
-	
+
 		query = ' '.join(args)
-	
+
 		if options.csv:
 			a = csv(query, author=options.author, count=options.count)
 		elif options.csv_header:
@@ -534,12 +534,12 @@ Getting this information is a little bit tricky, because we first have to retrie
 			a = txt(query, author=options.author, count=options.count)
 		elif options.cite:
 			cite(options.cite)
-		
+
 		if options.cite:
 			cite(a[int(options.cite)-1]['id'])
-			
+
 		return 0
-	
+
 	if __name__ == "__main__":
 		sys.exit(main())
 
@@ -569,7 +569,7 @@ So now, we are able to get this:
 	%@ 364231094X
 	%D 2012
 	%I Springer
-	
+
 ## Hours 6-11: Wasting Time with Google's Appengine
 
 Almost done. The final part which remains is to automate iterating through the plain references list, finding a way to extract a good search query for each entry, and getting out the Endnote (or BibTeX from Google Scholar).
@@ -586,7 +586,7 @@ In an impulse, I decided to try to whip up a Google Appengine page to provide th
 		q = q.split(' ')
 		q = ' '.join(c for c in q if len(c) >= 3)
 		# Use q as the Google Scholar search query
-		
+
 Really simple: convert to lowercase, leave only text and spaces, filter out all words smaller then three characters. This approached seemed to work well in initial tests.
 
 What didn't work well, however, was getting `scholar.py` to work on Google Appengine. The library works fine, but Google Scholar is very picky towards handling requests coming from Google Appengine, due to reasons which are actually pretty obvious.
@@ -617,7 +617,7 @@ So the final "convertor" script looks like this:
 		q = q.split(' ')
 		q = ' '.join(c for c in q if len(c) >= l)
 		return q
-	
+
 	def make_query_year(reference, l = 3):
 		q = reference
 		id_re = re.compile(r'(\d\d\d\d)')
@@ -641,11 +641,11 @@ So the final "convertor" script looks like this:
 		print "\n---------------------------------------------------------"
 		print "Doing reference:", reference
 		f = string.ascii_lowercase + ' '
-	
+
 		q = make_query(reference)
 		print "Query used:", q
 		r = scholar.articles(q, '', 1)
-	
+
 		if len(r) == 0 or r[0]['id'] is None:
 			q = make_query_year(reference)
 			print "Trying again with:", q
@@ -656,14 +656,14 @@ So the final "convertor" script looks like this:
 		req = requests.get(querier.parser.export['BibTeX'], headers={'User-Agent': querier.USER_AGENT}, cookies=scholar.CookieJar.COOKIE_JAR)
 		myFile.write('\n\n%%% '+r[0]['id']+'  '+r[0]['title']+'\n')
 		myFile.write(req.text)
-	
+
 	myFile.close()
 
 Note that I had to include two querying strategies: `make_query` and `make_query_year`. The latter combines the year with the title but leaves out authors, this is to retrieve some problematic articles where the author name was formatted differently in Google Scholar than in my list. A hacky approach which could be improved, but it gets the point across.
 
 Anyway, running this script returns a BibTeX list like this:
 
-	macuyiko$ cat ./bibliography.bib 
+	macuyiko$ cat ./bibliography.bib
 
 	%%% mr4JHn2auF8J  Theory, algorithms and applications
 	@article{bang2007theory,

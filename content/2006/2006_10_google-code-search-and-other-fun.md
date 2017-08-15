@@ -1,6 +1,0 @@
-Title: Google Code Search (And Other) Fun
-Date: 2006-10-06
-Author: Seppe "Macuyiko" vanden Broucke
-
-Google Code Search has been providing bloggers with a lot of searching-fun. Most talked about? [Winzip key generation code](http://www.google.com/codesearch?q=+keygen+name+serial+show:n7lzx83Fh-k:Z1tHhQiuqr0:5FzGruqYsUI&sa=N&amp;cd=21&ct=rc&cs_p=www.cs.mcgill.ca/%7Ecs520/JOOS1.1/joosbench2005-v2.tar.gz&cs_f=joosbench05/01Benchmark/KeyGen.java#a0). There are also a lot of [passwords](http://www.google.com/codesearch?as_q=username&btnG=Search%20Code&as_lang=&as_license_restrict=i&as_license=&as_package=&as_filename=wp-config.php&as_case=) floating around. Just as [potential buffer overflows](http://www.google.com/codesearch?q=buffer+%22should+be+big+enough%22). Some [geek jokes](http://google.com/codesearch?q=%22here+be+dragons%22) and a lot of things which need [to be fixed](http://www.google.com/codesearch?hl=en&lr=&q=%22+fix+this%22&btnG=Search) or need [to be done](http://www.google.com/codesearch?hl=en&amp;lr=&q=%22+to+do%22&btnG=Search).  
-On a side note: be sure to watch the [South Park World Of Warcraft episode](http://www.dailymotion.com/SolTek/video/xgv4c_south-park-wow) ;). 

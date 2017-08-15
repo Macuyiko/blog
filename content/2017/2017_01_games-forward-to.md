@@ -3,7 +3,7 @@ Author: Seppe "Macuyiko" vanden Broucke
 Date: 2017-01-09 19:10
 Subtitle: Most of these are indie titles, again
 
-2016 turned out to be a great year for gaming, with Dishonored 2, The Witness, Doom, Overwatch, Superhot, Thumper, Hyper Light Drifter, Cogmind, Devil Daggers, Furi, Brigador, Age of Empires 2 HD keeping me entertained throughout most of the year. 
+2016 turned out to be a great year for gaming, with Dishonored 2, The Witness, Doom, Overwatch, Superhot, Thumper, Hyper Light Drifter, Cogmind, Devil Daggers, Furi, Brigador, Age of Empires 2 HD keeping me entertained throughout most of the year.
 
 Which games am I looking forward to in 2017? Below follows my personal list.
 

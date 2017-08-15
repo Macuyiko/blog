@@ -65,23 +65,23 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 `MainPlugin.java`, this class just loads the libraries from the `lib` folder and spawns a `PythonConsole` window:
 
 	package com.macuyiko.canaryconsole;
-	
+
 	import java.io.File;
 	import java.io.IOException;
 	import java.lang.reflect.Method;
 	import java.net.URL;
 	import java.net.URLClassLoader;
-	
+
 	import net.canarymod.plugin.Plugin;
-	
+
 	public class MainPlugin extends Plugin {
-		
+
 		private final boolean guiconsole;
 		private final boolean serverconsole;
 		private final int serverport;
 		private final String serverpass;
 		private final int serverconns;
-		
+
 		public MainPlugin() {
 			super();
 			guiconsole = getConfig().getBoolean("canaryconsole.guiconsole.enabled", true);
@@ -90,11 +90,11 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 			serverpass = getConfig().getString("canaryconsole.serverconsole.password", "swordfish");
 			serverconns = getConfig().getInt("canaryconsole.serverconsole.maxconnections", 10);
 		}
-		
+
 	    @Override
 	    public boolean enable() {
 	    	getLogman().info("Loading");
-	    	
+
 			try {
 				File dependencyDirectory = new File("lib/");
 				File[] files = dependencyDirectory.listFiles();
@@ -105,19 +105,19 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 				    	addURL(new File("lib/"+files[i].getName()).toURI().toURL());
 				    }
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				getLogman().error(e.getMessage());
 	    		return false;
 			}
-			
+
 	    	getConfig().save();
-	    	
+
 	    	try {
 		    	if (guiconsole) {
 		    		getLogman().info("Starting Jython GUI console");
 					new PythonConsole();
 				}
-				
+
 				if (serverconsole) {
 					getLogman().info("Starting Jython socket console server");
 					SocketServer server = new SocketServer(serverport, serverconns, serverpass);
@@ -130,17 +130,17 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 	    		getLogman().error(e.getMessage());
 	    		return false;
 	    	}
-			
+
 	        return true;
 	    }
-	    
+
 	    @Override
 	    public void disable() {
 	    	getLogman().info("CanaryConsole: Plugin disabled");
 	    }
-	    
+
 	    public static void addURL(URL u) throws IOException {
-	    	// Horrible hack taken from: 
+	    	// Horrible hack taken from:
 	    	// http://stackoverflow.com/questions/60764/how-should-i-load-jars-dynamically-at-runtime
 	    	// Fix if I figure out if there's a class loader in Canary
 	        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
@@ -153,7 +153,7 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 	            t.printStackTrace();
 	            throw new IOException("Error, could not add URL to system classloader");
 	        }
-	
+
 	    }
 	}
 
@@ -162,9 +162,9 @@ Note that injecting the libraries in `lib` is necessary to ensure that the plugi
 `PythonConsole.java` contains the following:
 
 	package com.macuyiko.canaryconsole;
-	
+
 	import java.io.File;
-	
+
 	import org.python.core.PyString;
 	import org.python.core.PySystemState;
 	import org.python.util.InteractiveInterpreter;
@@ -181,7 +181,7 @@ Note that injecting the libraries in `lib` is necessary to ensure that the plugi
 			};
 			new Thread(r).start();
 		}
-		
+
 		public static PySystemState getPythonSystemState() {
 			PySystemState sys = new PySystemState();
 			sys.path.append(new PyString("."));
@@ -229,7 +229,7 @@ First of, you'll want to start of by making sure all your imports are ready to g
 	from net.canarymod import LineTracer
 	from net.canarymod.api.world.blocks import BlockType
 	from net.canarymod.api import GameMode
-	
+
 	from time import *
 	from random import *
 	from math import *
@@ -304,7 +304,7 @@ Finally, it's even possible to render fractals. I'm making a [MandelBulb](http:/
 
 	def vir(l, h, s, o):
 		return l+((h-l)/float(s))*float(o)
-	
+
 	def rp(cx, cy, cz, maxit, mandpow):
 			x = 0
 			y = 0
@@ -323,7 +323,7 @@ Finally, it's even possible to render fractals. I'm making a [MandelBulb](http:/
 				y=newy+cy
 				z=newz+cz
 			return maxit
-	
+
 	def renderFractal(w, pos, size=64, rng=1.2, maxit=10, mandpow=8.0):
 		# http://www.skytopia.com/project/fractal/mandelbulb.html
 		xlow=-rng

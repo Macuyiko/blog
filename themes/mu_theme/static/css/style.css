@@ -165,7 +165,7 @@ div.sidebar-title {
 	text-transform: uppercase;
 }
 
-.side-nav li a { color: #222; padding-left: 0.2em; }
+.side-nav li a { color: #222; padding: 0.4em; }
 .side-nav li a:hover { background-color: #222; color: white; }
 .side-nav { padding: 0.5em 0; }
 

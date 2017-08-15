@@ -121,7 +121,7 @@ If the request contains `q=`, Audiosurf is performing a query. The other option 
 
 
 	def make_reply_stream(context, flow):
-		resp = HTTPResponse(b"HTTP/1.1", 200, b"OK", 
+		resp = HTTPResponse(b"HTTP/1.1", 200, b"OK",
 				Headers(Content_Type="audio/mpeg"), b"")
 		id = flow.request.path.split('/')[2]
 		context.__filename = None

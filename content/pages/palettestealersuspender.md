@@ -47,7 +47,7 @@ The program places itself in your Windows notification area after starting it.
 
 ### Right click menu Right clicking the notification area icon brings up a menu with the following options:
 
-  
+
 *   Games: this menu will subdivide itself into a list of games. When starting the program for the first time, no games will be present. For each game added, a (un)checkable entry will appear, together with an option to start a game manually.
 *   Configure...: this menu item brings up the configuration screen, where you can add games and manage settings. Double clicking the icon has the same effect.
 *   Quit: exits the program completely.
@@ -57,7 +57,7 @@ The program places itself in your Windows notification area after starting it.
 Right-click menu after starting the program for the first time.
 
 ### The configuration screen
- 
+
 ![](http://3.bp.blogspot.com/-id4e7jpkEp0/TjQsnAbQdwI/AAAAAAAASKc/rHJeTNJfZ8A/s1600/pss_jul11_03.png)
 
 The "Games"-menu shows a list of added games. Entries can be checked from this menu to monitor them.
@@ -70,9 +70,9 @@ The configuration screen (brought up by choosing "Configuration..." in the right
 *   A list of palette stealing processes: which should require no tampering in most cases. Palette stealing processes are automatically detected and added to the list while the configuration screen is active. If the program isn't working correctly for you, you might want to leave the configuration screen open while running the game to let new entries appear in this list. By checking and unchecking items you can choose which processes you want to suspend. Note that it is impossible to check or uncheck some processes.
 *   The method to suspend and resume palette stealing programs: in most cases, the recommended option should work well enough. Try the other options in case the program isn't working.
 *   Buttons: "Save and Hide" saves your settings to "save.xml" and hides the program back to the notification area. "Quit" completely exits the program and has the same effect as picking "Quit" from the right-click menu.Starting and playing games
-  
+
 There are two ways to play your games. The first one is to "manually start" your games with the right-click menu. PalettestealerSuspender will automatically suspend all palette stealing programs and resume them when exiting the game.
-  
+
 ![](http://1.bp.blogspot.com/-w5XkFBJJIz8/TjQqMacplPI/AAAAAAAASKQ/wQdoE7ESr1g/s1600/pss_jul11_05.png)
 
 The other way is to let PalettestealerSuspender monitor your list of running processes to see if a game has been started. To allow PalettestealerSuspender to monitor a particular game, check its entry in the configuration screen or through the right-click menu itself. This option provides the most flexibility, as you can just configure a list of games you want to monitor in the configuration screen, make sure they are checked, and then just hide PalettestealerSuspender and forget all about it. It will automatically react when you start a game, while still allowing to "manually start" games from the right-click menu as well.
@@ -85,7 +85,7 @@ As of April 2011, the program also contains a console mode, look in "readme.txt"
 
 This work is licensed under a Creative Commons Attribution-Share Alike 2.0 Belgium License as stated at http://creativecommons.org/licenses/by-sa/2.0/be/.
 
-THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
 HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  [1]: http://static.macuyiko.com/files/palettestealersuspender/PalettestealerSuspender.zip

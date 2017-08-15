@@ -44,7 +44,7 @@ Another great related recent article is [this one](http://dangrover.com/blog/201
 
 But I digress... this post was going to be a simple one, about cloud storage services. As stated before, Chinese technology firms have begun offering cloud storage services:
 
-* [Baidu Disk](http://pan.baidu.com/) - or: Baidu Yun (云, Cloud) or Pan (盘, Disk [3]): offers 2TB (that is terabytes!) of data for free when you install the mobile app.
+* [Baidu Disk](http://pan.baidu.com/) - or: Baidu Yun (äº‘, Cloud) or Pan (ç›˜, Disk [3]): offers 2TB (that is terabytes!) of data for free when you install the mobile app.
 * Tencent [Weiyun](http://www.weiyun.com/): offers 10TB of data for free when you install the mobile app.
 * 360.cn's [Yunpan](yunpan.360.cn): offers 10TB of data when installing the Windows client and an additional 20TB when installing a mobile client.
 
@@ -85,7 +85,7 @@ All apps examined here absolutely love imposing arbitrary limits. Want to upload
 
 For many of these limits, it's not exactly clear what is driving this. Perhaps imposing limits allows for easier monetization later on? Perhaps this is a way to drive people to use the add-ons, which brings us to...
 
-#### Pattern 4: A Web App, a Plugin, a Client, a Mobile App... 
+#### Pattern 4: A Web App, a Plugin, a Client, a Mobile App...
 
 Whereas both Dropbox and Google follow the strategy to put most in an accessible web app and offer a small sync client to install on your computer, the Chinese counterparts go all out and offer a wealth of apps -- a pattern which is very typical. Meaning that you'll end up with: the web app, the plugin to install in the web browser and allows extra features (many of which could be offered by using latest-and-greatest Javascript developments such as websockets), a client, a syncing tool, and a mobile app or two.
 
@@ -177,13 +177,13 @@ Taking a closer look at the `data` payload, it looks something like this:
 Last, we also need to take a look at the cookies send with every request:
 
 - `pgv_info`: some kind of session indicator? Values look like `ssid=s9869263628` and do not tend to change after a session timeout.
-- `pgv_pvid`: same. Values look like `4842874884`		
+- `pgv_pvid`: same. Values look like `4842874884`
 - `pt2gguin`: the letter "o" followed by your QQ number.
 - `ptcz`: also a session identifier which does not tend to change after a session timeout.
 - `ptisp`: set to the value `os`
 - `ptui_loginuin`: your e-mail address.
 - `skey`: a session key which does change after a session timeout, starts with "@".
-- `uin`: same as `pt2gguin` above.	
+- `uin`: same as `pt2gguin` above.
 - `verifysession`: a remainder of the login process, but not required in the app itself.
 
 With this under our belt, we're ready to start of with some code. First, we set up our imports and values we need to retrieve from a started session:
@@ -197,7 +197,7 @@ With this under our belt, we're ready to start of with some code. First, we set 
 	import sys
 	import struct
 	import binascii
-	
+
 	# Change the values below:
 	SKEY = '@changeme'
 	UIN = '29changeme'
@@ -209,7 +209,7 @@ With this under our belt, we're ready to start of with some code. First, we set 
 Next, some general purpose functions:
 
 	current_milli_time = lambda: int(round(time.time() * 1000))
-	file_size = lambda x: os.stat(x).st_size 
+	file_size = lambda x: os.stat(x).st_size
 	get_ordered_tuple = lambda x,y: next(a[1] for a in x if a[0] == y)
 	md5 = lambda x: hashlib.md5(open(x, 'rb').read()).hexdigest()
 	sha1 = lambda x: hashlib.sha1(open(x, 'rb').read()).hexdigest()
@@ -224,7 +224,7 @@ And some additional constants we'll be using throughout:
 				' (KHTML, like Gecko) Chrome/37.0.2062.94 Safari/537.36',
 				'Referer': 'http://www.weiyun.com/disk/index-en.html'}
 	COOKIES = {'pgv_info': PGV_INFO,
-				'pgv_pvid': PGV_PVID, 
+				'pgv_pvid': PGV_PVID,
 				'ptui_loginuin': EMAIL,
 				'pt2gguin': 'o'+UIN,
 				'uin': 'o'+UIN,
@@ -252,7 +252,7 @@ Now, we can start with setting up a base class on top of which we'll implement a
 			self.data = {"req_header":REQ_HEADER,
 						"req_body":{}}
 			self.data["req_header"]["cmd"] = cmd
-	
+
 		def get_response(self):
 			url = self.base + self.endpoint
 			payload = self.get_payload()
@@ -262,7 +262,7 @@ Now, we can start with setting up a base class on top of which we'll implement a
 				.replace(')} catch(e){};', '')\
 				.replace(')}catch(e){};', '');
 			return json.loads(response)
-	
+
 		def get_payload(self, isPost=False):
 			ruuid = str(uuid.uuid4()).upper().replace('-', '_')
 			prefix = 'post_callback' if isPost else 'get'
@@ -438,11 +438,11 @@ Note that this command does not only require the folder key you wish to retrieve
 	"main_dir_key": "56e73eb0f0a739ae12b58dcd423dce4a",
     "main_dir_name": "\u00e5\u00be\u00ae\u00e4\u00ba\u0091",
     "main_key": "56e73eb0f0a739ae12b58dcd423dce4a",
-   
+
 I'll spoil the answer and tell right away that the `main_dir_key` is the one we need:
 
 	req = GetDirList(
-				'56e73eb054570c238a6a15604df9e583', 
+				'56e73eb054570c238a6a15604df9e583',
 				'56e73eb0f0a739ae12b58dcd423dce4a')
 	print jsonprint(req.get_response())
 
@@ -479,7 +479,7 @@ You might think that this explains the reason why there exists separate commands
 
 You can test this out with:
 
-	req = GetDirList('56e73eb0f0a739ae12b58dcd423dce4a', 
+	req = GetDirList('56e73eb0f0a739ae12b58dcd423dce4a',
 				'56e73eb0f338fdcb41c5dfa52b9ed888')
 	print jsonprint(req.get_response())
 
@@ -524,7 +524,7 @@ Next up, classes to remove files and folders, which work in a similar manner but
 								"flag":1,
 								"dir_name":dirnames[i]})
 			self.data["req_body"] = {"del_folders": dellist}
-	
+
 		def get_response(self):
 			url = self.base + self.endpoint
 			payload = self.get_payload(True)
@@ -534,7 +534,7 @@ Next up, classes to remove files and folders, which work in a similar manner but
 					'try{parent.'+get_ordered_tuple(payload,"callback")+'(', '')\
 				.replace(')} catch(e){};</script>', '');
 			return json.loads(response)
-	
+
 	class BatchFileDelete(BaseWeiyun):
 		def __init__(self, fileids, filenames, filevers, parentdirkeys, parentparentdirkeys):
 			endpoint = '/wy_web_jsonp.fcg'
@@ -548,7 +548,7 @@ Next up, classes to remove files and folders, which work in a similar manner but
 								"file_name":filenames[i],
 								"file_ver":filevers[i]})
 			self.data["req_body"] = {"del_files": dellist}
-	
+
 		def get_response(self):
 			url = self.base + self.endpoint
 			payload = self.get_payload(True)
@@ -572,7 +572,7 @@ Next up is a big class in order to download files:
 			self.filename = filename
 			self.parentdirkey = parentdirkey
 			self.checksum = checksum
-	
+
 		def get_response(self, stream=True):
 			url = self.base + self.endpoint
 			payload = self.get_payload()
@@ -580,7 +580,7 @@ Next up is a big class in order to download files:
 			headers['origin'] = 'http://www.weiyun.com'
 			r = requests.post(url, cookies=COOKIES, params=payload, headers=headers, stream=stream)
 			return r
-	
+
 		def callback(self, ds, sofar, total):
 			w = 80
 			sys.stdout.write( "\b" * (w+10) )
@@ -589,7 +589,7 @@ Next up is a big class in order to download files:
 				("#" * (int(w * float(sofar) / float(total))),
 				 " " * (w-(int(w * float(sofar) / float(total)))),
 				 speed) )
-	
+
 		def get_file(self, filename, stream=True, callback=None):
 			if callback is None:
 				callback = self.callback
@@ -609,7 +609,7 @@ Next up is a big class in order to download files:
 				with open(filename, 'wb') as fd:
 					fd.write(a.content)
 					fd.close()
-	
+
 		def get_payload(self):
 			payload = (('fid', self.fileid),
 						('pdir', self.parentdirkey),
@@ -650,7 +650,7 @@ Uploading files also requires some custom code:
 					"file_attr":{"file_name":filename}}
 			self.parentdirkey = parentdirkey
 			self.parentparentdirkey = parentparentdirkey
-	
+
 		def send_file(self, filename):
 			a = self.get_response()
 			print a
@@ -696,7 +696,7 @@ Trying this with an Ubuntu ISO file:
 	hsha1 = sha1(file)
 	filesize = file_size(file)
 	req = FileUpload(
-		filename, filesize, 
+		filename, filesize,
 		'56e73eb0f0a739ae12b58dcd423dce4a', '56e73eb0f338fdcb41c5dfa52b9ed888',
 		hmd5, hsha1)
 	print req.send_file('c:/users/n11093/desktop/download.pdf')
@@ -709,7 +709,7 @@ Trying this with a non-existent file (and/or without providing hashes):
 	filename = 'unique.txt'
 	filesize = file_size(file)
 	req = FileUpload(
-		filename, filesize, 
+		filename, filesize,
 		'56e73eb0f0a739ae12b58dcd423dce4a', '56e73eb0f338fdcb41c5dfa52b9ed888')
 	print req.send_file('c:/users/n11093/desktop/download.pdf')
 
@@ -781,7 +781,7 @@ Again, a lovely display of custom-rolled security functions. I wonder how develo
 
 #### Download
 
-I've put all my code up on [GitHub](https://github.com/Macuyiko/WeiyunAPI), in case you're interested. I'll probably not maintain this for long, but feel free to fork or submit pull requests. The license is permissive (MIT), and I'd love to hear if this ends up being useful in some way. I can be reached at [macuyiko@gmail.com](mailto:macuyiko@gmail.com) (我也明白一点中文).
+I've put all my code up on [GitHub](https://github.com/Macuyiko/WeiyunAPI), in case you're interested. I'll probably not maintain this for long, but feel free to fork or submit pull requests. The license is permissive (MIT), and I'd love to hear if this ends up being useful in some way. I can be reached at [macuyiko@gmail.com](mailto:macuyiko@gmail.com) (æˆ‘ä¹Ÿæ˜Žç™½ä¸€ç‚¹ä¸­æ–‡).
 
 #### Addendum: Tencent's Encrypted Chunked Upload Mechanism
 
@@ -859,7 +859,7 @@ Based on this, we can start implementing this in Python:
 									"file_exist_option":4}}}}
 			self.parentdirkey = parentdirkey
 			self.parentparentdirkey = parentparentdirkey
-	
+
 		def get_response(self):
 			url = self.base + self.endpoint
 			payload = self.get_payload()
@@ -870,18 +870,18 @@ Based on this, we can start implementing this in Python:
 				.replace('try{X_GET(', '')\
 				.replace(')}catch(e){};', '');
 			return json.loads(response)
-	
+
 		def get_payload(self):
 			payload = (('cmd', self.cmd),
 				('g_tk', GTK),
-				('data', json.dumps(self.data)), 
+				('data', json.dumps(self.data)),
 				('callback', 'X_GET'),
 				('_', str(current_milli_time())))
 			return payload;
-	
+
 		def callback(self, send, total):
 			print send, total
-	
+
 		def send_file(self, filename, callback=None):
 			if callback is None:
 				callback = self.callback
@@ -931,7 +931,7 @@ Whilst browsing to the request made by Chrome, I noticed a particular one to `ht
 	import sys
 	from multiprocessing import Pool
 	from multiprocessing.dummy import Pool as ThreadPool
-	
+
 	def get_face(uid, itype=5):
 		payload = (
 				('appid', str(527020901)),
@@ -945,7 +945,7 @@ Whilst browsing to the request made by Chrome, I noticed a particular one to `ht
 				.replace('pt.setHeader(', '')\
 				.replace(');', '');
 		return json.loads(response)
-	
+
 	def parse(i):
 		url = get_face(i)[str(i)]
 		if '&t=0' in url: return
@@ -954,7 +954,7 @@ Whilst browsing to the request made by Chrome, I noticed a particular one to `ht
 			with open('./images/'+str(i)+'.jpeg', 'wb') as f:
 				f.write(r.content)
 			print str(i),url
-	
+
 	pool = ThreadPool(4)
 	start = 2756800000
 	length = 10000
@@ -971,6 +971,6 @@ I'd love to see a project combining computer vision with this and do some unsupe
 
 [2]: I've noticed this myself when trying to find standard notation for terms which are generally accepted in English research literature, such as "recall and precision". The New York times also has two great articles [here (older)](http://www.nytimes.com/2011/03/22/world/asia/22china.html?pagewanted=all) and [here](http://www.nytimes.com/2014/09/22/business/international/china-clamps-down-on-web-pinching-companies-like-google.html) on the subject (the latter article is a great read and better expands on some points I'm making here). To quote:
 
-> "I know some foreign scientists are studying the rings of ancient trees to learn about the climate, for example, but I can't find their work using Baidu," Ms. Jin said. "When in China, I'm almost never able to access Google Scholar, so I’m left badly informed of the latest findings."
+> "I know some foreign scientists are studying the rings of ancient trees to learn about the climate, for example, but I can't find their work using Baidu," Ms. Jin said. "When in China, I'm almost never able to access Google Scholar, so Iâ€™m left badly informed of the latest findings."
 
-[3]: I really like the hanzi 盘 to indicate a disk. The character is a pretty old-fashioned one to indicate a dish, plate, or even a washbasin. It is used in 硬盘 to indicate hard drive. Sometimes, 硬碟 is used as well (the latter also meaning dish, plate).
+[3]: I really like the hanzi ç›˜ to indicate a disk. The character is a pretty old-fashioned one to indicate a dish, plate, or even a washbasin. It is used in ç¡¬ç›˜ to indicate hard drive. Sometimes, ç¡¬ç¢Ÿ is used as well (the latter also meaning dish, plate).

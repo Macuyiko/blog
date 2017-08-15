@@ -20,7 +20,7 @@ Unless you've been living under a rock, you probably know about [Minecraft](http
 
 > Minecraft is a game about breaking and placing blocks. At first, people built structures to protect against nocturnal monsters, but as the game grew players worked together to create wonderful, imaginative things.
 >
-> It can also be about adventuring with friends or watching the sun rise over a blocky ocean. It’s pretty. Brave players battle terrible things in The Nether, which is more scary than pretty. You can also visit a land of mushrooms if it sounds more like your cup of tea.
+> It can also be about adventuring with friends or watching the sun rise over a blocky ocean. Itâ€™s pretty. Brave players battle terrible things in The Nether, which is more scary than pretty. You can also visit a land of mushrooms if it sounds more like your cup of tea.
 
 Minecraft has been wildly successful. Not only because of the LEGO-like main gameplay, but also thanks to the developers' friendly stance towards modding, causing an incredible amount of modifications being released, ranging from [additional creatures to custom biomes](http://www.pcgamesn.com/minecraft/twenty-best-minecraft-mods).
 
@@ -46,7 +46,7 @@ Other than that, lots of people have started to learn Java or other languages by
  * [Learning Physics with Minecraft](http://www.wired.com/wiredscience/2012/02/minecraft-physics/) -- not programming, but learning physics with Minecraft
  * [Minecraft in Mathematica](http://mathematica.stackexchange.com/questions/19669/mathematica-minecraft) -- ...and even Mathematica clones
 
-This is all nice, but a bit too high-level for what I wanted to build. I wanted to have direct access to the Bukkit API, similar to how the Minecraft: Pi Edition provides direct access to its API. 
+This is all nice, but a bit too high-level for what I wanted to build. I wanted to have direct access to the Bukkit API, similar to how the Minecraft: Pi Edition provides direct access to its API.
 
 We're thus going to create a Bukkit plugin which gives server administrators or programming students direct access to the full Bukkit API. The actual plugin is actually very simple, thanks to the magic of Jython, a Python implementation in Java which allows for Python<->Java crosstalk and saves us from having to implement any command in the plugin itself. Commands are issued on a separate console window and do not require players or server administrators to be running the game itself.
 
@@ -70,8 +70,8 @@ This is all nice, but still too high-level. I want to be able to get direct acce
 
 Finally, plugins such as [PyDevTool](http://dev.bukkit.org/bukkit-plugins/pydevtools/) and [RedstoneTorch](http://dev.bukkit.org/bukkit-plugins/redstonetorch/) come closer to what we want to achieve. For instance, PyDevTools allows to:
 
-> Execute arbitrary python code from console or ingame    
-> Execute saved python scripts    
+> Execute arbitrary python code from console or ingame
+> Execute saved python scripts
 > Interactive interpreter mode
 
 This is almost exactly what I wanted to build, but still requires to log into the game to execute `/py <statement>` commands. Yes, these can also be entered in the Bukkit console (offering some kind of interactive shell), but I wanted to remove the `/py` clutter. A simple trick indeed will allow us to do so, let's get right to it...
@@ -98,11 +98,11 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 `MainPlugin.java`, this class just loads the libraries from the `lib` folder and spawns a `PythonConsole` window:
 
 	package com.macuyiko.bukkitconsole;
-	
+
 	import java.io.File;
 	import org.bukkit.plugin.java.JavaPlugin;
 	import org.bukkit.plugin.java.PluginClassLoader;
-	
+
 	public class MainPlugin extends JavaPlugin {
 		public void onEnable(){
 			getLogger().info("BukkitConsole: Loading libs");
@@ -117,14 +117,14 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 							new File("lib/"+files[i].getName()).toURI().toURL());
 				    }
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			getLogger().info("BukkitConsole: Starting Jython console");
 			new PythonConsole();
 		}
-	 
+
 		public void onDisable(){
 			getLogger().info("BukkitConsole: Plugin was disabled");
 		}
@@ -142,7 +142,7 @@ Next, we'll create the plugin classes themselves. Create a package under `src` c
 	public class PythonConsole {
 		public PythonConsole() {
 			PySystemState.initialize();
-	
+
 			PythonInterpreter interp = new PythonInterpreter(null,
 					new PySystemState());
 
@@ -283,9 +283,9 @@ As such, we create two new Java classes. `SocketServer.java` handles the incomin
 
 		public void run() {
 			try {
-			
+
 				//...
-			
+
 				out.print(">>> ");
 				while ((line = in.readLine()) != null && !line.equals("exit!")) {
 					boolean result = interpreter.runsource(line);
@@ -297,7 +297,7 @@ As such, we create two new Java classes. `SocketServer.java` handles the incomin
 	 					return;
 	 				}
 				}
-			
+
 				out.println("Bye");
 				socket.close();
 			} // ...
@@ -307,7 +307,7 @@ As such, we create two new Java classes. `SocketServer.java` handles the incomin
 Finally, `MainPlugin.java` is modified to read in config values from a `config.yml` file with following defaults:
 
 	bukkitconsole:
-	 guiconsole: 
+	 guiconsole:
 	  enabled: true
 	 serverconsole:
 	  enabled: true
@@ -321,13 +321,13 @@ Once done, the plugin is able to start both a GUI interpreter locally on the ser
 	Trying 127.0.0.1...
 	Connected to localhost.
 	Escape character is '^]'.
-	
+
 	Python Interpreter Server
 	-------------------------
 	PASSWORD: swordfish
 	You're in
 	>>> from org.bukkit import Bukkit
-	>>> Bukkit.getWorlds() 
+	>>> Bukkit.getWorlds()
 	[CraftWorld{name=world}, CraftWorld{name=world_nether}, CraftWorld{name=world_the_end}]
 	>>> Bukkit.getWorld("world").setTime(200)
 	>>> Bukkit.getWorld("world").setTime(1400)

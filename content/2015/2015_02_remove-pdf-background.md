@@ -18,7 +18,7 @@ At first sight, this works fine:
 
 But when printing, Adobe Reader decides to just put the background back in, even although the white background shows up in the page preview... Call it the ultimate troll, but that exactly how we know Adobe by now.
 
-Perhaps some alternative PDF readers such as Foxit or Sumatra can do this right, but I'm using Evince, and -- currently -- not in the mood to start trying out others. 
+Perhaps some alternative PDF readers such as Foxit or Sumatra can do this right, but I'm using Evince, and -- currently -- not in the mood to start trying out others.
 
 Luckily, help is on the way. Step one: download [PDFClown](http://pdfclown.org/) for Java. You'll find a JAR file in the source code zip somewhere.
 

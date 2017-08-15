@@ -2,7 +2,7 @@ Title: I Did Switch to Pelican
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2013-07-11 01:05
 
-Just a quick heads up to let you know that this blog will look a bit different -- once again! 
+Just a quick heads up to let you know that this blog will look a bit different -- once again!
 
 Although indicated [otherwise](|filename|/2013/2013_06_i-almost-switched-pelican.md) about a week ago, I've nevertheless decided to move away from Blogger and migrate to Pelican.
 

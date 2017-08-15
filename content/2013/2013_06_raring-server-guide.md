@@ -14,9 +14,9 @@ One of the staff mentions the following in the comments of the update post:
 
 The hackers, on the other hand, came out with a [different statement](http://turtle.dereferenced.org/~nenolod/linode/linode-abridged.txt) altogether:
 
-> 06:00 \<AlexC\_\> ryann: So, are you saying CC details have also been compromised?    
-> 06:00 \<ryann\> Yep    
-> 06:00 \<AlexC\_\> ryann: And you plan on releasing these?    
+> 06:00 \<AlexC\_\> ryann: So, are you saying CC details have also been compromised?
+> 06:00 \<ryann\> Yep
+> 06:00 \<AlexC\_\> ryann: And you plan on releasing these?
 > 06:00 \<ryann\> They did try to encrypt them, but using public key encryption doesn't work if you have the public and private key in the same directory
 
 Of course, statements such as these should be taken with a grain of salt, as it could easily be hyperbolic bragging. Still, the whole ordeal left many Linode users with a bitter aftertaste.
@@ -36,7 +36,7 @@ This is a single-click process with DigitalOcean. I'm using Ubuntu Server 13.04 
 
 ## 2. Always be updating and upgrading
 
-    apt-get update  
+    apt-get update
     apt-get upgrade
 
 ## 3. Synchronize the system clock
@@ -45,15 +45,15 @@ Synchronize the system clock with an NTP server over the Internet.
 
     apt-get install ntp ntpdate
 
-SSH is installed already, so we skip this. We also don't have to configure our network, but you can check the hostname with: 
+SSH is installed already, so we skip this. We also don't have to configure our network, but you can check the hostname with:
 
-    hostname  
+    hostname
 
 ## 4. Add users
 
 Add some users. Adding a `webmaster` is recommended:
 
-    useradd -d /home/webmaster -m webmaster  
+    useradd -d /home/webmaster -m webmaster
     passwd webmaster
     adduser webmaster sudo
 
@@ -61,9 +61,9 @@ Add some users. Adding a `webmaster` is recommended:
 
 Edit `/etc/ssh/sshd_config`:
 
-	# Always a good idea to not listen at the default port	
+	# Always a good idea to not listen at the default port
 	Port	44422
-	
+
 	# Prohibit root logins
 	PermitRootLogin no
 
@@ -116,10 +116,10 @@ Install:
 
 Enable some modules:
 
-	a2enmod ssl  
-	a2enmod rewrite  
-	a2enmod suexec  
-	a2enmod status  
+	a2enmod ssl
+	a2enmod rewrite
+	a2enmod suexec
+	a2enmod status
 	a2enmod include
 
 	/etc/init.d/apache2 force-reload
@@ -127,30 +127,30 @@ Enable some modules:
 Adding subdomains is done with vhosts in `/etc/apache2/sites-enabled`:
 
 
-    <VirtualHost *>  
-      ServerAdmin info@sitename.com  
-      ServerName sitename.com   
-      ServerAlias *.sitename.com  
-      DocumentRoot /var/www/sitename.com/  
-      
-      <Directory />  
-        Options FollowSymLinks  
-        AllowOverride All  
-      </Directory>  
+    <VirtualHost *>
+      ServerAdmin info@sitename.com
+      ServerName sitename.com
+      ServerAlias *.sitename.com
+      DocumentRoot /var/www/sitename.com/
+
+      <Directory />
+        Options FollowSymLinks
+        AllowOverride All
+      </Directory>
 
       <Directory /var/www/sitename.com/>
-        Options Indexes FollowSymLinks MultiViews  
+        Options Indexes FollowSymLinks MultiViews
         DirectoryIndex index.html index.htm index.php
-        AllowOverride All  
-        Order allow,deny  
-        allow from all  
-      </Directory>  
+        AllowOverride All
+        Order allow,deny
+        allow from all
+      </Directory>
 
-      ErrorLog /var/log/apache2/error.log  
-      LogLevel warn  
+      ErrorLog /var/log/apache2/error.log
+      LogLevel warn
 
-      CustomLog /var/log/apache2/access.log combined  
-      ServerSignature On    
+      CustomLog /var/log/apache2/access.log combined
+      ServerSignature On
     </VirtualHost>
 
 Don't forget to edit the default virtualhost with a `NameVirtualHost *` and `AllowOverride All`.
@@ -167,7 +167,7 @@ Make sure to pick `standalone`.
 
 Edit `/etc/proftpd/proftpd.conf`:
 
-	DefaultRoot /  
+	DefaultRoot /
 	UseIPv6 off
 
 And:
@@ -180,7 +180,7 @@ We don't install phpMyAdmin anymore. `apt-get install phpmyadmin` if you want to
 
 Making it easy for our "webmaster":
 
-    chown -R webmaster:www-data /var/www  
+    chown -R webmaster:www-data /var/www
     chmod 775 -R /var/www
 
 ## 11. Install fail2ban

@@ -15,7 +15,7 @@ Throughout the years, that -- this -- blog went through a series of redesigns an
 Anyway, I've been getting somewhat disappointment with Blogger lately, something which started some two or three years ago, when I started putting out longer articles, containing also more code fragments. Don't get me wrong, I don't think Blogger is bad, but the following things were becoming an annoyance:
 
  * I've seen my fair share of Javascript WYSIWYG editors -- either bolted to your favorite blogging platform of choice or "that PHP Content Management System from the nineties". While libraries and frameworks such as JQuery have helped to clear out some of the mess, I honestly feel that 99% of them still behave like crap.
- 
+
     I'll not go into details about all the things wrong with Javascript editors now. Still, there is one silver lining which is worth mentioning: the amount of great Markdown based Javascript editors which have appeared during the past years. For example, check out [EpicEditor](http://epiceditor.com/), [markItUp!](http://markitup.jaysalvat.com/home/), [markdown live editor](http://jrmoran.com/playground/markdown-live-editor/), [WMD](https://code.google.com/p/wmd/) (outdated) and its [many](http://blog.stackoverflow.com/2008/12/reverse-engineering-the-wmd-editor/) [spinoffs](https://code.google.com/p/pagedown/). I absolutely love Markdown, and have even forced it to users of websites I've built, using one of the aforementioned Javascript editors to make it clear how easy it is to write Markdown text.
 
     At this point you might be wondering what, exactly, is so messed up about the Blogger WYSIWYG editor. There isn't anything *really* wrong with it, but the following has been bothering me:
@@ -23,10 +23,10 @@ Anyway, I've been getting somewhat disappointment with Blogger lately, something
     - Inserting code is a problem. You have to deal with `pre`, `tt`, `code` tags together with installations of Pretty Print (or similar libraries). Don't forget to convert your `<`'s to `&lt;` or things won't work. Make sure your whitespace is correct, meaning that you alternate between tabs, spaces, or a bunch of `&nbsp;`'s.
     - So okay, maybe Blogger isn't great for code, but at least it's perfect for writing, right? Not really. It's okay, but the rise of recent "modern magazines" such as [Medium](https://medium.com/) and [SVBTLE](https://svbtle.com/) have made it clear that writing can be a much smoother process. Heck, even Wordpress' editor is nicer, and will apply many typographic fixes such as converting two dashes to an em-dash.
     - Blogger allows too many formatting options. Since its editor is a WYSIWYG on top of HTML, it's perfectly fine to copy-paste in ugly text coming from an e-mail message or that Word document you typed out... `<span>` with `mso-style`, anyone? Please, just allow me to apply headings, emphasis, lists and paragraphs to my text, but let the theme CSS do its thing and leave out the styling.
-    
+
  * Making changes to the template is bothersome. Blogger's template system is fine as long as you keep using one of the default themes, maybe make some slight color or font changes, and leave the rest as is. Once you want to start moving stuff around however, add backgrounds or lots of custom CSS/JS, things get harder and you quickly and up in the middle of "tag soup". I didn't even manage to change the background of the final theme I was using once, even though I was initially planning to do so once in awhile. It's not hard, but my laziness outshines the difficulty.
 
-That said, there are plenty of things which I do like about Blogger. It's very easy to set up a basic blog, there are many widgets to choose from, basic templating stuff is fine if you don't mind your blog having a common look and feel. Also, comment management and moderation works pretty well, especially now with the Google+ integration.  
+That said, there are plenty of things which I do like about Blogger. It's very easy to set up a basic blog, there are many widgets to choose from, basic templating stuff is fine if you don't mind your blog having a common look and feel. Also, comment management and moderation works pretty well, especially now with the Google+ integration.
 
 So, in short, what I wanted was:
 
@@ -95,7 +95,7 @@ Configuration is just an easy step consisting of modifying `pelicanconf.py`:
 	TIMEZONE = 'Europe/Brussels'
 	DEFAULT_LANG = u'en'
 	TYPOGRIFY = True
-	
+
 	# Generation
 	DIRECT_TEMPLATES = ('index', 'archives')
 	MONTH_ARCHIVE_SAVE_AS = 'archives/{date:%Y}/{date:%m}/index.html'
