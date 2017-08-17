@@ -1,4 +1,4 @@
-Title: Sacrifice RAM Problem (Or: Fixing An Old Game)
+Title: Sacrifice RAM Problem (Or: Fixing an Old Game)
 Date: 2006-07-13
 Author: Seppe "Macuyiko" vanden Broucke
 
@@ -6,7 +6,7 @@ Update: check out new post with updated instructions [over here](|filename/2008_
 
 Recently I found my old copy of Sacrifice ([Gamespot link](http://www.gamespot.com/pc/strategy/sacrifice/)). I really like this game because it reminds me of [Jullian Gollop](http://en.wikipedia.org/wiki/Julian_Gollop)'s Chaos. (Has anyone ever played this game on the Spectrum?) Basically, it's a bunch of wizards fighting it out.
 
-The graphics are not that amazing anymore as they used to be. But who cares about that if you get a great gameplay experience (running at 120fps)? So I decided to install this game... on Windows XP... with more that 4Ghz processing power... and 4GB RAM... You could say this meets the minimum requirements.
+The graphics are not as amazing anymore as they used to be. But who cares about that if you get a great gameplay experience (running at 120fps)? So I decided to install this game... on Windows XP... with more that 4Ghz processing power... and 4GB RAM... You could say this meets the minimum requirements.
 
 Install went fine, I start the game and... I get an error thrown into my face. "Not enough Virtual Memory".
 

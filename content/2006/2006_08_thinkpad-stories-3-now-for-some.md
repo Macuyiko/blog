@@ -16,35 +16,21 @@ The first was WPA support since my home network uses that.
 
 I found a lot of information on the forums, configure this and write that, but here is the most easy way to do it:
 
-  - Make sure wpa-supplier and gnome-network-tools are installed.
-  - sudo gedit /etc/network/interfaces. Uncomment everything except local loopback entries.
+  - Make sure `wpa-supplier` and `gnome-network-tools` are installed
+  - `sudo gedit /etc/network/interfaces`. Uncomment everything except local loopback entries
   - Note: you can use commands like
 
-    /wpa_supplicant -w -i eth1 -c /etc/wpa_supplicant.conf -D wext
+    `wpa_supplicant -w -i eth1 -c /etc/wpa_supplicant.conf -D wext`
 
-    and write a configuration as following in /etc/wpa_supplicant.conf:
+    and write a configuration in `/etc/wpa_supplicant.conf`. But you do not have to
 
-    network=
-    ssid="TYPEHERE"
-    scan_ssid=1
-    proto=WPA
-    key_mgmt=WPA-PSK
-    pairwise=TKIP
-    group=TKIP
-    psk="TYPEHERE"
-    }
+  - `sudo gedit /etc/default/wpasupplicant` and just enter this:
 
-    (It didn't work for me without the pairwise and group settings.)
+    `ENABLED=0`
 
-    But you do not have to. Read on...
+  - Reboot (or re-init).
 
-  - sudo gedit /etc/default/wpasupplicant and just enter this:
-
-    ENABLED=0
-
-  - Reboot probably (or re-init).
-
-  - I now see an eth0 icon in my Gnome taskbar. I also see an icon were I can choose from available wireless connections. I pick mine, enter my WPA password and set type to TKIP. I also have to enter a keyring password for gnome.
+  - I now see an `eth0` icon in my Gnome taskbar. I also see an icon were I can choose from available wireless connections. I pick mine, enter my WPA password and set type to TKIP. I also have to enter a keyring password for gnome.
 
 Waiting... authenticating... assigning address... done! I disconnect my network cable.
 

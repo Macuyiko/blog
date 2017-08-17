@@ -1,4 +1,4 @@
-Title: Javascript browser detection using DOM capabilities
+Title: Javascript Browser Detection using DOM Capabilities
 Date: 2008-01-20
 Author: Seppe "Macuyiko" vanden Broucke
 

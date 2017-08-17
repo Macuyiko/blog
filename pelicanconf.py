@@ -26,8 +26,7 @@ CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
 # Blogroll
-LINKS =  (	('Old Blog Location', 'http://bedagainstthewall.blogspot.com'),
-         )
+LINKS =  ()
 
 # Social widget
 SOCIAL = (('Twitter', 'http://twitter.com/macuyiko'),
