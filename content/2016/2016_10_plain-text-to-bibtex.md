@@ -1,4 +1,4 @@
-Title: Replacing BibTeX References with DBLP Entries, Updated
+Title: Converting Plain Text References To BibTeX, Updated
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2016-09-24 15:31
 
