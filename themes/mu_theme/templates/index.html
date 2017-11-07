@@ -49,12 +49,14 @@
 		{% endif %}
 	</ul>
 	
-	<div class="sidebar-title">Pages</div>
-	<ul class="side-nav">
-	{% for page in PAGES %}
-		<li><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
-	{% endfor %}
-	</ul>
+	{% if PAGES %}
+		<div class="sidebar-title">Pages</div>
+		<ul class="side-nav">
+		{% for page in PAGES %}
+			<li><a href="{{ SITEURL }}/{{ page.url }}">{{ page.title }}</a></li>
+		{% endfor %}
+		</ul>
+	{% endif %}
 	
 	{% if LINKS %}
 	<div class="sidebar-title">Links</div>

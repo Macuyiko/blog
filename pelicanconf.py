@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+LOCALE = ('en',)
+
 AUTHOR = u'Seppe "Macuyiko" vanden Broucke'
 SITENAME = u'Bed Against The Wall'
 SITEURL = 'http://blog.macuyiko.com'
