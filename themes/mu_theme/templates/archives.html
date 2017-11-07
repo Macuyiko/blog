@@ -9,7 +9,7 @@
 		<tbody>
 		{% for article in date_year %}
 			<tr>
-			<td><time datetime="{{ article.date.isoformat() }}" pubdate>{{ article.date.strftime('%d %B') }}</time> </td>
+			<td><time datetime="{{ article.date.isoformat() }}" pubdate>{{ article.date.strftime('%d&nbsp;%B') }}</time> </td>
 			<td><a href='{{ article.url }}'>{{ article.title }}</a></td>
 			</tr>
 		{% endfor %}

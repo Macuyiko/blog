@@ -2,11 +2,11 @@ Title: Compiling Firesheep on Linux
 Date: 2010-11-19
 Author: Seppe "Macuyiko" vanden Broucke
 
-If you follow the (security) news a bit, you'veÂ undoubtedlyÂ heart about Firesheep. This tool makes it very easy to listen in on public WiFi connections and intercept HTTP Cookies from a plethora of social networking sites and mail services.
+If you follow the (security) news a bit, you've undoubtedly heart about Firesheep. This tool makes it very easy to listen in on public WiFi connections and intercept HTTP Cookies from a plethora of social networking sites and mail services.
 
 This has been possible for a long time (some tcpdump filters and some cookie setting scripts and you're golden), but this tool makes it insanely easy. You can check out the tool and its description on the [main site](http://codebutler.com/firesheep).
 
-The site mentions that Linux support is on the way, and recently it has become possible toÂ successfullyÂ compile the tool on Linux. This is what I did to get it running on Ubuntu 10.10.
+The site mentions that Linux support is on the way, and recently it has become possible to successfully compile the tool on Linux. This is what I did to get it running on Ubuntu 10.10.
 
     cd ~git clone git://github.com/mickflemm/firesheep.git
     cd firesheep/
@@ -53,7 +53,7 @@ Now start Firefox with root rights:
 
     sudo firefox
 
-Go to `ToolsÂ ->Â Add-ons`, and open the Firesheep `Preferences` under the `Extensions` view. Another window opens. Set the `Capture Interface` to `mon0`.
+Go to `Tools -> Add-ons`, and open the Firesheep `Preferences` under the `Extensions` view. Another window opens. Set the `Capture Interface` to `mon0`.
 
 Press `CTRL+SHIFT+S` to open the Firesheep sidebar and to start capturing.
 

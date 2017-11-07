@@ -15,10 +15,10 @@ Let's take a look at some pseudocode:
 
 	Randomly construct a valid solution
 	For each temperature do:
-	Â Â For number of trials to do at each temperature do:
-	Â Â Â Â Move solution to a neighbour
-	Â Â Â Â Accept neighbour with probability(old_score, new_score, temperature)
-	Â Â Â Â Lower the temperature by a reduction factor
+	  For number of trials to do at each temperature do:
+	    Move solution to a neighbour
+	    Accept neighbour with probability(old_score, new_score, temperature)
+	    Lower the temperature by a reduction factor
 
 It becomes clear that this method can be used in discrete optimization problems only, so that we can construct neighbours from our current state. E.g., a first solution in the problem we've been discussing might be [10,51,5,18] with a neighbour [10,52,5,18].
 
@@ -35,58 +35,58 @@ Let's see some Python code (again, based on the code mentioned in the previous p
 	from math import *
 
 	def individual(length, min, max):
-	Â Â 'Create a member of the population.'
-	Â Â return [ randint(min,max) for x in xrange(length) ]
+	  'Create a member of the population.'
+	  return [ randint(min,max) for x in xrange(length) ]
 
 	def fitness(individual, target):
-	Â Â """
-	Â Â Determine the fitness of an individual. Higher is better.
-	Â Â individual: the individual to evaluate
-	Â Â target: the target number individuals are aiming for
-	Â Â """
-	Â Â sum = reduce(add, individual, 0)
-	Â Â return abs(target-sum)
+	  """
+	  Determine the fitness of an individual. Higher is better.
+	  individual: the individual to evaluate
+	  target: the target number individuals are aiming for
+	  """
+	  sum = reduce(add, individual, 0)
+	  return abs(target-sum)
 
 	def probability(o_fitness, n_fitness, temperature):
-	Â Â if n_fitness < o_fitness:
-	Â Â Â Â return 1
-	Â Â return exp( (n_fitness-o_fitness) / temperature)
+	  if n_fitness < o_fitness:
+	    return 1
+	  return exp( (n_fitness-o_fitness) / temperature)
 
 	def temperature(step, max_steps):
-	Â Â return max_steps - step
+	  return max_steps - step
 
 	def neighbour(ind, min, max):
-	Â Â pos_to_mutate = randint(0, len(ind)-1)
+	  pos_to_mutate = randint(0, len(ind)-1)
 
-	Â Â if random() < 0.5:
-	Â Â Â Â ind[pos_to_mutate] -= 1
-	Â Â else:
-	Â Â Â Â ind[pos_to_mutate] += 1
+	  if random() < 0.5:
+	    ind[pos_to_mutate] -= 1
+	  else:
+	    ind[pos_to_mutate] += 1
 
-	Â  if ind[pos_to_mutate] < min:
-	Â Â Â Â ind[pos_to_mutate] = min
-	Â Â elif ind[pos_to_mutate] > max:
-	Â Â Â Â ind[pos_to_mutate] = max
+	  if ind[pos_to_mutate] < min:
+	    ind[pos_to_mutate] = min
+	  elif ind[pos_to_mutate] > max:
+	    ind[pos_to_mutate] = max
 
-	Â Â return ind
+	  return ind
 
 	def evolve(ind, nr_trials, step, max_steps, min, max, target):
-	Â Â best_fit = 10000;
-	Â Â for i in range(1,nr_trials):
-	Â Â Â Â n_ind = neighbour(ind, min, max)
-	Â Â Â Â o_fitness = fitness(ind,target)
-	Â Â Â Â n_fitness = fitness(n_ind,target)
+	  best_fit = 10000;
+	  for i in range(1,nr_trials):
+	    n_ind = neighbour(ind, min, max)
+	    o_fitness = fitness(ind,target)
+	    n_fitness = fitness(n_ind,target)
 
-	Â Â if n_fitness < best_fit:
-	Â Â Â Â best_fit = n_fitness
+	  if n_fitness < best_fit:
+	    best_fit = n_fitness
 
-	Â Â #move to new state?
-	Â Â if probability(o_fitness, n_fitness, temperature(step,max_steps)) >= random():
-	Â Â Â Â ind = n_ind
-	Â Â Â Â print "Best fitness this evolution:",best_fit
-	Â Â Â Â print "Temperature this evolution:",temperature(step,max_steps)
+	  #move to new state?
+	  if probability(o_fitness, n_fitness, temperature(step,max_steps)) >= random():
+	    ind = n_ind
+	    print "Best fitness this evolution:",best_fit
+	    print "Temperature this evolution:",temperature(step,max_steps)
 
-	Â Â return ind`
+	  return ind`
 
 If the fitness of the neighbour is better (remember: that means lower), we immediately accept it. We don't really need a chance of rejection for this problem. Otherwise, we use `exp( (n_fitness-o_fitness) / temperature)`.
 
@@ -107,8 +107,8 @@ Let's try it, our starting temperature becomes 100, using 1000 trials per temper
 	i_kmax = 100
 	i_trials = 1000
 	while i_k < i_kmax:
-	Â Â i = evolve(i, i_trials, i_k, i_kmax, i_min, i_max, target)
-	Â Â i_k += 1
+	  i = evolve(i, i_trials, i_k, i_kmax, i_min, i_max, target)
+	  i_k += 1
 
 The output:
 
@@ -160,12 +160,12 @@ Another Java applet to look at: solving a [travelling salesman problem with simu
 
 -----
 
-Table Of ContentsÂ (click a link to jump to that post)
+Table Of Contents (click a link to jump to that post)
 
 1. [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
-2.Â [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
-3.Â [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
-4.Â [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
-5.Â [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)Â
-6.Â [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
-7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)Â
+2. [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
+3. [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
+4. [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
+5. [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
+6. [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
+7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)

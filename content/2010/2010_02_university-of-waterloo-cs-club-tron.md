@@ -2,7 +2,7 @@ Title: The University Of Waterloo CS Club Tron Challenge, And Some Minimax In Ge
 Date: 2010-02-25
 Author: Seppe "Macuyiko" vanden Broucke
 
-(This is the first part in the University Of Waterloo CS Club Tron Challenge post series. You can find the second partÂ [here](|filename|2010_03_university-of-waterloo-cs-club-tron-2.md).)
+(This is the first part in the University Of Waterloo CS Club Tron Challenge post series. You can find the second part [here](|filename|2010_03_university-of-waterloo-cs-club-tron-2.md).)
 
 The Computer Science Club of the University of Waterloo is currently organizing an [AI challenge](http://csclub.uwaterloo.ca/contest/index.php), sponsored by Google. I'm (as always) a bit late with my write-up and the contest will be ending soon (26th of February), so you will have to be quick if you still want to enter. However, I can imagine that many of you are already familiar with the contest...
 
@@ -25,12 +25,12 @@ In this version of the game, some things are a bit simpler then what we see in t
 For example, one of the maps provided in the package looks like this:
 
     ########
-    #1Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â 2#
+    #1     #
+    #      #
+    #      #
+    #      #
+    #      #
+    #     2#
     ########
 
 `#` stands for a wall, and `1` and `2` are our two players on their starting positions.
@@ -40,54 +40,54 @@ Let's pit them against each other and see how they fare. We provide them with a 
 After the first move, the board looks like this:
 
     ########
-    ##Â Â Â Â Â #
-    #1Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â Â #
-    #Â Â Â Â Â 2#
-    #Â Â Â Â Â ##
+    ##     #
+    #1     #
+    #      #
+    #      #
+    #     2#
+    #     ##
     ########
 
 See how they both leave a wall behind them? Note that diagonal moves are forbidden. A few moves later, the situation looks like this:
 
     ########
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ###Â Â Â Â #
-    #Â 1Â Â ###
-    #Â Â 2####
+    ##     #
+    ##     #
+    ##     #
+    ###    #
+    # 1  ###
+    #  2####
     ########
 
 If player 1 now decides to go right, and player 2 decides to go up, they will crash into each other and the game will end with a draw. This actual run turns out to be a bit more dramatic:
 
     ########
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ###Â Â Â Â #
-    #1#2Â ###
-    #Â Â #####
+    ##     #
+    ##     #
+    ##     #
+    ###    #
+    #1#2 ###
+    #  #####
     ########
 
 Player 1 has gone left, and 2 has gone up and the players are now separated from each other. Unless player 2 does something really stupid, it is clear that 1 will lose...
 
     ########
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ###Â Â Â Â #
+    ##     #
+    ##     #
+    ##     #
+    ###    #
     ####2###
-    #1Â #####
+    #1 #####
     ########
 
         ...
 
     ########
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ##Â Â Â Â Â #
-    ###Â 2Â Â #
+    ##     #
+    ##     #
+    ##     #
+    ### 2  #
     ########
     ##1#####
     ########
@@ -116,7 +116,7 @@ When we continue following the left hand rule (and still being close to a wall),
 
 ![](http://3.bp.blogspot.com/_X4W-h82Vgjw/S4WpOnDewQI/AAAAAAAAPTI/S-tuZM9VBCU/s1600/image3.png)
 
-Which is of course, not the optimal choice here.Â It is trivial to find other maps which break the left (or right, or ordered direction) wall hugging method.
+Which is of course, not the optimal choice here. It is trivial to find other maps which break the left (or right, or ordered direction) wall hugging method.
 
 **Wall hugging - another try:** let's see if we can fix the above problem. Let's wallhug while following a rule (left or right hand, ordered direction or even random), but when we notice that a move would lead us into a new separate space which results in less possible moves than the other separated space, try the next move.
 
@@ -261,7 +261,7 @@ We thus take a look at **xtron**, you can find the source package [here](http://
       enum directions sides[2];
       int flags[6] = {0,0,0,0,0,0};
       int index[2];
-      int dis_forward,Â Â dis_left, dis_right;
+      int dis_forward,  dis_left, dis_right;
       dis_forward = dis_left = dis_right = 1;
 
       switch (p[p_num].plr_dir) {
@@ -294,9 +294,9 @@ We thus take a look at **xtron**, you can find the source package [here](http://
         index[1] += flags[1];
       }
 
-      if (dis_forward < LookAHEAD) { Â Â Â
-        dis_forward = 100 - 100/dis_forward; Â Â Â
-        /* check left */ Â Â Â
+      if (dis_forward < LookAHEAD) {   
+        dis_forward = 100 - 100/dis_forward;   
+        /* check left */   
         index[0] = p[p_num].co_ords[0]+flags[2];
         index[1] = p[p_num].co_ords[1]+flags[3];
         while (index[0] < MAXHORZ && index[0] >= MINHORZ &&
@@ -319,18 +319,18 @@ We thus take a look at **xtron**, you can find the source package [here](http://
         if(!(dis_left == 1 && dis_right == 1))
           if ((int)rand()%100 >= dis_forward || dis_forward == 0) {
             /* change direction */
-            if ((int)rand()%100 <= (100*dis_left)/(dis_left+dis_right)) Â
-              if (dis_left != 1) Â Â Â Â /* turn to the left */ Â Â Â
-                p[p_num].plr_dir = sides[0]; Â
-              elseÂ /* turn to the right */ Â Â
+            if ((int)rand()%100 <= (100*dis_left)/(dis_left+dis_right)) 
+              if (dis_left != 1)     /* turn to the left */   
+                p[p_num].plr_dir = sides[0]; 
+              else /* turn to the right */  
                 p[p_num].plr_dir = sides[1];
-            else Â
-              if (dis_right != 1)    /*Â Â turn to the right */ Â Â
-                p[p_num].plr_dir = sides[1]; Â
-              else Â Â Â
-                /* turn to the left */ Â Â Â
-              p[p_num].plr_dir = sides[0]; Â Â Â Â Â
-            } Â
+            else 
+              if (dis_right != 1)    /*  turn to the right */  
+                p[p_num].plr_dir = sides[1]; 
+              else   
+                /* turn to the left */   
+              p[p_num].plr_dir = sides[0];     
+            } 
           }
         }
 
@@ -350,94 +350,94 @@ The code is easily converted to a Python bot:
     DIRECTION = tron.NORTH
 
     def which_move(board):
-    Â Â global DIRECTION
-    Â Â LookAHEAD = 6
+      global DIRECTION
+      LookAHEAD = 6
 
-    Â Â sides = [0,0]
-    Â Â flags = [0,0,0,0,0,0]
-    Â Â index = [0,0]
-    Â Â dis_forward = 1
-    Â Â dis_left = 1
-    Â Â dis_right = 1
+      sides = [0,0]
+      flags = [0,0,0,0,0,0]
+      index = [0,0]
+      dis_forward = 1
+      dis_left = 1
+      dis_right = 1
 
-    Â Â if DIRECTION == tron.WEST:
-    Â Â Â Â flags[0] = -1
-    Â Â Â Â flags[1] = 0
-    Â Â Â Â flags[2] = 0
-    Â Â Â Â flags[3] = 1
-    Â Â Â Â flags[4] = 0
-    Â Â Â Â flags[5] = -1
-    Â Â Â Â sides[0] = tron.SOUTH
-    Â Â Â Â sides[1] = tron.NORTH
-    Â Â elif DIRECTION == tron.EAST:
-    Â Â Â Â flags[0] = 1
-    Â Â Â Â flags[1] = 0
-    Â Â Â Â flags[2] = 0
-    Â Â Â Â flags[3] = -1
-    Â Â Â Â flags[4] = 0
-    Â Â Â Â flags[5] = 1
-    Â Â Â Â sides[0] = tron.NORTH;
-    Â Â Â Â sides[1] = tron.SOUTH;
-    Â Â elif DIRECTION == tron.NORTH:
-    Â Â Â Â flags[0] = 0
-    Â Â Â Â flags[1] = -1
-    Â Â Â Â flags[2] = -1
-    Â Â Â Â flags[3] = 0
-    Â Â Â Â flags[4] = 1
-    Â Â Â Â flags[5] = 0
-    Â Â Â Â sides[0] = tron.WEST
-    Â Â Â Â sides[1] = tron.EAST
-    Â Â elif DIRECTION == tron.SOUTH:
-    Â Â Â Â flags[0] = 0
-    Â Â Â Â flags[1] = 1
-    Â Â Â Â flags[2] = 1
-    Â Â Â Â flags[3] = 0
-    Â Â Â Â flags[4] = -1
-    Â Â Â Â flags[5] = 0
-    Â Â Â Â sides[0] = tron.EAST
-    Â Â Â Â sides[1] = tron.WEST
+      if DIRECTION == tron.WEST:
+        flags[0] = -1
+        flags[1] = 0
+        flags[2] = 0
+        flags[3] = 1
+        flags[4] = 0
+        flags[5] = -1
+        sides[0] = tron.SOUTH
+        sides[1] = tron.NORTH
+      elif DIRECTION == tron.EAST:
+        flags[0] = 1
+        flags[1] = 0
+        flags[2] = 0
+        flags[3] = -1
+        flags[4] = 0
+        flags[5] = 1
+        sides[0] = tron.NORTH;
+        sides[1] = tron.SOUTH;
+      elif DIRECTION == tron.NORTH:
+        flags[0] = 0
+        flags[1] = -1
+        flags[2] = -1
+        flags[3] = 0
+        flags[4] = 1
+        flags[5] = 0
+        sides[0] = tron.WEST
+        sides[1] = tron.EAST
+      elif DIRECTION == tron.SOUTH:
+        flags[0] = 0
+        flags[1] = 1
+        flags[2] = 1
+        flags[3] = 0
+        flags[4] = -1
+        flags[5] = 0
+        sides[0] = tron.EAST
+        sides[1] = tron.WEST
 
-    Â Â index[0] = board.me()[0]+flags[1];
-    Â Â index[1] = board.me()[1]+flags[0];
-    Â Â while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
-    Â Â Â Â dis_forward+=1
-    Â Â Â Â index[0] += flags[1]
-    Â Â Â Â index[1] += flags[0]
+      index[0] = board.me()[0]+flags[1];
+      index[1] = board.me()[1]+flags[0];
+      while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
+        dis_forward+=1
+        index[0] += flags[1]
+        index[1] += flags[0]
 
-    Â Â if dis_forward < LookAHEAD:
-    Â Â Â Â dis_forward = 100 - (100/dis_forward)
+      if dis_forward < LookAHEAD:
+        dis_forward = 100 - (100/dis_forward)
 
-    Â Â Â Â index[0] = board.me()[0]+flags[3];
-    Â Â Â Â index[1] = board.me()[1]+flags[2];
-    Â Â Â Â while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
-    Â Â Â Â Â Â dis_left+=1
-    Â Â Â Â Â Â index[0] += flags[3]
-    Â Â Â Â Â Â index[1] += flags[2]
+        index[0] = board.me()[0]+flags[3];
+        index[1] = board.me()[1]+flags[2];
+        while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
+          dis_left+=1
+          index[0] += flags[3]
+          index[1] += flags[2]
 
-    Â Â Â Â index[0] = board.me()[0]+flags[5];
-    Â Â Â Â index[1] = board.me()[1]+flags[4];
-    Â Â Â Â while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
-    Â Â Â Â Â Â dis_right+=1
-    Â Â Â Â Â Â index[0] += flags[5]
-    Â Â Â Â Â Â index[1] += flags[4]
+        index[0] = board.me()[0]+flags[5];
+        index[1] = board.me()[1]+flags[4];
+        while index[0] < board.height and index[0] >= 0 and index[1] < board.width and index[1] >= 0 and board[index[0],index[1]] == tron.FLOOR:
+          dis_right+=1
+          index[0] += flags[5]
+          index[1] += flags[4]
 
-    Â Â Â Â if not (dis_left == 1 and dis_right == 1):
-    Â Â Â Â Â Â if random.randint(0 ,99) >= dis_forward or dis_forward == 0:
-    Â Â Â Â Â Â Â Â #change dir
-    Â Â Â Â Â Â Â Â if random.randint(0 ,99) <= (100*dis_left)/(dis_left+dis_right):
-     Â Â Â Â Â Â Â Â Â Â if dis_left != 1:
-     Â Â Â Â Â Â Â Â Â Â Â Â DIRECTION = sides[0]
-     Â Â Â Â Â Â Â Â Â Â else:
-     Â Â Â Â Â Â Â Â Â Â Â Â DIRECTION = sides[1]
-     Â Â Â Â Â Â Â Â else:
-     Â Â Â Â Â Â Â Â Â Â if dis_right != 1:
-     Â Â Â Â Â Â Â Â Â Â Â Â DIRECTION = sides[1]
-     Â Â Â Â Â Â Â Â Â Â else:
-     Â Â Â Â Â Â Â Â Â Â Â Â DIRECTION = sides[0]
-    Â Â return DIRECTION
+        if not (dis_left == 1 and dis_right == 1):
+          if random.randint(0 ,99) >= dis_forward or dis_forward == 0:
+            #change dir
+            if random.randint(0 ,99) <= (100*dis_left)/(dis_left+dis_right):
+               if dis_left != 1:
+                 DIRECTION = sides[0]
+               else:
+                 DIRECTION = sides[1]
+             else:
+               if dis_right != 1:
+                 DIRECTION = sides[1]
+               else:
+                 DIRECTION = sides[0]
+      return DIRECTION
 
     for board in tron.Board.generate():
-    Â Â tron.move(which_move(board))`
+      tron.move(which_move(board))`
 
 Uploading the converted code to the contest server quickly confirms the fact that this bot is not doing well (in blue):
 
@@ -469,11 +469,11 @@ Surprisingly, this code was working fairly well... A minute later I had implemen
 
 - If we're seperated, use a quick but fairly good way to make good use of our available space
 - If we're not seperated:
-Â Â - If there's a move which does seperate us
-Â Â - And will result in us having more space
+  - If there's a move which does seperate us
+  - And will result in us having more space
   - Make that move
 - Otherwise: move towards the opponent:
-Â Â - *Do not use euclidean distances but use a shortest path, this ensures the bast way to reach our opponent*
+  - *Do not use euclidean distances but use a shortest path, this ensures the bast way to reach our opponent*
 - Avoid draws if possible:
   - Try your hardest to avoid a crash with the opponent if the opponent has no other spaces left to go
   - If the opponent does have other spaces to go to, avoid a draw if it doesn't negatively impact us
@@ -482,7 +482,7 @@ And as a final edge, I added:
 
 - If we're seperated, use a quick but fairly good way to make good use of our available space
 - If we're not seperated:
-Â Â - If there's a move which does seperate us
+  - If there's a move which does seperate us
   - And will result in us having more space
   - Make that move
 - Otherwise: move towards the opponent:
@@ -526,7 +526,7 @@ However, once this happened, smarter opponent bots would rush to the little hole
 
 > "Drats! I'm trapped now."
 
-Remember the definition ofÂ articulation vertices above?Â A final check I implemented looks at those little "gateways" and checks if our opponent can reach those faster than us, and if this would result in us being blocked off with less moves. If such a gateway exists, it's better to go the other way.
+Remember the definition of articulation vertices above? A final check I implemented looks at those little "gateways" and checks if our opponent can reach those faster than us, and if this would result in us being blocked off with less moves. If such a gateway exists, it's better to go the other way.
 
 A nice example (on a difficult map) of the bot in action, the map starts of like this (we're blue):
 

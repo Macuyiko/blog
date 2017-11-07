@@ -20,7 +20,7 @@ Unless you've been living under a rock, you probably know about [Minecraft](http
 
 > Minecraft is a game about breaking and placing blocks. At first, people built structures to protect against nocturnal monsters, but as the game grew players worked together to create wonderful, imaginative things.
 >
-> It can also be about adventuring with friends or watching the sun rise over a blocky ocean. Itâ€™s pretty. Brave players battle terrible things in The Nether, which is more scary than pretty. You can also visit a land of mushrooms if it sounds more like your cup of tea.
+> It can also be about adventuring with friends or watching the sun rise over a blocky ocean. It's pretty. Brave players battle terrible things in The Nether, which is more scary than pretty. You can also visit a land of mushrooms if it sounds more like your cup of tea.
 
 Minecraft has been wildly successful. Not only because of the LEGO-like main gameplay, but also thanks to the developers' friendly stance towards modding, causing an incredible amount of modifications being released, ranging from [additional creatures to custom biomes](http://www.pcgamesn.com/minecraft/twenty-best-minecraft-mods).
 

@@ -9,7 +9,7 @@ The following overview is just a reminder, mainly aimed at myself in the future,
   - Download from http://developer.android.com/sdk/index.html
   - Update packages
 
-**2\. In Kindle:Â "Allow Installation of Applications From Unknown Sources"**
+**2\. In Kindle: "Allow Installation of Applications From Unknown Sources"**
 
 **3\. Edit `android_winusb.inf` in `usb_driver` in Android install path**
 
@@ -25,7 +25,7 @@ The following overview is just a reminder, mainly aimed at myself in the future,
 
 **5\. Update USB driver**
 
-  - "Update Driver Software" in Device Manager withÂ `android_winusb.inf`
+  - "Update Driver Software" in Device Manager with `android_winusb.inf`
 
 **6\. (Optional) test USB**
 

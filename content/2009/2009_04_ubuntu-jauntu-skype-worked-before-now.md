@@ -54,14 +54,14 @@ If none of them are working or if you're sure which hw-device you need (and it i
 
 This is an optional step however, but it seems to help with the Skype sound quality (an other option is setting `default-fragment-size-msec` to 10).
 
-**(!)** Now,Â  edit `~/.asoundrc` (no need to be root here, it's a file in your home directory). And make sure the following lines are there:
+**(!)** Now,  edit `~/.asoundrc` (no need to be root here, it's a file in your home directory). And make sure the following lines are there:
 
     pcm.pulse { type pulse }
     ctl.pulse { type pulse }
 
 Which I totally did in Hardy as well! The update must've deleted them. This simple file seemed to do the trick!
 
-Then, just to be sure, I reinstalledÂ  the `libasound2-plugins` package.
+Then, just to be sure, I reinstalled  the `libasound2-plugins` package.
 
 Reboot, or restart pulseaudio (kill it, then start it in i.e. a Terminal window). Restart Skype. Skype was working fine now. If it is not, make sure you try every plughw-device.
 

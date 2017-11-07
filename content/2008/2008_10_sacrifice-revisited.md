@@ -35,4 +35,4 @@ It turns out there is a patch available [over here](http://aluigi.altervista.org
 
 All done! You should be able to enjoy the game now.
 
-One last thing. If you're too lazy to follow the steps above, or you don't have Sacrifice but would like to play this (and other old) games, then check out [Good Old Games](http://www.gog.com/en/frontpage/). They've just went into public beta and are offering MDK2, Giants: Citizen Kabuto and Sacrifice (for $5.99). They also offer support, so your game'll probably work without complaining out of the box;Â it seems they provide the Virtual Memory tip as well.
+One last thing. If you're too lazy to follow the steps above, or you don't have Sacrifice but would like to play this (and other old) games, then check out [Good Old Games](http://www.gog.com/en/frontpage/). They've just went into public beta and are offering MDK2, Giants: Citizen Kabuto and Sacrifice (for $5.99). They also offer support, so your game'll probably work without complaining out of the box; it seems they provide the Virtual Memory tip as well.

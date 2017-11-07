@@ -101,13 +101,13 @@ Now we're going to enable the PPP connection, in a _new_ terminal window (keep t
 If all went well you should see an entry now in your ifconfig output:
 
     $ ifconfig
-      ppp0 Â  Â  Â Link encap:Point-to-Point Protocol
-        inet addr:81.169.31.99Â  P-t-P:10.6.6.6Â  Mask:255.255.255.255
-        UP POINTOPOINT RUNNING NOARP MULTICASTÂ  MTU:1500Â  Metric:1
+      ppp0      Link encap:Point-to-Point Protocol
+        inet addr:81.169.31.99  P-t-P:10.6.6.6  Mask:255.255.255.255
+        UP POINTOPOINT RUNNING NOARP MULTICAST  MTU:1500  Metric:1
         RX packets:3 errors:0 dropped:0 overruns:0 frame:0
         TX packets:4 errors:0 dropped:0 overruns:0 carrier:0
         collisions:0 txqueuelen:3
-        RX bytes:54 (54.0 B)Â  TX bytes:69 (69.0 B)`
+        RX bytes:54 (54.0 B)  TX bytes:69 (69.0 B)`
 
 If you're done surfing the internet, turn off PPP:
 
@@ -119,7 +119,7 @@ Press CTRL-C in that other terminal window to break the Bluetooth/3G-connection.
 
     rfcomm release RFCOMM#
 
-With `RFCOMM#`Â equal to the `/dev/rfcomm`-number you've used before.
+With `RFCOMM#` equal to the `/dev/rfcomm`-number you've used before.
 
 #### Optional steps: use gnome-ppp to connect
 

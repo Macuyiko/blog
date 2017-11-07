@@ -6,7 +6,7 @@ Author: Seppe "Macuyiko" vanden Broucke
 
 Replace `C:\Windows\system32\sethc.exe` with `cmd.exe` (e.g. by renaming and/or using a repair CD: with the Vista repair CD you can open "`notepad`" in the command prompt and execute file manipulations from the Open Dialog).
 
-Restart. At the login screen press "Shift" five times (at this point, you can guess what `sethc.exe` originally did) and a command window with full systemÂ privilegesÂ will appear. Often used to replace forgotten administrator passwords:
+Restart. At the login screen press "Shift" five times (at this point, you can guess what `sethc.exe` originally did) and a command window with full system privileges will appear. Often used to replace forgotten administrator passwords:
 
     net user administrator *
 
@@ -14,7 +14,7 @@ Of course, booting some sort of [live CD](http://www.sysresccd.org/) or [tool](h
 
 ### Number Two:
 
-The btwdins.exe method. On systems with the rightÂ Bluetooth service executable, you can execute any executable located at `C:\Program.exe` with LocalSystem rights. More info [here](http://osix.net/modules/article/?id=679).
+The btwdins.exe method. On systems with the right Bluetooth service executable, you can execute any executable located at `C:\Program.exe` with LocalSystem rights. More info [here](http://osix.net/modules/article/?id=679).
 
 ###  Number Three:
 

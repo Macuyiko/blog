@@ -58,7 +58,7 @@ It's a command line tool:
 
 But this one is able to show the Unicode parameters with their full name:
 
-	public float a(zy â˜ƒ, afi â˜ƒ1) {
+	public float a(zy ˜ƒ, afi ˜ƒ1) {
 
 ### CFR
 

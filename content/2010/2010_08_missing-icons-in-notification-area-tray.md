@@ -10,7 +10,7 @@ It turns out that Windows 7 stores its tray icons in a registry key. To reset th
 
 1. Open regedit
 2. Go to `HKEY_CURRENT_USER\Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\TrayNotify`
-3. You should see two values:Â `IconStreams` (stores program path and other info) and `PastIconsStream` (stores the icon data), delete them
+3. You should see two values: `IconStreams` (stores program path and other info) and `PastIconsStream` (stores the icon data), delete them
 4. Restart the `explorer.exe` process (or restart the computer)
 5. The missing icons should return, if the volume meter or other standard Windows icons are gone, you can re-enable them in the normal Taskbar Properties dialog
 

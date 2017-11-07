@@ -8,10 +8,10 @@ Let's take another look at [the blog post](http://lethain.com/entry/2009/jan/02/
 
 	Construct initial population
 	Repeat until time limit hit or satisfiable solution found:
-	Â Â Assign a **fitness** score to each individual
-	Â Â Use a **selection** method to pick individuals for reproduction
-	Â Â Construct a new population, using a **crossover** method
-	Â Â Use a **mutation** method to mutate the new population`
+	  Assign a **fitness** score to each individual
+	  Use a **selection** method to pick individuals for reproduction
+	  Construct a new population, using a **crossover** method
+	  Use a **mutation** method to mutate the new population`
 
 There are still a lot of gaps to fill in: how large should the population be, how do we construct individuals, which fitness function do we use, which selection methods are available, how do we evolve the population, should we mutate? If yes, and how?
 
@@ -39,15 +39,15 @@ Why would we use (2)? In some cases it is too difficult or too time-consuming to
 
 Why would we use this representation? As we will see in the following steps, a crossover between two individuals will happen to create new offspring, with a bit representation, the crossover point can be placed at any point:
 
-	Â Â Â Â Â Â Â Â Â Â Â Â Â v
+	             v
 	01100111 010 | 00101 11010101 11010111
 	01101111 000 | 00100 10010111 10011100
 
 When we use a list of integers, we place the crossover point between two numbers, this is different from the previous example, where the crossover point could be arbitrarily placed "in the middle of a number":
 
-	Â Â Â Â v
+	    v
 	103 | 69 , 213 , 215
-	13 Â | 22 , 123 , 76
+	13  | 22 , 123 , 76
 
 Bit-representation is thus often used when it is not clear how to place the crossover point, but when we do know a way to "convert" a solution to a bitstring. However, always watch out. Some representations become too sensitive to "random" tinkering with bits, making them quickly invalid. In our case: using a bit-representation would be permitted (changing a random bit still creates four integers), but in other cases this method becomes unfeasible.
 
@@ -79,10 +79,10 @@ Now pick a random value between zero and 26. Let's say 8: 8 > 1, continue; 8 > 1
 Another selection method (4) is called tournament selection:
 
 	Choose k (the tournament size) individuals from the population at random
-	Â Â Choose the best individual from pool/tournament with probability p
-	Â Â Choose the second best individual with probability p*(1-p)
-	Â Â Choose the third best individual with probability p*((1-p)^2)
-	Â Â ...
+	  Choose the best individual from pool/tournament with probability p
+	  Choose the second best individual with probability p*(1-p)
+	  Choose the third best individual with probability p*((1-p)^2)
+	  ...
 
 Note that p can be = 1. Then the best out of k individuals is chosen, this is fairly common. For k, often 2, 3, or 4 is used. This is an often-used method because it is easy to implement, and can be used in parallel environments. Note that when p = 1, k = 1 this method essentially becomes a pure random selection.
 
@@ -90,13 +90,13 @@ Note that p can be = 1. Then the best out of k individuals is chosen, this is fa
 
 Now that we know how to select two parents, how do we create children? Again, there are many techniques here. The first one (1) is the one-point crossover (simple crossover). I will illustrate the following examples with bit-represented individuals.
 
-	Â Â  Â  Â  Â  Â  Â  Â  Â  Â  Â v
+	                    v
 	0000 0000 0000 0000 | 0000 0000
 	1111 1111 1111 1111 | 1111 1111
 
 Creates two children:
 
-	Â Â  Â  Â  Â  Â  Â  Â  Â  Â  Â v
+	                    v
 	0000 0000 0000 0000 | 1111 1111
 	1111 1111 1111 1111 | 0000 0000
 
@@ -104,13 +104,13 @@ The crossover point can be randomly chosen, or can be a fixed location (1/4, 1/3
 
 The second (2) crossover method is two-point crossover, and looks a lot like the previous method:
 
-	Â Â  Â  v Â  Â  Â  Â  Â  Â  Â  Â v
+	     v                v
 	0000 | 0000 0000 0000 | 0000 0000
 	1111 | 1111 1111 1111 | 1111 1111
 
 Creates two children:
 
-	Â Â  Â  v Â  Â  Â  Â  Â  Â  Â  Â v
+	     v                v
 	0000 | 1111 1111 1111 | 0000 0000
 	1111 | 0000 0000 0000 | 1111 1111
 
@@ -171,21 +171,21 @@ Another really cool example can be found [here](http://rogeralsing.com/2008/12/0
 Finally, using the code from the article:
 
 	import sys
-	Â Â sys.path.append("C:\Users\Seppe\Desktop")
-	Â Â from genetic import *
-	Â Â target = 300
-	Â Â p_count = 100
-	Â Â i_length = 5
-	Â Â i_min = 0
-	Â Â i_max = 100
-	Â Â p = population(p_count, i_length, i_min, i_max)
-	Â Â fitness_history = [grade(p, target),]
-	Â Â for i in xrange(100):
-	Â Â Â Â p = evolve(p, target)
-	Â Â Â Â fitness_history.append(grade(p, target))
+	  sys.path.append("C:\Users\Seppe\Desktop")
+	  from genetic import *
+	  target = 300
+	  p_count = 100
+	  i_length = 5
+	  i_min = 0
+	  i_max = 100
+	  p = population(p_count, i_length, i_min, i_max)
+	  fitness_history = [grade(p, target),]
+	  for i in xrange(100):
+	    p = evolve(p, target)
+	    fitness_history.append(grade(p, target))
 
-	Â Â for datum in fitness_history:
-	Â Â Â Â print datum
+	  for datum in fitness_history:
+	    print datum
 
 Outputs:
 
@@ -262,13 +262,13 @@ In the next section: we will explore a particular GA implementation: CHC by Eshe
 
 -----
 
-Table Of ContentsÂ (click a link to jump to that post)
+Table Of Contents (click a link to jump to that post)
 
 1. [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
-2.Â [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
-3.Â [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
-4.Â [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
-5.Â [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)Â
-6.Â [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
-7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)Â
+2. [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
+3. [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
+4. [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
+5. [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
+6. [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
+7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)
 

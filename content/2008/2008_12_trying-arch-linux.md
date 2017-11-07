@@ -16,11 +16,11 @@ I'll be following directions from [this wiki page](http://wiki.archlinux.org/ind
 
   5. Reboot. Login? Works. `ping google.com`? Works.
 
-  6. `pacman` is the package manager. `pacman -Syu` to sync and update. `klibc` is complaining: file exists. I check the forums. Turns out I have to doÂ `rm /usr/lib/klibc/include/asm`. Minus one for user-friendliness.
+  6. `pacman` is the package manager. `pacman -Syu` to sync and update. `klibc` is complaining: file exists. I check the forums. Turns out I have to do `rm /usr/lib/klibc/include/asm`. Minus one for user-friendliness.
 
-  7. Update works now. Time to add a user. `useradd -m -G users,audio,lp,optical,storage,video,wheel,powerÂ -s /bin/bash archie`. `passwd archie`.
+  7. Update works now. Time to add a user. `useradd -m -G users,audio,lp,optical,storage,video,wheel,power -s /bin/bash archie`. `passwd archie`.
 
-  8. `pacman -S sudo` (we want sudo). `EDITOR=nano visudo`. AddÂ `archie ALL=(ALL) ALL`.
+  8. `pacman -S sudo` (we want sudo). `EDITOR=nano visudo`. Add `archie ALL=(ALL) ALL`.
 
   9. Install Alsa, works (seems like Arch isn't using `pulseaudio` in their tutorials/beginner's guide).
 
@@ -60,15 +60,4 @@ Screenshot:
 
 ![](http://4.bp.blogspot.com/_X4W-h82Vgjw/STsJWIjqvJI/AAAAAAAALIc/59jmigmYngc/s400/arch.jpg)
 
-Would I use it instead of Ubuntu for everyday tasks? Not at the moment.
-
-Would I recommend it to noviceÂ friends and family? No.
-
-Would I use it as a server? Perhaps.
-
-Is it fast? Yes.
-
-Would I use it on an outdated machine? Yes.
-
-Does is show potential? Yes.
 

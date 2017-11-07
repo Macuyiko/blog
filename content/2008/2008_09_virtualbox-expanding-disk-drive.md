@@ -16,14 +16,14 @@ None of these actually offered a really good or quick solution, until I found th
 You'll need:
 
   - [A Gparted LiveCD](http://gparted.sourceforge.net/livecd.php).
-  - Two virtual disk images: the old one (the one you're currently using, the small one), and a new one, which you can easily create in Virtualbox, make sure it's "raw"Â (unpartitioned).
+  - Two virtual disk images: the old one (the one you're currently using, the small one), and a new one, which you can easily create in Virtualbox, make sure it's "raw" (unpartitioned).
 
 Steps:
 
 1. Mount or burn the Gparted disk in Virtualbox so that it'll boot from it (make sure the "virtual bios" boots from it first).
 2. Using VirtualBox, create a new VDI with a larger size that you want to expand the virtual machine to (see: "You'll need").
 3. Leave your existing VDI as the primary IDE master. Set the new VDI to be the Primary IDE slave for the machine.
-4. In Gparted: run `fdisk -l`Â or use Gparted GUI to view your partitions. You should get /dev/hda and /dev/hdb. /dev/hdb shouldn't be partitioned at this point. /dev/hda should be your primary master (the original VDI that is too small for your needs), and /dev/hdb should be the new image (virtual primary IDE slave).
+4. In Gparted: run `fdisk -l` or use Gparted GUI to view your partitions. You should get /dev/hda and /dev/hdb. /dev/hdb shouldn't be partitioned at this point. /dev/hda should be your primary master (the original VDI that is too small for your needs), and /dev/hdb should be the new image (virtual primary IDE slave).
 5. Do not mount those (yet). Instead, use dd to copy the old image to the new one: `dd if=/dev/hda of=/dev/hdb`
 
 Warning: don't despair, this may take some time, and the hard drive status icon of Virtualbox should indicate that something's happening.
@@ -34,7 +34,7 @@ Steps for Linux guests:
 
     [ ![](http://3.bp.blogspot.com/_X4W-h82Vgjw/SYo4jrQIXKI/AAAAAAAAPIo/xLipRm7H704/s400/right.png)](http://3.bp.blogspot.com/_X4W-h82Vgjw/SYo4jrQIXKI/AAAAAAAAPIo/xLipRm7H704/s1600-h/right.png)
 
-2. Extra step (update - thanks to comments): modern Linux distributions use disk IDs to identify disks instead of sda, sdb,... This might give you the following message in a few steps:Â "Waiting for device /dev/disk/by-id/scsi-SATA_VBOX_HARDDISK_VB... to appear", like the user in the comments of this post. So before you continue with the following steps, open a Terminal window.
+2. Extra step (update - thanks to comments): modern Linux distributions use disk IDs to identify disks instead of sda, sdb,... This might give you the following message in a few steps: "Waiting for device /dev/disk/by-id/scsi-SATA_VBOX_HARDDISK_VB... to appear", like the user in the comments of this post. So before you continue with the following steps, open a Terminal window.
 
     I'm going to create two mount points for the old and new partition and mount them. You can use GParted to find out the exact device location (the new partition should probably be `/dev/hdb1`):
 
@@ -59,18 +59,18 @@ Steps for Linux guests:
 
       - Device locations, like `/dev/sda1` (yes, you see this in my fstab file as well, but everything after a pound ('#') character is a comment, so it's not really using that). You can find out your new locations using GParted. Make sure you only change the numbers if you have to! So don't change `sda` to `sdb` or `hdb`! GParted might be showing you `/dev/hdb`, but when we'll make our new partition the master VDI, your Linux installation will see this as /dev/sda!
       - IDs, not common, you can find the new IDs by using `ls /dev/disk/by-id -lah`.
-      - Paths, not common, you can find them by usingÂ `ls /dev/disk/by-path -lah`.
-      - UUIDs (like me), more and more common. You can find your new UUIDs by usingÂ `ls /dev/disk/by-uuid -lah`. The new UUIDs will be listed next to `../../hdb`-lines (remember: `hda` is our old hard disk).
+      - Paths, not common, you can find them by using `ls /dev/disk/by-path -lah`.
+      - UUIDs (like me), more and more common. You can find your new UUIDs by using `ls /dev/disk/by-uuid -lah`. The new UUIDs will be listed next to `../../hdb`-lines (remember: `hda` is our old hard disk).
 
-    Now let's edit our newÂ fstab. Open a new Terminal window (so you can still see the UUIDs) and enter:
+    Now let's edit our new fstab. Open a new Terminal window (so you can still see the UUIDs) and enter:
 
     nano /mnt/new_disk/etc/fstab
 
     Nano is a Terminal text editor. Just use it like Notepad, use CTRL+O to save your changes, and CTRL+X to exit. You can use it to edit your UUIDs.
 
-    Note:Â make sure you leave the proc-line intact! Also, note that the cdrom-line doesn't use an UUID but /dev/scd0.
+    Note: make sure you leave the proc-line intact! Also, note that the cdrom-line doesn't use an UUID but /dev/scd0.
 
-    Extra note:Â the data-partition will probably have the same UUID as before (we have only extended it). The swap partition has a new UUID (because I deleted and recreated it).
+    Extra note: the data-partition will probably have the same UUID as before (we have only extended it). The swap partition has a new UUID (because I deleted and recreated it).
 
     Following screenshot shows my edited fstab, I have removed the comments.
 
@@ -84,7 +84,7 @@ Steps for Linux guests:
 
 Steps for Windows guests:
 
-1. Do not use gparted orÂ ntfsresize to resize the partition. I know you can, but I found it a tad risky. Instead, set the new image as the primary master for the virtual machine, uncheck the primary slave. Boot back into Windows.
+1. Do not use gparted or ntfsresize to resize the partition. I know you can, but I found it a tad risky. Instead, set the new image as the primary master for the virtual machine, uncheck the primary slave. Boot back into Windows.
 
 2. You should be back into Windows, but still on a small partition. If you use Disk Management in Administrative Tools you should see that there is a lot of unallocated space now on the virtual hard disk, how can we expand our drive?
 

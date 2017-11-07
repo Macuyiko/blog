@@ -14,20 +14,20 @@ The pseudocode looks like this (thanks to the commenters for sorting some proble
 	Threshold := MutProb * (1.0-MutProb) * L (or L/4 is also used)
 
 	Evolution until time limit hit or satisfying solution found:
-	Â Â CPop := {}
-	Â Â For i := 1 to N/2 do:
-	Â Â Â Â Choose two random parents: P1 and P2
-	Â Â Â Â If (different bits between P1 an P2) / 2 > threshold do:
-	Â Â Â Â Â Â Create children C1 and C2 using half-uniform crossover
-	Â Â Â Â Â Â Add C1 and C2 to CPop
+	  CPop := {}
+	  For i := 1 to N/2 do:
+	    Choose two random parents: P1 and P2
+	    If (different bits between P1 an P2) / 2 > threshold do:
+	      Create children C1 and C2 using half-uniform crossover
+	      Add C1 and C2 to CPop
 
-	Â Â If there are no children in Cpop:
-	Â Â Â Â Threshold := threshold - 1
-	Â Â Else:
-	Â Â Â Â P := best N individuals from P and CPop
+	  If there are no children in Cpop:
+	    Threshold := threshold - 1
+	  Else:
+	    P := best N individuals from P and CPop
 
-	Â Â If threshold < 0:
-	Â Â Â Â Cataclysmic creation of new population P
+	  If threshold < 0:
+	    Cataclysmic creation of new population P
 
 There is another pseudocode description in the slides found [here](http://soar.snu.ac.kr/~yhdfly/presentation/MKCP.pps).
 
@@ -45,87 +45,87 @@ My Python - again, based on the [code found here](http://lethain.com/entry/2009/
 	from operator import add
 
 	def individual(length, min, max):
-	Â Â return [ randint(min,max) for x in xrange(length) ]
+	  return [ randint(min,max) for x in xrange(length) ]
 
 	def population(count, length, min, max):
-	Â Â return [ individual(length, min, max) for x in xrange(count) ]
+	  return [ individual(length, min, max) for x in xrange(count) ]
 
 	def fitness(individual, target):
-	Â Â sum = reduce(add, individual, 0)
-	Â Â return abs(target-sum)
+	  sum = reduce(add, individual, 0)
+	  return abs(target-sum)
 
 	def grade(pop, target):
-	Â Â summed = reduce(add, (fitness(x, target) for x in pop))
-	Â Â return summed / (len(pop) * 1.0)
+	  summed = reduce(add, (fitness(x, target) for x in pop))
+	  return summed / (len(pop) * 1.0)
 
 	def hamming(ind1, ind2):
-	Â Â nr_hamming = 0
-	Â Â for x in range(0, len(ind1) - 1):
-	Â Â Â Â if (ind1[x] != ind2[x]):
-	Â Â Â Â Â Â nr_hamming += 1
-	Â Â return nr_hamming
+	  nr_hamming = 0
+	  for x in range(0, len(ind1) - 1):
+	    if (ind1[x] != ind2[x]):
+	      nr_hamming += 1
+	  return nr_hamming
 
 	def cataclysm(pop, target, min, max):
-	Â Â #keep the best individual, flip 35% of bits to get new individuals
-	Â Â pop.sort (lambda x, y : cmp (fitness(x, target), fitness(y, target)))
-	Â Â firstind = pop[0]
-	Â Â newpop = [firstind]
-	Â Â for x in range(1, len(pop)):
-	Â Â Â Â nextind = firstind[:]
-	Â Â Â Â for i in range(0, len(nextind)):
-	Â Â Â Â Â Â if 0.35 > random():
-	Â Â Â Â Â Â Â Â nextind[i] = randint(min, max)
-	Â Â Â Â newpop.append(nextind)
-	Â Â return newpop
+	  #keep the best individual, flip 35% of bits to get new individuals
+	  pop.sort (lambda x, y : cmp (fitness(x, target), fitness(y, target)))
+	  firstind = pop[0]
+	  newpop = [firstind]
+	  for x in range(1, len(pop)):
+	    nextind = firstind[:]
+	    for i in range(0, len(nextind)):
+	      if 0.35 > random():
+	        nextind[i] = randint(min, max)
+	    newpop.append(nextind)
+	  return newpop
 
 	def hux(ind1, ind2):
-	Â Â child_one = []
-	Â Â child_two = []
-	Â Â hamming_dist = hamming(ind1, ind2);
-	Â Â nr_swaps = 0
-	Â Â for x in range(0, len(ind1)):
-	Â Â Â Â if (ind1[x] == ind2[x]) or (random > 0.5) or (nr_swaps > hamming_dist / 2):
-Â Â Â Â Â Â #same, just copy to both
-	Â Â Â Â Â Â child_one.append(ind1[x])
-	Â Â Â Â Â Â child_two.append(ind2[x])
-	Â Â Â Â else:
-	Â Â Â Â Â Â #different, swap with .5 probability, until hamming/2 swaps
-	Â Â Â Â Â Â nr_swaps += 1
-	Â Â Â Â Â Â child_one.append(ind2[x])
-	Â Â Â Â Â Â child_two.append(ind1[x])
-	Â Â return [child_one,child_two]
+	  child_one = []
+	  child_two = []
+	  hamming_dist = hamming(ind1, ind2);
+	  nr_swaps = 0
+	  for x in range(0, len(ind1)):
+	    if (ind1[x] == ind2[x]) or (random > 0.5) or (nr_swaps > hamming_dist / 2):
+      #same, just copy to both
+	      child_one.append(ind1[x])
+	      child_two.append(ind2[x])
+	    else:
+	      #different, swap with .5 probability, until hamming/2 swaps
+	      nr_swaps += 1
+	      child_one.append(ind2[x])
+	      child_two.append(ind1[x])
+	  return [child_one,child_two]
 
 	def evolve(pop, target, min, max, treshold):
-	Â Â child_population = []
-	Â Â for i in range(1, len(pop)/2):
-	Â Â Â Â #choose two random parents:
-	Â Â Â Â parent_one = pop[randint(0, len(pop)-1)]
-	Â Â Â Â parent_two = pop[randint(0, len(pop)-1)]
-	Â Â Â Â if (hamming(parent_one, parent_two)/2) > treshold[0]:
-	Â Â Â Â Â Â #do hux crossover
-	Â Â Â Â Â Â children = hux(parent_one, parent_two)
-	Â Â Â Â Â Â child_population.append(children[0])
-	Â Â Â Â Â Â child_population.append(children[1])
-	Â Â if len(child_population) == 0:
-	Â Â Â Â treshold[0]-=1;
-	Â Â Â Â print "No children evolved"
-	Â Â else:
-	Â Â Â Â p_count = len(pop);
-	Â Â Â Â print len(child_population),"children"
-	Â Â Â Â for x in child_population:
-	Â Â Â Â Â Â pop.append(x)
-	Â Â Â Â pop.sort (lambda x, y : cmp (fitness(x, target), fitness(y, target)))
-	Â Â Â Â #for x in pop:
-	Â Â Â Â # if fitness(x,target) == 0:
-	Â Â Â Â # print "Perfect individual found:",x
-	Â Â Â Â pop = pop[:p_count]
-	Â Â Â Â print len(pop),"new population, grade:", grade(pop, target)
-	Â Â if treshold[0] < 0:
-	Â Â Â Â pop = cataclysm(pop, target, min, max)
-	Â Â Â Â print "Cataclysm, newpop length:",len(pop),"grade:",grade(pop,target)
-	Â Â Â Â treshold[0] = len(pop[0]) / 4.0
-	Â Â Â Â print "Treshold is now:",treshold[0]
-	Â Â return pop`
+	  child_population = []
+	  for i in range(1, len(pop)/2):
+	    #choose two random parents:
+	    parent_one = pop[randint(0, len(pop)-1)]
+	    parent_two = pop[randint(0, len(pop)-1)]
+	    if (hamming(parent_one, parent_two)/2) > treshold[0]:
+	      #do hux crossover
+	      children = hux(parent_one, parent_two)
+	      child_population.append(children[0])
+	      child_population.append(children[1])
+	  if len(child_population) == 0:
+	    treshold[0]-=1;
+	    print "No children evolved"
+	  else:
+	    p_count = len(pop);
+	    print len(child_population),"children"
+	    for x in child_population:
+	      pop.append(x)
+	    pop.sort (lambda x, y : cmp (fitness(x, target), fitness(y, target)))
+	    #for x in pop:
+	    # if fitness(x,target) == 0:
+	    # print "Perfect individual found:",x
+	    pop = pop[:p_count]
+	    print len(pop),"new population, grade:", grade(pop, target)
+	  if treshold[0] < 0:
+	    pop = cataclysm(pop, target, min, max)
+	    print "Cataclysm, newpop length:",len(pop),"grade:",grade(pop,target)
+	    treshold[0] = len(pop[0]) / 4.0
+	    print "Treshold is now:",treshold[0]
+	  return pop`
 
 This reminds me: I should really work on a css class for code (update: done), instead of writing everything in monospace. A few remarks:
 (1) The implementation is a bit hacky. Python passes everything by reference, except immutable objects. I wanted to pass threshold by reference, which did not work, it being a float and such. That's why I've wrapped it in a list.
@@ -146,7 +146,7 @@ Let's test it:
 	p = population(p_count, i_length, i_min, i_max)
 	print "First grade: ",grade(p, target)
 	for i in range(0,100):
-	Â Â p=evolve(p, target, i_min, i_max, treshold)`
+	  p=evolve(p, target, i_min, i_max, treshold)`
 
 In the first run, it took two cataclysms to reach a completely perfect population (grade is the average score for the complete population, not for the best single individual, it might be possible to have a perfect individual in the first evolution, still, because this problem is so simple, we look at the complete population):
 
@@ -276,14 +276,14 @@ If you want to download the source code used in this post, you can find it [here
 
 -----
 
-Table Of ContentsÂ (click a link to jump to that post)
+Table Of Contents (click a link to jump to that post)
 
 1. [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
-2.Â [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
-3.Â [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
-4.Â [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
-5.Â [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)Â
-6.Â [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
-7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)Â
+2. [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
+3. [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
+4. [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
+5. [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
+6. [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
+7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)
 
 

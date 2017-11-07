@@ -6,11 +6,11 @@ If your Windows 7 service pack upgrade is failing with error code 80073701, you 
 
 ### Solution 1: reset Windows Update components (you've probably done this already)
 
-Download the Fix It tool fromÂ [this Microsoft KB article](http://support.microsoft.com/kb/971058/en-us)Â and run it. Afterwards, restart your computer and try installing SP1 again.
+Download the Fix It tool from [this Microsoft KB article](http://support.microsoft.com/kb/971058/en-us) and run it. Afterwards, restart your computer and try installing SP1 again.
 
 ### Solution 2: run the System Update Readiness Tool (you've probably done this, too)
 
-The tool can be downloaded fromÂ [this Microsoft KB article](http://support.microsoft.com/kb/947821/en-us). Make sure to download the correct version. Note that the updates installed by this tool might take a _long_Â time to complete. It will appear as if the installation process is stuck. Don't worry, as the progress bar might go from zero to hundred per cent in an instant, just be patient. Afterwards, restart your computer and try installing SP1 again.
+The tool can be downloaded from [this Microsoft KB article](http://support.microsoft.com/kb/947821/en-us). Make sure to download the correct version. Note that the updates installed by this tool might take a _long_ time to complete. It will appear as if the installation process is stuck. Don't worry, as the progress bar might go from zero to hundred per cent in an instant, just be patient. Afterwards, restart your computer and try installing SP1 again.
 
 ### Solution 3: check out the logs and run lpksetup (this might be new)
 

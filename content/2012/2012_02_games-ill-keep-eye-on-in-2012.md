@@ -8,7 +8,7 @@ In order of release date. Some release dates are an estimate. Unannounced games 
 
 **January**
 
-![](http://1.bp.blogspot.com/-ZQB2xOIMgeI/TzgPDR850GI/AAAAAAAASlo/vVD2fY04eLc/s1600/01swtor.png)Â Star Wars: The Old Republic
+![](http://1.bp.blogspot.com/-ZQB2xOIMgeI/TzgPDR850GI/AAAAAAAASlo/vVD2fY04eLc/s1600/01swtor.png) Star Wars: The Old Republic
 
 **February**
 
@@ -92,15 +92,15 @@ In order of release date. Some release dates are an estimate. Unannounced games 
 - Cube World
 - Overgrowth
 - Path of Exile
-- Grim DawnÂ
-- StarfarerÂ
-- Legend of GrimrockÂ
-- Torchlight IIÂ
-- Survivors of RagnarokÂ
-- Project ZomboidÂ
-- Masters of the Broken WorldÂ
-- Warlock: Master of the ArcaneÂ
-- A Game of DwarvesÂ
+- Grim Dawn
+- Starfarer
+- Legend of Grimrock
+- Torchlight II
+- Survivors of Ragnarok
+- Project Zomboid
+- Masters of the Broken World
+- Warlock: Master of the Arcane
+- A Game of Dwarves
 - Jagged Alliance
 - Castle Story
 - Retro City Rampage

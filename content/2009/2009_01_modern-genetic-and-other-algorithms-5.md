@@ -20,18 +20,18 @@ You do get to see some pseudocode though:
 	Create a number of "ants" (often equal to number of nodes)
 	Associate a distance, pheromone value, and delta pheromone value to every edge
 	Iterate until time limit hit or satisfiable solution found:
-	Â Â For each ant do:
-	Â Â  Â Do until tour constructed:
-	Â Â  Â Next node is chosen depending on visibility (e.g. 1/distance) and pheromone trail
-	Â Â  Â E.g. choose next node with probability (visibility^a)*(pheromone trail^b)
-	Â Â  Â Calculate fitness of this tour
-	Â Â  Â Copy this tour to the best tour if fitness is better
-	Â Â  Â Update the pheromone trail of each edge of this ant's tour:
-	Â Â  Â E.g. delta pheromone for edge := 1/(tour cost)
-	Â Â For each edge:
-	Â Â  Â Lower pheromone value by a factor
-	Â Â  Â Add delta pheromone value to pheromone value
-	Â Â  Â Set delta pheromone := 0
+	  For each ant do:
+	    Do until tour constructed:
+	    Next node is chosen depending on visibility (e.g. 1/distance) and pheromone trail
+	    E.g. choose next node with probability (visibility^a)*(pheromone trail^b)
+	    Calculate fitness of this tour
+	    Copy this tour to the best tour if fitness is better
+	    Update the pheromone trail of each edge of this ant's tour:
+	    E.g. delta pheromone for edge := 1/(tour cost)
+	  For each edge:
+	    Lower pheromone value by a factor
+	    Add delta pheromone value to pheromone value
+	    Set delta pheromone := 0
 
 ACO is an interesting method, again, we see certain aspects already used in the previous posts, like using pheromone trails to avoid local maxima. Since the algorithm is closely tied to graphs, nodes and paths, it's no wonder it's often used to find shortest paths, or to solve the traveling salesman problem.
 
@@ -47,12 +47,12 @@ Those who are interested can read more about [Swarm intelligence](http://en.wiki
 
 -----
 
-Table Of ContentsÂ (click a link to jump to that post)
+Table Of Contents (click a link to jump to that post)
 
 1. [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
-2.Â [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
-3.Â [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
-4.Â [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
-5.Â [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)Â
-6.Â [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
-7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)Â
+2. [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
+3. [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
+4. [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
+5. [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
+6. [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
+7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)
