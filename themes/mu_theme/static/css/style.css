@@ -1,7 +1,7 @@
 html {
 	background: white; 
 }
-			
+
 body {
 	position: relative;
 	top: 0;
@@ -18,6 +18,10 @@ body {
 
 .linenos {
 	display: none !important;
+}
+
+iframe {
+	margin-bottom: 2em;
 }
 
 .row {
