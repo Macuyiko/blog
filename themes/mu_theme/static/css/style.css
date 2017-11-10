@@ -1,7 +1,7 @@
 html {
 	background: white; 
 }
-			
+
 body {
 	position: relative;
 	top: 0;
@@ -10,6 +10,10 @@ body {
 	word-wrap:break-word;
 	font-family: 'Open Sans', sans-serif;
 	font-size: 0.8em;
+}
+
+iframe {
+	margin-bottom: 2em;
 }
 
 .row {
