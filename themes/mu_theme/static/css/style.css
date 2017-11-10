@@ -12,12 +12,20 @@ body {
 	font-size: 0.8em;
 }
 
+.highlighttable {
+	border: 0 !important;
+}
+
+.linenos {
+	display: none !important;
+}
+
 .row {
 	max-width: 60em;
 }
 
 td.code .highlight, td.linenos .linenodiv {
-	border: 0px !important;
+	border: 0 !important;
 }
 
 code {

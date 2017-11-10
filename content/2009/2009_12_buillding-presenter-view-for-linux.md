@@ -16,16 +16,16 @@ Note: you can follow along with the instructions and perform them yourself, or y
 
 Test drive Impressive by running the following command in a terminal (make sure you're in the correct directory):
 
-    ~/Desktop/Impressive-0.10.2$ ./impressive.py demo.pdf
+	~/Desktop/Impressive-0.10.2$ ./impressive.py demo.pdf
 
-    Welcome to Impressive version 0.10.2
-    ./impressive.py:94: DeprecationWarning: the md5 module is deprecated; use hashlib instead
-    import random, getopt, os, types, re, codecs, tempfile, glob, StringIO, md5, re
-    Detected screen size: 1024x768 pixels
-    OpenGL renderer: Mesa DRI Intel(R) 945GM GEM 20090712 2009Q2 RC3 x86/MMX/SSE2
-    Using GL_ARB_texture_non_power_of_two.
-    Note: pdftk failed, hyperlinks disabled.
-    Total presentation time: 0:03.
+	Welcome to Impressive version 0.10.2
+	./impressive.py:94: DeprecationWarning: the md5 module is deprecated; use hashlib instead
+	import random, getopt, os, types, re, codecs, tempfile, glob, StringIO, md5, re
+	Detected screen size: 1024x768 pixels
+	OpenGL renderer: Mesa DRI Intel(R) 945GM GEM 20090712 2009Q2 RC3 x86/MMX/SSE2
+	Using GL_ARB_texture_non_power_of_two.
+	Note: pdftk failed, hyperlinks disabled.
+	Total presentation time: 0:03.
 
 Press ESC to close the presentation. Do you see the demo presentation? Good. Take some time to familiarize yourself with the features (they're explained in the demo slide, so you can test them out on the fly.
 
@@ -49,64 +49,64 @@ In the top-folder (where `impressive.py` resides), we'll create some simple supp
 
 First: `start.sh` -- a simple script to start our presentation:
 
-    #!/bin/bash
-    python impressive.py ./Presentation/presentation.pdf
+	#!/bin/bash
+	python impressive.py ./Presentation/presentation.pdf
 
 Next: `clone.sh` -- a simple script to clone our two screens:
 
-    #!/bin/bash
-    xrandr --output LVDS1 --mode 1024x768 --output VGA1 --same-as LVDS1 --mode 1024x768
+	#!/bin/bash
+	xrandr --output LVDS1 --mode 1024x768 --output VGA1 --same-as LVDS1 --mode 1024x768
 
 Then: `dual.sh` -- a simple script to enable dualscreen (same resolution, screens above each other, which works best on most configurations):
 
-    #!/bin/bash
-    xrandr --output LVDS1 --mode 1024x768 --output VGA1 --above LVDS1 --mode 1024x768`
+	#!/bin/bash
+	xrandr --output LVDS1 --mode 1024x768 --output VGA1 --above LVDS1 --mode 1024x768`
 
 `converter.sh` -- script to make thumbnails for our presenter view, this needs ImageMagick:
 
-    #!/bin/bash
-    echo Removing old images...;
-    rm ./Presentation/Slides/slide-*.png;
-    echo Converting...;
-    convert ./Presentation/presentation.pdf -density 100 slide.png
-    for filename in slide-*.png
-    do
-      echo Moving $filename;
-      mv $filename ./Presentation/Slides/$filename;
-    done
+	#!/bin/bash
+	echo Removing old images...;
+	rm ./Presentation/Slides/slide-*.png;
+	echo Converting...;
+	convert ./Presentation/presentation.pdf -density 100 slide.png
+	for filename in slide-*.png
+	do
+	  echo Moving $filename;
+	  mv $filename ./Presentation/Slides/$filename;
+	done
 
 `makeinfo.php` -- PHP script to generate our info file Impress will use, needs PHP CLI:
 
-    <?php
-    if (count($argv) != 2)
-      die ("Provide number of pages\n");
-    $nrpages = $argv[1];
-    ob_start();
-    ?>
+	<?php
+	if (count($argv) != 2)
+	  die ("Provide number of pages\n");
+	$nrpages = $argv[1];
+	ob_start();
+	?>
 
-    import json
-    def UpdateInfo():
-      global FileName, FileList, PageCount
-      global DocumentTitle
-      global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
-      global RTrunning, RTrestart, StartTime, PageEnterTime, CurrentTime
-      io = open('./Presentation/json.txt', 'w')
-      json.dump(({"page_count": PageCount, "current_page": Pcurrent, "previous_page": Pnext, "start_time": StartTime, "pageenter_time": PageEnterTime, "current_time": CurrentTime}), io)
-      io.close
+	import json
+	def UpdateInfo():
+	  global FileName, FileList, PageCount
+	  global DocumentTitle
+	  global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
+	  global RTrunning, RTrestart, StartTime, PageEnterTime, CurrentTime
+	  io = open('./Presentation/json.txt', 'w')
+	  json.dump(({"page_count": PageCount, "current_page": Pcurrent, "previous_page": Pnext, "start_time": StartTime, "pageenter_time": PageEnterTime, "current_time": CurrentTime}), io)
+	  io.close
 
-      PageProps = {
-        <?php for($page = 1; $page <= $nrpages; $page++): ?>
-          <?php echo $page; ?>: {
-          'transition': None,
-          'OnEnter': UpdateInfo
-          },
-        <?php endfor; ?>
-      }
+	  PageProps = {
+	<?php for($page = 1; $page <= $nrpages; $page++): ?>
+	  <?php echo $page; ?>: {
+	  'transition': None,
+	  'OnEnter': UpdateInfo
+	  },
+	<?php endfor; ?>
+	  }
 
-    <?php
-    file_put_contents("./Presentation/presentation.pdf.info", ob_get_contents());
-    ob_end_clean();
-    ?>
+	<?php
+	file_put_contents("./Presentation/presentation.pdf.info", ob_get_contents());
+	ob_end_clean();
+	?>
 
 You now have the following folder structure:
 
@@ -118,121 +118,121 @@ In the Presentation-folder, we'll create an HTML page.
 
 `PresenterView.html`:
 
-    <html>
-    <head>
-      <title>Presenter View</title>
-    <style>
-    #information {
-      text-align: center;
-      font-size: 300%;
-      border: 3px solid #ccc;
-      padding: 4px;
-    }
-    #val_time, #val_pagethis, #val_pagecount {
-      color: #444;
-      font-weight: bold;
-    }
-    #slideleft {
-      float: left;
-      padding: 4px;
-      border: 1px solid #ccc;
-    }
-    #slideright {
-      float: right;
-      padding: 4px;
-      border: 1px solid #ccc;
-    }
-    #text{
-      padding: 4px;
-      margin-top: 10px;
-      border-top: 3px solid #ccc;
-      height: 50px;
-    }
-    #pane{
-      margin-top: 10px;
-      font-size: 140%;
-    }
-    #time{
-      margin-top: 40px;
-      text-align: center;
-      font-size: 200%;
-      border: 3px solid #ccc;
-      padding: 4px;
-    }
-    </style>
+	<html>
+	<head>
+	  <title>Presenter View</title>
+	<style>
+	#information {
+	  text-align: center;
+	  font-size: 300%;
+	  border: 3px solid #ccc;
+	  padding: 4px;
+	}
+	#val_time, #val_pagethis, #val_pagecount {
+	  color: #444;
+	  font-weight: bold;
+	}
+	#slideleft {
+	  float: left;
+	  padding: 4px;
+	  border: 1px solid #ccc;
+	}
+	#slideright {
+	  float: right;
+	  padding: 4px;
+	  border: 1px solid #ccc;
+	}
+	#text{
+	  padding: 4px;
+	  margin-top: 10px;
+	  border-top: 3px solid #ccc;
+	  height: 50px;
+	}
+	#pane{
+	  margin-top: 10px;
+	  font-size: 140%;
+	}
+	#time{
+	  margin-top: 40px;
+	  text-align: center;
+	  font-size: 200%;
+	  border: 3px solid #ccc;
+	  padding: 4px;
+	}
+	</style>
 
-    <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
-    <script>
-    var mins = 0;
-    var secs = 0;
-    var clock = 0;
-    var previousslide = 0;
-    var refreshtime = 1000;
+	<script type="text/javascript" src="jquery-1.3.2.min.js"></script>
+	<script>
+	var mins = 0;
+	var secs = 0;
+	var clock = 0;
+	var previousslide = 0;
+	var refreshtime = 1000;
 
-    function display_clock(){
-      min = Math.floor(clock/60);
-      secs= clock - mins*60;
-      $("#val_time").text(mins+ ":" + secs);
-    }
+	function display_clock(){
+	  min = Math.floor(clock/60);
+	  secs= clock - mins*60;
+	  $("#val_time").text(mins+ ":" + secs);
+	}
 
-    function update_clock(){
-      setTimeout ("update_clock()", 1000);
-      clock = clock + 1;
-      display_clock();
-    }
+	function update_clock(){
+	  setTimeout ("update_clock()", 1000);
+	  clock = clock + 1;
+	  display_clock();
+	}
 
-    function make_call(){
-      $.ajaxSetup({'beforeSend': function(xhr){
-        if (xhr.overrideMimeType){
-          xhr.overrideMimeType("text/plain");
-        }
-      }
-      });
-      $.getJSON("json.txt",
-        function(data){
-          $("#val_pagethis").text(data.current_page);
-          $("#val_pagecount").text(data.page_count);
-          if (previousslide != data.current_page){
-            clock = data.current_time; //synchronize
-            $("#val_slideleft").attr("src", "./Slides/slide-"+(data.current_page-1)+".png");
-          if (data.current_page < data.page_count)
-            $("#val_slideright").attr("src", "./Slides/slide-"+(data.current_page)+".png");
-          $("#val_text").text(" ");
-          $.get("./Text/text-"+data.current_page+".txt",
-            function(data){
-              $("#val_text").html(data);
-            });
-        }
-        previousslide = data.current_page;
-        display_clock();
-      });
-      setTimeout ("make_call()", refreshtime);
-    }
+	function make_call(){
+	  $.ajaxSetup({'beforeSend': function(xhr){
+	if (xhr.overrideMimeType){
+	  xhr.overrideMimeType("text/plain");
+	}
+	  }
+	  });
+	  $.getJSON("json.txt",
+	function(data){
+	  $("#val_pagethis").text(data.current_page);
+	  $("#val_pagecount").text(data.page_count);
+	  if (previousslide != data.current_page){
+	clock = data.current_time; //synchronize
+	$("#val_slideleft").attr("src", "./Slides/slide-"+(data.current_page-1)+".png");
+	  if (data.current_page < data.page_count)
+	$("#val_slideright").attr("src", "./Slides/slide-"+(data.current_page)+".png");
+	  $("#val_text").text(" ");
+	  $.get("./Text/text-"+data.current_page+".txt",
+	function(data){
+	  $("#val_text").html(data);
+	});
+	}
+	previousslide = data.current_page;
+	display_clock();
+	  });
+	  setTimeout ("make_call()", refreshtime);
+	}
 
-    $(document).ready(function(){
-      make_call();
-      update_clock();
-    });
-    </script>
-    </head>
+	$(document).ready(function(){
+	  make_call();
+	  update_clock();
+	});
+	</script>
+	</head>
 
-    <body>
-      <div id="information">Currently at slide
-        <span id="val_pagethis">?</span> of <span id="val_pagecount">?</span>
-      </div>
-      <div id="pane">
-        <div id="slideright">
-          Next slide:<br />
-          <img height="360" id="val_slideright" src="./Slides/slide-1.png" /></div>
-          <div id="slideleft">
-            Current slide:<br />
-            <img height="360" id="val_slideleft" src="./Slides/slide-0.png" /></div>
-      </div>
-      <div style="clear:both;"> </div>
-      <div id="text"><span id="val_text">?</span></div>
-      <div id="time">Clock: <span id="val_time">?</span></div>
-    </body>
-    </html>
+	<body>
+	  <div id="information">Currently at slide
+	<span id="val_pagethis">?</span> of <span id="val_pagecount">?</span>
+	  </div>
+	  <div id="pane">
+	<div id="slideright">
+	  Next slide:<br />
+	  <img height="360" id="val_slideright" src="./Slides/slide-1.png" /></div>
+	  <div id="slideleft">
+	Current slide:<br />
+	<img height="360" id="val_slideleft" src="./Slides/slide-0.png" /></div>
+	  </div>
+	  <div style="clear:both;"> </div>
+	  <div id="text"><span id="val_text">?</span></div>
+	  <div id="time">Clock: <span id="val_time">?</span></div>
+	</body>
+	</html>
 
 This page uses [jQuery](http://docs.jquery.com/Downloading_jQuery#Current_Release) for a bit of AJAX-magic. So make sure `jquery-1.3.2.min.js` is placed in the Presentation-folder as well.
 
@@ -246,13 +246,13 @@ And we're done. We can now start preparing and giving our presentation...
 
 **(2 - Make thumbnails)** Open a terminal, cd to your top-folder, and execute the converter.sh-script:
 
-    ~/Desktop/Impressive-0.10.2$ ./converter.sh
+	~/Desktop/Impressive-0.10.2$ ./converter.sh
 
-    Removing old images...
-    Converting...
-    Moving slide-0.png
-    Moving slide-1.png
-    Moving slide-2.png
+	Removing old images...
+	Converting...
+	Moving slide-0.png
+	Moving slide-1.png
+	Moving slide-2.png
 
 Your Presentation/Slides-folder should now contain a bunch of PNG-files.
 
@@ -260,36 +260,36 @@ Your Presentation/Slides-folder should now contain a bunch of PNG-files.
 
 **(4 - Create the Impress info script)** Run the PHP file:
 
-    ~/Desktop/Impressive-0.10.2$ php makeinfo.php 3
+	~/Desktop/Impressive-0.10.2$ php makeinfo.php 3
 
 In my example, I have three slides, so I use `3` as the argument. Make sure the number you use is equal (or higher) than your number of slides!
 
 This will have created a `presentation.pdf.info` file in the Presentation-folder:
 
-    import json
-    def UpdateInfo():
-      global FileName, FileList, PageCount
-      global DocumentTitle
-      global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
-      global RTrunning, RTrestart, StartTime, PageEnterTime, CurrentTime
-      io = open('./Presentation/json.txt', 'w')
-      json.dump(({"page_count": PageCount, "current_page": Pcurrent, "previous_page": Pnext, "start_time": StartTime, "pageenter_time": PageEnterTime, "current_time": CurrentTime}), io)
-      io.close
+	import json
+	def UpdateInfo():
+	  global FileName, FileList, PageCount
+	  global DocumentTitle
+	  global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
+	  global RTrunning, RTrestart, StartTime, PageEnterTime, CurrentTime
+	  io = open('./Presentation/json.txt', 'w')
+	  json.dump(({"page_count": PageCount, "current_page": Pcurrent, "previous_page": Pnext, "start_time": StartTime, "pageenter_time": PageEnterTime, "current_time": CurrentTime}), io)
+	  io.close
 
-      PageProps = {
-        1: {
-          'transition': None,
-          'OnEnter': UpdateInfo
-        },
-        2: {
-          'transition': None,
-          'OnEnter': UpdateInfo
-        },
-        3: {
-          'transition': None,
-          'OnEnter': UpdateInfo
-        },
-      }
+	  PageProps = {
+	1: {
+	  'transition': None,
+	  'OnEnter': UpdateInfo
+	},
+	2: {
+	  'transition': None,
+	  'OnEnter': UpdateInfo
+	},
+	3: {
+	  'transition': None,
+	  'OnEnter': UpdateInfo
+	},
+	  }
 
 This script provides Impressive with the necessary actions: every time we enter a script, we write some JSON-information (time, current slide, next slide,...) to `json.txt`. This file will be polled continuously by jQuery in our HTML-page. Also note that I'm not using transitions. (You can change that if you want.)
 

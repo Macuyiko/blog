@@ -264,11 +264,11 @@ In the next section: we will explore a particular GA implementation: CHC by Eshe
 
 Table Of Contents (click a link to jump to that post)
 
-1. [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
-2. [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
-3. [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
-4. [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
-5. [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
-6. [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
-7. [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)
+1- [Introduction](|filename|2009_01_modern-genetic-and-other-algorithms-1.md)
+2- [Genetic Algorithms](|filename|2009_01_modern-genetic-and-other-algorithms-2.md)
+3- [CHC Eshelman](|filename|2009_01_modern-genetic-and-other-algorithms-3.md)
+4- [Simulated Annealing](|filename|2009_01_modern-genetic-and-other-algorithms-4.md)
+5- [Ant Colony Optimization](|filename|2009_01_modern-genetic-and-other-algorithms-5.md)
+6- [Tabu Search](|filename|2009_01_modern-genetic-and-other-algorithms-6.md)
+7- [Conclusion](|filename|2009_01_modern-genetic-and-other-algorithms-7.md)
 
