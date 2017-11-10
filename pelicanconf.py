@@ -14,6 +14,10 @@ DEFAULT_LANG = u'en'
 
 TYPOGRIFY = True
 
+STATIC_PATHS = ['images', 'iframes']
+PAGE_EXCLUDES = ['iframes']
+ARTICLE_EXCLUDES = ['iframes']
+
 DIRECT_TEMPLATES = ('index', 'archives')
 ARTICLE_URL = 'post/{date:%Y}/{slug}.html'
 ARTICLE_SAVE_AS = 'post/{date:%Y}/{slug}.html'
