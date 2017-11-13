@@ -12,6 +12,14 @@ body {
 	font-size: 0.8em;
 }
 
+.highlighttable {
+	border: 0 !important;
+}
+
+.linenos {
+	display: none !important;
+}
+
 iframe {
 	margin-bottom: 2em;
 }
@@ -21,7 +29,7 @@ iframe {
 }
 
 td.code .highlight, td.linenos .linenodiv {
-	border: 0px !important;
+	border: 0 !important;
 }
 
 code {

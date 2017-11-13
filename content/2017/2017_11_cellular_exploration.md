@@ -264,3 +264,26 @@ The neighborhood again includes diagonal cells, but we're not going to wrap arou
 
 <div src="/iframes/cellular/index.wireworld.html"
 	class="toggle" scrolling="no" frameborder="0" width="520" height="320"></div>
+
+# Finishing up
+
+Cellular automata are very versatile indeed. As a final example, let us consider [Langton's Ant](https://en.wikipedia.org/wiki/Langton%27s_ant). This can be modelled as a discrete agent walking over a grid, but as the Wikipedia page mentions, it's possible to formulate the behavior by means of a cellular automaton as well. Our state now encodes:
+
+- Whether a cell is white or black
+- Whether a cell contains an ant or not. If it contains an an, the numbers 1 to 4 indicate the direction of the ant
+
+The rule set is as follows:
+
+- The next cell's color is equal to the current one, except if the ant is here, in which case we flip the color
+- If the ant is on a cell, first figure out the new direction of the ant
+- If the current cell's color is black, turn 90 degrees left
+- If it's white, turn 90 degrees right
+- The ant is removed from the next cell
+- The ant is place on the next cell matching the new direction of the ant
+
+In fact, we don't even have to define a neighborhood here, except for knowing to which new cell to move our ant. This simple rule set leads to a beautiful pattern over time (this cellular automaton runs on its own, no way to scribble over it here):
+
+<div src="/iframes/cellular/index.langton.html"
+	class="toggle" scrolling="no" frameborder="0" width="520" height="520"></div>
+
+That's enough for the first part in this series. In the next part, we'll use the building blocks we've constructed and explored so far, and start taking a look at using cellular automata to simulate water, sand, lava, and so on, as is done in several games.
