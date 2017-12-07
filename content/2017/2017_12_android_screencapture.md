@@ -1,6 +1,6 @@
 Title: Note to Self: Fast Android Screen Capture
 Author: Seppe "Macuyiko" vanden Broucke
-Date: 2017-11-13 14:30
+Date: 2017-12-07 17:10
 
 Getting a reliable, real-time screen of an Android device is more challenging than one might think, e.g. for the purpose of training a reinforcement learning agent.
 
