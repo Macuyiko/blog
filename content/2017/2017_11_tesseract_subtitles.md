@@ -8,7 +8,7 @@ Opening the page in Chrome and inspecting the network requests quickly uncovers 
 
 	https://video-bru2-1.xx.fbcdn.net/v/t42.9040-2/10000000_703970666457205_4416008794480312320_n.mp4?efg=eyJ2ZW5jb2RlX3RhZyI6ImRhc2hfdjNfMTI4MF9jcmZfMjNfaGlnaF8zLjFfZnJhZ18yX3ZpZGVvIn0%3D&oh=40bbd0e0dd5367ed3a2d5ff0e7cbe081&oe=5A09D778&bytestart=0&byteend=953
 
-By cuttung off `&bytestart=0&byteend=953`, we can download the video file completely.
+By cutting off `&bytestart=0&byteend=953`, we can download the video file completely.
 
 Next, we can use `ffmpeg` to create frames every half second:
 
