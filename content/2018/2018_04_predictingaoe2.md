@@ -434,3 +434,5 @@ This weekend data science project turned out to take a bit longer than just one 
 - Speaking of deployability: I'm not one to "spend 80% of time getting the final 20% of the work finished up," so I'm not really thinking about building a beautiful moving trendline kind of overlay for OBS, even although I'd love to see a predictive component being used in e-sports casting similar as is being done on poker channels, for instance
 
 In any case, this has been a very fun time killer to work on. I plan to make all the full scripts and data available on GitHub at some point in time soon (even regarding their horrible form), though will spend some time to only incorporate the training sample instead of the full database (which is way too big with 2GB of data to put online), as well as changing the scraper to incorporate civilizations.
+
+**Update:** the code, model and data are now available on [this GitHub repository](https://github.com/Macuyiko/aoe2predict) (warning: not the most clean setup you'll ever see). The Voobly scraper has been modified to download civ information. The data set itself has been converted to a csv.gz file to save on size.
