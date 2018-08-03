@@ -67,7 +67,7 @@ Grid.prototype.neighborhood = function(col, row) {
   if (col > 0) n.left = this.cells[col-1][row];
   if (col < this.cols-1) n.right = this.cells[col+1][row];
   if (row > 0) n.up = this.cells[col][row-1];
-  if (col < this.rows-1) n.down = this.cells[col][row+1];
+  if (row < this.rows-1) n.down = this.cells[col][row+1];
   return n;
 }
 
