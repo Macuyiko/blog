@@ -44,7 +44,7 @@ Another great related recent article is [this one](http://dangrover.com/blog/201
 
 But I digress... this post was going to be a simple one, about cloud storage services. As stated before, Chinese technology firms have begun offering cloud storage services:
 
-* [Baidu Disk](http://pan.baidu.com/) - or: Baidu Yun (äº‘, Cloud) or Pan (ç›˜, Disk [3]): offers 2TB (that is terabytes!) of data for free when you install the mobile app.
+* [Baidu Disk](http://pan.baidu.com/) - or: Baidu Yun (云, cloud) or Pan (盘, disk [3]): offers 2TB (that is terabytes!) of data for free when you install the mobile app.
 * Tencent [Weiyun](http://www.weiyun.com/): offers 10TB of data for free when you install the mobile app.
 * 360.cn's [Yunpan](yunpan.360.cn): offers 10TB of data when installing the Windows client and an additional 20TB when installing a mobile client.
 
@@ -971,6 +971,6 @@ I'd love to see a project combining computer vision with this and do some unsupe
 
 [2]: I've noticed this myself when trying to find standard notation for terms which are generally accepted in English research literature, such as "recall and precision". The New York times also has two great articles [here (older)](http://www.nytimes.com/2011/03/22/world/asia/22china.html?pagewanted=all) and [here](http://www.nytimes.com/2014/09/22/business/international/china-clamps-down-on-web-pinching-companies-like-google.html) on the subject (the latter article is a great read and better expands on some points I'm making here). To quote:
 
-> "I know some foreign scientists are studying the rings of ancient trees to learn about the climate, for example, but I can't find their work using Baidu," Ms. Jin said. "When in China, I'm almost never able to access Google Scholar, so Iâ€™m left badly informed of the latest findings."
+> "I know some foreign scientists are studying the rings of ancient trees to learn about the climate, for example, but I can't find their work using Baidu," Ms. Jin said. "When in China, I'm almost never able to access Google Scholar, so I'm left badly informed of the latest findings."
 
-[3]: I really like the hanzi ç›˜ to indicate a disk. The character is a pretty old-fashioned one to indicate a dish, plate, or even a washbasin. It is used in ç¡¬ç›˜ to indicate hard drive. Sometimes, ç¡¬ç¢Ÿ is used as well (the latter also meaning dish, plate).
+[3]: I really like the hanzi 盘 to indicate a disk. The character is a pretty old-fashioned one to indicate a dish, plate, or even a washbasin. It is used in 硬盘 to indicate hard drive.

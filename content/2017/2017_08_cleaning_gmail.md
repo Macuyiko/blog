@@ -3,6 +3,8 @@ Author: Seppe "Macuyiko" vanden Broucke
 Date: 2017-08-14 22:12
 Subtitle: Using Python and the Gmail API
 
+**Update:** code is available at [https://github.com/Macuyiko/gmail-cleaner](https://github.com/Macuyiko/gmail-cleaner).
+
 I've been getting increasingly frustrated by my overflowing Gmail inbox lately. I've been using Gmail as a primary e-mail service since 2005 and have collected tens of thousands emails over the years.
 
 Lately, I've been finding it increasingly harder to quickly find an e-mail using Gmails otherwise solid search functionality. The problem is mostly due to me not using much labels on the one hand and archiving, rather than deleting junky e-mails on the other hand. The latter stems from Gmail's "training", inspiring users to archive e-mails rather than deleting them, since storage is never really an issue.
@@ -322,4 +324,3 @@ E-mails that are trashed will get a flag in the local database in order to preve
 
 Using this overview, I was able to delete about twenty thousand e-mails in half an hour or so.
 
-The code is still relatively messy (and unpythonic) in places, though I might think about putting this up on GitHub at some later point, after which I'll update this post with a link.
