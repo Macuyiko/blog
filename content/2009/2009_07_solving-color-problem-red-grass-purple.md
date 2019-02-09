@@ -50,15 +50,15 @@ There are a few different solutions floating around. Let's list the most common 
 
 Most methods below are unreliable, or do not work with everyone. Most of them are pretty annoying and/or hard to execute as well. If you want better solutions, just skip this part...
 
-**(1 - unreliable)** Alt-tab out of the game, and then maximize it again. This worked in XP (and in Vista for some users), and works in some cases in Windows 7. I had no luck with this anymore though. The colors would work for a few seconds, but then changed again.
+**(1 - unreliable)** Alt-tab out of the game, and then maximize it again. This worked in XP (and in Vista for some users), and works in some cases in later versions of Windows. I had no luck with this anymore though. The colors would work for a few seconds, but then changed again.
 
-**(2 - unreliable)** Change your in-game resolution. Doesn't work in Windows 7 anymore either. After switching resolutions, the colors even became worse. This might work in Vista, but this solution is not really preferred (you want to play on the best resolution possible).
+**(2 - unreliable)** Change your in-game resolution. Doesn't work in Windows 7 or later anymore either. After switching resolutions, the colors even became worse. This might work in Vista, but this solution is not really preferred (you want to play on the best resolution possible).
 
 **(3 - unreliable)** Before starting the game, open a explorer window. My Computer, a random folder, anything works. Surprisingly, this often worked in Vista with most Directdraw games. In Windows 7, not anymore.
 
 **(4 - unreliable)** Mess around with the compatibility options, especially `Run in 256 colors`, `Disable visual themes`, `Disable desktop composition`, `Display display scaling on high DPI settings` and `Run as administrator`. This works for some games/users, but I don't really like this method as it has a lot of drawbacks (desktop windows/icons messed up when you exit etc...).
 
-**(5 - mostly reliable but annoying)** Close `explorer.exe` using the Task Manager. This works on both Vista and 7, for most games, but if you're like me, you don't like to close your 5+ open explorer windows. Besides, there's a better solution...
+**(5 - mostly reliable but annoying)** Close `explorer.exe` using the Task Manager. This works for most games, but if you're like me, you don't like to close your 5+ open explorer windows.
 
 This method has been added to the program (see below). Another way is to create a batch script, if you don't want to use the program:
 
@@ -87,17 +87,13 @@ On my large monitor, I actually enjoy playing this way.
 
 There are other mods out there for other games which allow to run them in windowed mode. For Age Of Empires: Rise Of Rome, you can get [this mod](http://veg.slutsk.net/aoe/aoe_ror_vegmod.zip). Or you can get [DxWnd](http://www.nynaeve.net/?p=52) which forces Directdraw (DirectX >=7) games to run in a window. I had no luck with it for The Conquerors however. For Starcraft, there are also some tools floating around to fix the resolution/window/colors. For Worms: Armageddon, CyberShadow is working on a fix for the game (see [here](http://forum.team17.com/showthread.php?t=38762)), so you might want to keep an eye out for that.
 
-**(7 - mostly reliable but annoying)** This is the newly found strange "Screen Resolution"-method. Found on [ this](http://www.sevenforums.com/gaming/2981-starcraft-fix-holy-cow.html) forum recently. This is a weird workaround but seems to work on every game I've tried. Follow these steps exactly: right click on your desktop and pick `Screen Resolution`. You're not done yet (!), in the Screen Resolution window, click `Advanced settings`. Another window will open - click the `Monitor`-tab in that window. You should now be looking at something like this:
-
-![](http://2.bp.blogspot.com/_X4W-h82Vgjw/Sr9vNe13FsI/AAAAAAAAPPQ/UI7ohu9IvmM/s400/screenmethod.png)
-
-Now, leave these windows open, and start the game. The colors should work. Unbelievably weird (I had to pick the Monitor tab for it to work), but it works. If it works for you too, you may stop reading here :).
+**(7 - mostly reliable but annoying)** This is the newly found strange "Screen Resolution"-method. Found on [ this](http://www.sevenforums.com/gaming/2981-starcraft-fix-holy-cow.html) forum recently. This is a weird workaround but seems to work on every game I've tried. Follow these steps exactly: right click on your desktop and pick `Screen Resolution`. In the Screen Resolution window, click `Advanced settings`. Another window will open - click the `Monitor`-tab in that window. Now, leave these windows open, and start the game.
 
 ####  Newer and/or reliable methods
 
 You'll find the easier, newer and more reliable methods in this section.
 
-**(8 - reliable)** [Download a tool](https://github.com/Macuyiko/palettestealer-suspender/releases/tag/final-release) I whipped up to play Directdraw games in fullscreen without them changing colors. This tool will act as a launcher which places itself in your notification area and automatically suspends all applications which are changing the game's colors and will bring them back alive when you close the game
+**(8 - reliable)** [Download a tool](https://github.com/Macuyiko/palettestealer-suspender/releases) I whipped up to play Directdraw games in fullscreen without them changing colors. This tool will act as a launcher which places itself in your notification area and automatically suspends all applications which are changing the game's colors and will bring them back alive when you close the game
 
 **(9 - reliable)** Thanks to this a reader comment, I found out that Windows 7 actually provides a compatibility hack build in to allow running old DirectDraw games in all their glorious colors. The `HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\DirectDraw\Compatibility\` registry entry (or `HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\DirectDraw\Compatibility\` for 64bit Windows) contains entries for some popular games, such as Age Of Empires and Starcraft.
 
@@ -121,7 +117,7 @@ PCs back then weren't really powerful. Everything had to be as fast as possible,
 
 Now this is the thing: if you're a fullscreen game, you don't want other programs screwing up the system palette, changing your beautiful chosen colors to ugly greens and reds. And this is what's happening in Windows 7. If you read [System Palette and Static Colors](http://msdn.microsoft.com/en-us/library/dd145128\(VS.85\).aspx) on MSDN, it states that "However, because changing the static colors can have an immediate and dramatic effect on all windows on the display, an application should not call SetSystemPaletteUse, unless it has a maximized window and the input focus." Alas, this is not enforced by Windows, and thus `explorer.exe` (which comes from Microsoft mind you) and other programs will happily call `SetSystemPaletteUse` and mess the poor fullscreen DirectDraw game up.
 
-I googled a bit around to see if I could find any clues. [ This message](http://stackoverflow.com/questions/1054365/exclusive-directdraw-palette-isnt-actually-exclusive) at Stackoverflow describes the same problem. This message is actually posted by the maintainers of Worms: Armageddon. No-one provided an answer though. I opened up Visual Studio (which was still installed) to quickly throw something together in VB.NET to intercept the `WM_SYSCOLORCHANGE`, `WM_PALETTECHANGED`, `WM_PALETTEISCHANGING` and `WM_QUERYNEWPALETTE` messages and look at where they're coming from. Basically, three processes are fighting:
+I googled a bit around to see if I could find any clues. [This message](http://stackoverflow.com/questions/1054365/exclusive-directdraw-palette-isnt-actually-exclusive) at Stackoverflow describes the same problem. This message is actually posted by the maintainers of Worms: Armageddon. No-one provided an answer though. I opened up Visual Studio (which was still installed) to quickly throw something together in VB.NET to intercept the `WM_SYSCOLORCHANGE`, `WM_PALETTECHANGED`, `WM_PALETTEISCHANGING` and `WM_QUERYNEWPALETTE` messages and look at where they're coming from. Basically, three processes are fighting:
 
 	CHANGING from (0)
 	CHANGED from Age of Empires II Expansion (135458)
