@@ -95,6 +95,11 @@ footer {
 	margin-right: auto;
 }
 
+.contentwrapper .wrap-normal pre {
+	white-space: normal !important;
+	word-wrap: normal !important;
+}
+
 .contentwrapper pre {
 	max-width: 100%;
 	font-family: 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
