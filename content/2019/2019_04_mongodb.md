@@ -205,7 +205,7 @@ Face scanners:
 {'_id': ObjectId('5c404fafa2b83b0b64516aea'), '_class': 'com.tianyi.collection.bean.EntryExitRecord', 'imgName': '20190117_cut_1547718573711.jpg', 'bucketName': 'face20190117', 'passTime': datetime.datetime(2019, 1, 17, 9, 48, 59), 'deviceNo': '012383-B6E2B8-1989EE', 'deviceName': '测试设备'}
 </pre></div>
 
-Other daatabases deal with public health information:
+Other databases deal with public health information:
 
 <div class="wrap-normal"><pre>
 {'_id': ObjectId('5a9911f6cf9bb7143800002b'), 'add_user': '5a9911f6cf9bb7143800002b', 'area': ['10000000|北京市|1|0', '11000000|天津市|1|0', '12000000|河北省|1|0', '13000000|山西省|1|0', '14000000|内蒙古自治区|1|0', '15000000|辽宁省|1|0', '16000000|吉林省|1|0', '17000000|黑龙江省|1|0', '18000000|上海市|1|0', '19000000|江苏省|1|0', '20000000|浙江省|1|0', '21000000|安徽省|1|0', '22000000|福建省|1|0', '23000000|江西省|1|0', '24000000|山东省|1|0', '25000000|河南省|1|0', '26000000|湖北省|1|0', '27000000|湖南省|1|0', '28000000|广东省|1|0', '29000000|广西壮族自治区|1|0', '30000000|海南省|1|0', '31000000|重庆市|1|0', '32000000|四川省|1|0', '33000000|贵州省|1|0', '34000000|云南省|1|0', '35000000|西藏自治区|1|0', '36000000|陕西省|1|0', '37000000|甘肃省|1|0', '38000000|青海省|1|0', '39000000|宁夏回族自治区|1|0', '40000000|新疆维吾尔自治区|1|0', '41000000|港澳地区|1|0'], 'create_time': '1519981046', 'email': '█████', 'mobile': '█████', 'name': '█████', 'password': '█████', 'role_id': '5a9d093ccf9bb71438000035', 'sex': '1', 'true_name': '█████', 'update_time': '1520322412'}
@@ -295,11 +295,7 @@ A lot of images contain QR and bar codes:
 
 ![](/images/2019/mongo_qr.png)
 
-Others contain faces (blurred):
-
-![](/images/2019/mongo_faces.png)
-
-Product images:
+Others contain medical product images:
 
 ![](/images/2019/mongo_prod.png)
 
@@ -307,9 +303,7 @@ Receipts and signatures:
 
 ![](/images/2019/mongo_sign.png)
 
-And even sweet intimate pictures sent between users, it seems:
-
-![](/images/2019/mongo_love.png)
+And a lot of them contain faces and more intimate photos (not shown here).
 
 <center>*<br>*&nbsp;&nbsp;&nbsp;*</center>
 
