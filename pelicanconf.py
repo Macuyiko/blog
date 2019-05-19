@@ -6,7 +6,7 @@ LOCALE = ('en',)
 
 AUTHOR = u'Seppe "Macuyiko" vanden Broucke'
 SITENAME = u'Bed Against The Wall'
-SITEURL = 'http://blog.macuyiko.com'
+SITEURL = '//blog.macuyiko.com'
 
 TIMEZONE = 'Europe/Brussels'
 

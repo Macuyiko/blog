@@ -38,7 +38,7 @@ Given the above stories, I was wondering whether the situation is still as bad t
 
 As such, I went off to [Shodan](https://www.shodan.io/) to set up a search for MongoDB instances running on their default port and without authentication enabled. A few years ago, I used tools such as [masscan](https://github.com/robertdavidgraham/masscan) to scan the whole IPv4 range myself, but network operators and server providers have gotten stricter and prefer you don't scan 4 billion addresses. As such, I just dumped in the couple of bucks necessary to get the data out of Shodan and set to work.
 
-24980 IP addresses where obtained together with some metadata, based on which you can already get an overview of the distribution per country:
+24980 IP addresses were obtained together with some metadata, based on which you can already get an overview of the distribution per country:
 
 ![Most open servers are located in the US and China](/images/2019/mongo_cn.png)
 
