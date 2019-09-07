@@ -7,6 +7,7 @@ LOCALE = ('en',)
 AUTHOR = u'Seppe "Macuyiko" vanden Broucke'
 SITENAME = u'Bed Against The Wall'
 SITEURL = '//blog.macuyiko.com'
+# SITEURL = '//localhost:8000'
 
 TIMEZONE = 'Europe/Brussels'
 
@@ -35,16 +36,17 @@ TRANSLATION_FEED_ATOM = None
 LINKS =  ()
 
 # Social widget
-SOCIAL = (('Twitter', 'http://twitter.com/macuyiko'),
-          ('Personal Site', 'http://seppe.net'),
-          ('LinkedIn', 'http://www.linkedin.com/profile/view?id=26422505'),
-          ('E-mail', 'mailto:macuyiko@gmail.com'),
-          ('Tumblr', 'http://macuyiko.tumblr.com/'),
-          ('Google+', 'http://profiles.google.com/macuyiko'),)
+SOCIAL = (
+    ('Twitter', 'http://twitter.com/macuyiko'),
+    ('Personal Site', 'http://seppe.net'),
+    ('LinkedIn', 'http://www.linkedin.com/profile/view?id=26422505'),
+    ('E-mail', 'mailto:macuyiko@gmail.com'),
+    ('Tumblr', 'http://macuyiko.tumblr.com/'),
+)
 
 DEFAULT_PAGINATION = 10
 
 # Template
 
-THEME = "themes/mu_theme"
+THEME = "themes/mu2_theme"
 

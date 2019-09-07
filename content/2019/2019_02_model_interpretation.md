@@ -125,12 +125,13 @@ The book describes both "versions" of the H-statistic:
 - H2(j) to measure if a feature j interacts with any other feature. This can hence be regarded as a first-order measure guiding the second-order measures to check
 
 This is a great approach, but two problems exist in most implementations:
+
 - The first H2 measure can actually be constructed for higher-order interactions as well, the paper mentions this in passing through "Analogous relationships can be derived for the absence of higher order interactions" and by providing a metric for H2(jkl). This requires partial dependence values for higher-order feature sets, which most implementations do not provide
 - Most implementations will only implement H2(jk), without providing the first-order test H2(j), which would greatly help to reduce the number of checks to perform
 
 There are other aspects to consider as well (e.g. with regards to sampling to speed up the procedure), but let us focus on these for now and see which options are available.
 
-- In R, the [`iml`](https://github.com/christophM/iml/blob/master/R/Interaction.R) package implements both measures, but does not allow to calculate the second-order H-measure on e.g. H2(jkl)
+- In R, the [`iml`](https://github.com/christophM/iml/blob/master/R/Interaction.R) package implements both measures, but does not allow to calculate the second-order H-measure on higher-order feature sets, e.g. H2(jkl)
 - The R [`interact.gbm`](https://www.rdocumentation.org/packages/gbm/versions/2.1.4/topics/interact.gbm) package only works for gradient boosting models and does not implement the first-order measure, but does allow for higher-order second-order measures
 - The R [`pre`](https://github.com/marjoleinF/pre/blob/master/R/pre.R) package seems to implement the first-order measure, but not the second-order one
 - In Python, [`sklearn_gbmi`](https://pypi.org/project/sklearn-gbmi/) will accept feature sets of length two and higher, but does not provide support for the first-order measure, very similar to `interact.gbm` in R. It only works on gradient boosting based models
