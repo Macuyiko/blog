@@ -24,15 +24,19 @@ Optional:
 - [f.lux](https://justgetflux.com/)
 - [Paint.NET](http://www.getpaint.net/)
 - [Sumatra PDF](https://www.sumatrapdfreader.org/free-pdf-reader.html) and [Adobe Reader](https://get.adobe.com/reader/) for those annoying edge cases where Sumatra doesn't work
+- Fonts: Open Sans and Fira Code especially
+- [Putty](https://www.putty.org/)
+- [OBS](https://obsproject.com/)
+- [VideoPad](https://www.nchsoftware.com/videopad/index.html)
+- [BareGrep](https://www.baremetalsoft.com/baregrep/)
+
+Optional:
+
 - [VirtualBox](https://www.virtualbox.org/)
 - [Spotify](https://www.spotify.com)
 - [VLC](http://www.videolan.org/vlc/index.html)
 - [Steam](http://store.steampowered.com/)
 - [GOG Galaxy](https://www.gog.com/galaxy)
-- Fonts: Open Sans and Fira Code especially
-- [Putty](https://www.putty.org/)
-- [OBS](https://obsproject.com/)
-- [VideoPad](https://www.nchsoftware.com/videopad/index.html)
 - [Gimp](https://www.gimp.org/)
 - [Geek Uninstaller](https://geekuninstaller.com/) to clean up Windows Apps cruft
 - [SQLite DB Browser](https://sqlitebrowser.org/)
@@ -41,15 +45,14 @@ Optional:
 
 - [Anaconda Python Distribution](https://www.anaconda.com/distribution/)
 - [GraphViz](http://www.graphviz.org/)
-- [R](http://cran.r-project.org/) and [RStudio](http://www.rstudio.com/) although can be replaced by Anaconda
+- [R](http://cran.r-project.org/) and [RStudio](http://www.rstudio.com/) preferably through Anaconda
+- [MSYS2](https://www.msys2.org/)
 
 ## Coding and Editing ##
 
 - [VSCode](https://code.visualstudio.com/)
 - [GitHub Desktop](https://desktop.github.com/)
+- [WinEdt](http://www.winedt.com/)
 - [Eclipse](https://eclipse.org/downloads/)
 - [LyX](http://www.lyx.org/)
-- [WinEdt](http://www.winedt.com/)
-
-
 
