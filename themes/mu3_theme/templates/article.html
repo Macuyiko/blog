@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title|striptags }}{% endblock %}
+
+
+{% block headerimage %}
+{% if article.image %}
+	<div class="postheader">
+		<div class="postheader-wrap">
+			<img class="postheader-trans" src="data:image/gif;base64,R0lGODlhMgAVAPAAAP///wAAACH5BAEAAAAALAAAAAAyABUAAAIfhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8dTAQA7">
+			<img class="postheader-cover" src="/images/backgrounds/{{ article.image }}">
+		</div>
+	</div>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">{{ article.locale_date }}, by {{ article.author }}</div>
+			<div class="article-title"><a href="{{ SITEURL }}/{{ article.url }}" rel="bookmark"
+			title="Permalink to {{ article.title|striptags }}">{{ article.title}}</a></div>
+			{% if article.subtitle %}<div class="article-subtitle">{{ article.subtitle }}</div>{% endif %}
+		</header>
+	
+	    {{ article.content }}
+	</article>
+</div>
+{% endblock %}
