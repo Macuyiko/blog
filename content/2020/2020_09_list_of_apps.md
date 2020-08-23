@@ -32,11 +32,12 @@ Optional:
 - [Spotify](https://www.spotify.com)
 - [Steam](http://store.steampowered.com/)
 - [GOG Galaxy](https://www.gog.com/galaxy)
-- [VLC](http://www.videolan.org/vlc/index.html) (optional)
-- [Gimp](https://www.gimp.org/) (optional)
+- [Epic Store](https://www.epicgames.com/store/en-US/)
+- [VLC](http://www.videolan.org/vlc/index.html)
+- [Gimp](https://www.gimp.org/)
 - [SQLite DB Browser](https://sqlitebrowser.org/)
 - [QGIS](https://qgis.org/en/site/) (optional)
-- [Geek Uninstaller](https://geekuninstaller.com/) (optional): to clean up Windows Apps cruft
+- [Geek Uninstaller](https://geekuninstaller.com/): to clean up Windows Apps cruft
 
 ## Data Science ##
 
