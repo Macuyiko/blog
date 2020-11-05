@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width" />
@@ -7,8 +8,8 @@
 
 	<link rel="stylesheet" href="{{ SITEURL }}/theme/css/normalize.css" />
 	<link rel="stylesheet" href="{{ SITEURL }}/theme/css/style.css" />
-	<link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" />	
-	<script src="{{ SITEURL }}/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="stylesheet" href="{{ SITEURL }}/theme/css/pygments.css" />
+	<script src="{{ SITEURL }}/theme/js/jquery-3.5.1.min.js"></script>
 	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
 
 	<script type="text/javascript">
@@ -16,7 +17,7 @@
 		_gaq.push(['_setAccount', 'UA-60406-11']);
 		_gaq.push(['_trackPageview']);
 
-		(function() {
+		(function () {
 			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
 			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
@@ -26,24 +27,25 @@
 
 <body>
 
-<header id="header">
-	<h1><a href="{{ SITEURL }}/">{{ SITENAME }}</a></h1>
-</header>
+	<header id="header">
+		<h1><a href="{{ SITEURL }}/">{{ SITENAME }}</a></h1>
+	</header>
 
-{% block headerimage %}{% endblock %}
+	{% block headerimage %}{% endblock %}
 
-<div id="container">
-	{% block content %}{% endblock %}
-	{% block aside %}{% endblock %}
-</div>
-
-
-<footer id="footer">
-	<hr />
-	<div class="row">
-		<p>{{ SITENAME }} by {{ AUTHOR }}<br>
-		Unless mentioned otherwise, this work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">
-		Creative Commons Attribution-Share Alike 2.0 Belgium License</a>.<br>
-		Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+	<div id="container">
+		{% block content %}{% endblock %}
+		{% block aside %}{% endblock %}
 	</div>
-</footer>
+
+
+	<footer id="footer">
+		<hr />
+		<div class="row">
+			<p>{{ SITENAME }} by {{ AUTHOR }}<br>
+				Unless mentioned otherwise, this work is licensed under a <a
+					href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">
+					Creative Commons Attribution-Share Alike 2.0 Belgium License</a>.<br>
+				Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+		</div>
+	</footer>
