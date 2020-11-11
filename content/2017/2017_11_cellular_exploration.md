@@ -48,11 +48,13 @@ Many of these games' systems are based on the same underlying fundamentals. In t
 
 Cellular automata have been around for quite some time already (originally discovered in the 1940s by Stanislaw Ulam and John von Neumann). A cellular automaton is a "discrete model, consisting of a regular grid of cells, each in one of a finite number of states" ([Wikipedia](https://en.wikipedia.org/wiki/Cellular_automaton)). For each cell, a set of cells called its neighborhood is defined relative to the specified cell. From an initial state, a simulation is started where each new generation is created according to a set of rules that determines the new state of each cell in terms of the current state of the cell and the states of the cells in its neighborhood. In basic terms, this defines a "main loop" over our grid as follows:
 
-    forever:
-      for each current cell in current grid:
-        get current neighborhood
-        determine state for new cell based on current cell and current neighborhood
-      swap new grid to current grid
+```plain
+forever:
+	for each current cell in current grid:
+		get current neighborhood
+		determine state for new cell based on current cell and current neighborhood
+	swap new grid to current grid
+```
 
 That's the basic idea, and it's this system that is driving all the water, sand, ... systems in the games listed above. Of course, the main interestingsness from using this approach comes from the pieces left to you to plug in, namely:
 
