@@ -89,23 +89,25 @@ This basic system is enough to set up a system for moving packets across our gra
 
 A random strategy would look as follows:
 
-	function emitPacket(n, from) {
-		var connected = getConnected(n);
-		if (connected.length == 0) return null;
-		var next = undefined;
-		while ((from == next && connected.length > 1) || next == undefined) {
-			next = connected[randomint(0, connected.length)];
-		}
-		var newPacket = new Packet(n, next);
-		packets.push(newPacket);
+```javascript
+function emitPacket(n, from) {
+	var connected = getConnected(n);
+	if (connected.length == 0) return null;
+	var next = undefined;
+	while ((from == next && connected.length > 1) || next == undefined) {
+		next = connected[randomint(0, connected.length)];
 	}
+	var newPacket = new Packet(n, next);
+	packets.push(newPacket);
+}
 
-	function consumePacket(p) {
-		var n = packets[p].to;
-		var connected = getConnected(n);
-		if (connected.length > 1) emitPacket(n, packets[p].from);
-		packets[p].remove()
-	}
+function consumePacket(p) {
+	var n = packets[p].to;
+	var connected = getConnected(n);
+	if (connected.length > 1) emitPacket(n, packets[p].from);
+	packets[p].remove()
+}
+```
 
 Note that we already account for a simple system where nodes should prevent sending packets to a node equal to where the packet just came from.
 
@@ -116,24 +118,26 @@ The result looks as follows (click to add or remove a node, drag between two nod
 
 A round robin strategy is relatively easy to implement as well:
 
-	function emitPacket(n, from) {
-		var connected = getConnected(n);
-		if (connected.length == 0) return null;
-		var next = undefined;
-		while ((from == next && connected.length > 1) || next == undefined) {
-			nodes[n].last_connected_index = (nodes[n].last_connected_index + 1) % connected.length;
-			next = connected[nodes[n].last_connected_index];
-		}
-		var newPacket = new Packet(n, next);
-		packets.push(newPacket);
+```javascript
+function emitPacket(n, from) {
+	var connected = getConnected(n);
+	if (connected.length == 0) return null;
+	var next = undefined;
+	while ((from == next && connected.length > 1) || next == undefined) {
+		nodes[n].last_connected_index = (nodes[n].last_connected_index + 1) % connected.length;
+		next = connected[nodes[n].last_connected_index];
 	}
+	var newPacket = new Packet(n, next);
+	packets.push(newPacket);
+}
 
-	function consumePacket(p) {
-		var n = packets[p].to;
-		var connected = getConnected(n);
-		if (connected.length > 1) emitPacket(n, packets[p].from);
-		packets[p].remove()
-	}
+function consumePacket(p) {
+	var n = packets[p].to;
+	var connected = getConnected(n);
+	if (connected.length > 1) emitPacket(n, packets[p].from);
+	packets[p].remove()
+}
+```
 
 And this looks as follows:
 
@@ -142,26 +146,28 @@ And this looks as follows:
 
 Even more convoluted systems, such as packets moving along a shortest path to their destination is relatively easy to implement as well. We just calculate the shortest path using [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) (to a random destination node, in this case) and store it in the packet's state. On consumption, the consuming node uses this to send the packet along:
 
-	function emitPacket(n) {
-		var connected = getConnected(n);
-		if (connected.length == 0) return null;
-		var finaldest = randomint(0, nodes.length - 1)
-		var trajectory = dijkstra(n)[finaldest];
-		if (trajectory.dist == 0 || trajectory.dist == Infinity) return;
-		var newPacket = new Packet(n, trajectory.shift());
-		newPacket.trajectory = trajectory;
+```javascript
+function emitPacket(n) {
+	var connected = getConnected(n);
+	if (connected.length == 0) return null;
+	var finaldest = randomint(0, nodes.length - 1)
+	var trajectory = dijkstra(n)[finaldest];
+	if (trajectory.dist == 0 || trajectory.dist == Infinity) return;
+	var newPacket = new Packet(n, trajectory.shift());
+	newPacket.trajectory = trajectory;
+	packets.push(newPacket);
+}
+
+function consumePacket(p) {
+	var n = packets[p].to;
+	if (packets[p].trajectory.length > 0) {
+		var newPacket = new Packet(n, packets[p].trajectory.shift());
+		newPacket.trajectory = packets[p].trajectory;
 		packets.push(newPacket);
 	}
-
-	function consumePacket(p) {
-		var n = packets[p].to;
-		if (packets[p].trajectory.length > 0) {
-			var newPacket = new Packet(n, packets[p].trajectory.shift());
-			newPacket.trajectory = packets[p].trajectory;
-			packets.push(newPacket);
-		}
-		packets[p].remove()
-	}
+	packets[p].remove()
+}
+```
 
 And this looks as follows (middle click once on a node to emit one packet):
 
@@ -172,28 +178,30 @@ And this looks as follows (middle click once on a node to emit one packet):
 
 We can now extend this system with some more complex rules as well. As an example, consider a game like [Harvest: Massive Encounter](https://store.steampowered.com/app/15400/Harvest_Massive_Encounter/) or [Creeper World](https://store.steampowered.com/app/422910/Creeper_World_Anniversary_Edition/) where players connect up an energy grid. An emitter sends energy packets along to outer nodes, though connecting nodes need to be powered up themselves before they can send energy along. As a routing system, we'll use a simple random strategy:
 
-	function emitPacket(n, from) {
-		var connected = getConnected(n);
-		if (connected.length == 0) return null;
-		var next = undefined;
-		while ((from == next && connected.length > 1) || next == undefined) {
-			next = connected[randomint(0, connected.length)];
-		}
-		var newPacket = new Packet(n, next);
-		packets.push(newPacket);
+```javascript
+function emitPacket(n, from) {
+	var connected = getConnected(n);
+	if (connected.length == 0) return null;
+	var next = undefined;
+	while ((from == next && connected.length > 1) || next == undefined) {
+		next = connected[randomint(0, connected.length)];
 	}
+	var newPacket = new Packet(n, next);
+	packets.push(newPacket);
+}
 
-	function consumePacket(p) {
-		var n = packets[p].to;
-		if (node_energy !== null && !(nodes[n].id in node_energy)) node_energy[nodes[n].id] = 0;
-		if (node_energy !== null && node_energy[nodes[n].id] < energyRequired.value()) {
-			node_energy[nodes[n].id] += packetEnergy.value();
-		} else {
-			var connected = getConnected(n);
-			if (connected.length > 1) emitPacket(n, packets[p].from);
-		}
-		packets[p].remove()
+function consumePacket(p) {
+	var n = packets[p].to;
+	if (node_energy !== null && !(nodes[n].id in node_energy)) node_energy[nodes[n].id] = 0;
+	if (node_energy !== null && node_energy[nodes[n].id] < energyRequired.value()) {
+		node_energy[nodes[n].id] += packetEnergy.value();
+	} else {
+		var connected = getConnected(n);
+		if (connected.length > 1) emitPacket(n, packets[p].from);
 	}
+	packets[p].remove()
+}
+```
 
 Feel free to play around with the result below (click to add or remove a node, drag between two nodes to add an edge, press middle mouse button on a node to have it start emitting packets, or middle click outside to stop emitting). Note how in the default scenario, our outermost nodes already are hard to power up using a random routing strategy. Try playing around with the parameters to observe the results:
 

@@ -29,41 +29,41 @@ $(function() {
 
 This post is the fourth part on a small series on cellular automata and graph based systems as found in games. Part 1 can be found [here](|filename|/2017/2017_11_cellular_exploration.md), part 2 is over [here](|filename|/2017/2017_12_cellular_exploration2.md) and part 3 is [here](|filename|/2018/2018_08_cellular_exploration3.md). Especially parts 1 and 2 are worth reading if you're just catching up.
 
-This series started at the end of 2017 and was finished in 2018 (time flies). This part was hence unplanned but I wanted to add some additional thoughts. Since I wrote the original series, [Noita](https://store.steampowered.com/app/881100/Noita/) came out, a game which make the "falling sand" style of games part of its engine, proudly boasting that "every pixel is simulated". It's a very fun game, and a dream come true for fans of the cellular automaton (CA). Or is it?
+This series started at the end of 2017 and was finished in 2018 (time flies). This part was hence unplanned but I wanted to add some additional thoughts. Since I wrote the original series, [Noita](https://store.steampowered.com/app/881100/Noita/) came out, a game which make the "falling sand" style of games part of its engine, proudly boasting that "every pixel is simulated". It's a very fun game, and a dream come true for fans of the [cellular automaton](https://en.wikipedia.org/wiki/Cellular_automaton) (CA). Or is it?
 
 Whilst playing the game, I was impressed with the engine being capable to simulate huge worlds, without slowing down (well -- it *does* slow down, but only once you start unleashing real chaos). Based on some reading and some [earlier discussion on Hacker News](https://news.ycombinator.com/item?id=23649419), it seemed to me that this was based on a traditional cellular automaton system, which can be easily made multi-threaded: just distribute the cells over the thread pool. As each cell's new state is determined by its current environment, and all cells' new state is calculated before "flipping the buffer", this is easy.
 
-However, given the scale of the game map, it also seemed that something more clever was going on...
+However, given the scale of the game map, it also seemed that something more clever was going on. My hunch at the time was the grid is probably divided into blocks or chunks, with only the chunks close enough to the player being updated (or based on distance to other important triggers).
 
 # GDC to the Rescue
 
-A couple of months ago, I returned to the topic and tried to investigate the Noita engine in particular a bit more in depth. By then, the developers had given a [presentation at GDC](https://www.youtube.com/watch?v=prXuyMCgbTc) which I wholeheartedly recommend to watch for anyone with an interest in the topic. A couple of highlights stood out.
+A couple of months ago, I returned to the topic and tried to investigate the Noita engine a bit more in depth. By then, the developers had given a [presentation at GDC](https://www.youtube.com/watch?v=prXuyMCgbTc) which I wholeheartedly recommend to watch for anyone with an interest in the topic. A couple of highlights stood out.
 
-First, the speaker goes over the basics (and BASIC, too) of falling sand games quite extensively. This shows an implementation which does not rely on a real CA, but rather on a single-buffered version of the game which loops over the grid bottom-up:
+First, the speaker goes over the basics (and BASIC, too) of falling sand games quite extensively. This shows an implementation which does not rely on a real CA, but rather on a single-buffered version of the game which loops over the grid bottom-up, something like this:
 
 ```plain
 for each row starting from bottom:
 	for each column:
-		if there's sand at row, column
+		if there's sand at (row, column):
 			drop it down if there's empty space
 			drop it down-right if there's empty space
 			drop it down-left if there's empty space
 ```
 
-Something like that. This works fine if the only thing you're simulating is air and sand.
+This works fine if you're only simulating a couple of materials (sand and empty space) which behave similarly.
 
 ![Screenshot from the presentation](/images/2020/gdc_noita1.png)
 
-It is still relatively easy to add in water. Water is very much like sand, except that:
+It is still relatively easy to add in water, which is very much like sand, except that:
 
 ```plain
 for each row starting from bottom:
 	for each column:
-		if there's sand at row, column
+		if there's sand at (row, column):
 			drop it down if there's empty space
 			drop it down-right if there's empty space
 			drop it down-left if there's empty space
-		if there's water at row, column
+		else if there's water at (row, column):
 			drop it down if there's empty space
 			drop it down-right if there's empty space
 			drop it down-left if there's empty space
@@ -71,26 +71,26 @@ for each row starting from bottom:
 			move it left if there's empty space
 ```
 
-Sound's easy right? Well, if you're like me and have spent a couple of hours implementing a full CA engine to do this, you might argue:
+Sound's easy right? Well, if you're like me and have spent a couple of hours implementing a CA-style engine to do this, you might argue:
 
 - What if we want sand to float to the top of water? Can non-empty pixels displace each other?
-- Based on the for each column loop, water will have a tendency to move right-wards (or left-wards, which-ever check is performed first)
+- Based on the `for each column` loop, water will have a tendency to move right-wards (or left-wards, which-ever check is performed first)
 - How does this scale to more materials with more complex interactions?
 - Specifically, what if we add gasses which should go upwards? The whole reason one typically implements a bottom-up loop is because of the assumption of gravity. If we would go top-down, the simulation will quickly enter a gap-pattern:
 
-![Illustration of the Gap Pattern Issue](/images/2020/cel_gap.png)
+![Illustration of the gap pattern Issue](/images/2020/cel_gap.png)
 
-The figure above shows five steps of a simulation where we'd be using a top-down loop. In the first time step, we've just drawn five water droplet above each other. For the second frame, the game loops over the first four, but can't move them down (assume we're moving downwards only for now) as there's another pixel blocking them. The fifth (lowest) pixel can be moved down. For the third frame, the same problem occurs again for the top three pixels. The second to last pixel can be moved down (as there's an empty spot not), and the fifth pixel can be moved down as well. This naturally leads to a dispersed one-in-between pattern.
+The figure above shows five steps of a simulation where we'd be using a top-down loop. In the first time step, we've just drawn five water droplets above each other. For the second frame, the game loops over the first four, but can't move them down (assume we're moving downwards only for now) as there's another pixel blocking them. The fifth (lowest) pixel can be moved down. For the third frame, the same problem occurs again for the top three pixels. The second to last pixel can be moved down (as there's an empty spot not), and the fifth pixel can be moved down as well. This naturally leads to a dispersed one-in-between pattern.
 
 Hower, with materials moving upwards (e.g. steam), the issue will reappear with a bottom-up style loop.
 
-So okay, let's argue that it's a simplification for the sake of the presentation, as we can observe that the Noita engine is more involved. Let's continue. The presenter shows a simple game with only one simulated liquid (blood), but with a nice trick that rigid bodies can interact with pixels and displace them further away.
+So okay, let's argue that it's a simplification for the sake of the presentation, as we can observe that the Noita engine is more involved. Let's continue. The presenter shows a simple game with only one simulated liquid (blood), but with a nice trick that rigid physics bodies can interact with pixels and displace them further away.
 
 > When the player jumps in the blood, it takes the surrounding pixels and puts them in a particle simulation with velocity and gravity. This can make liquids look less blobby and we're still using this. [paraphrased]
 
-This is extremely neat. We won't dive into that idea here, but might later. The approach to convert moving rigid bodies to pixel bodies by applying marching squares is very nice, as is the fact that some pixels can be temporarily taken out of the simulation and dealt with by a normal particle engine to make things more lively. It doesn't answer our initial questions.
+This is extremely neat. We won't dive into that idea here, but might later. The approach to move pixels into a particle simulation is interesting, as well as the interaction with rigid bodies which themselves can be placed in and out the simulation by applying marching squares is very nice (as shown later in the presentation).
 
-Next up, the multithreading aspect is discussed. To do so, the world is divided into chunks. Each chunk keeps a dirty rect of things to be updated to limit the simulation. It gets a bit technical here, but something crucial is revealed:
+Next up, the multithreading aspect is discussed. To do so, the world is indeed divided into chunks. Each chunk keeps a dirty rect of things to be updated to limit the simulation. It gets a bit technical here, but something crucial is revealed:
 
 > The problem with adding multithreading is that it uses the same buffer. There's no two buffers. So you need to make sure the same pixel is not updated by multiple threads. [paraphrased]
 
@@ -98,7 +98,7 @@ The solution presented is a checkboard style update, but what stood out to me wa
 
 > We guarantee that no pixel can be moved more than 32 pixels away. [paraphrased]
 
-In summary, the talk is very revealing. The remainder of it goes over the design. It does leave us hanging a bit in terms of the exact details and how we can answer the questions posed above. One of the audience members in fact asks the same question (around 28:00):
+In summary, the talk is very revealing. The remainder of it goes over the design. It does leave us hanging a bit in terms of the exact details and whether Noita really doesn't use a CA approach. One of the audience members in fact asks the same question (around 28:00):
 
 > You mentioned that the simulation is single buffered, did you try double buffering?
 > - This is just how we got going. But later on I also noticed that when you do double buffering, you have to update everything even when applying multi threading.
@@ -115,7 +115,7 @@ The next step was trying to Google around for open source implementations of the
 
 > My surprise was that they don't double buffer. Most programs involve drawing to a buffer rather than directly on screen when the frame is being assembled.
 
-As commenters argue, the discussion has nothing to do with double or triple frame buffering. We're only talking about the simulation engine. The actual drawing routines are of course multiple-buffered and draw UI as well as particle elements on top. In fact, we've just seen how a lot of Noita's believability comes from a particle system which pretends its adding in simulated pixels. Spell, splash, and explosion effects for instance. That's an amazing feat in itself, but we're razor focused on the simulation engine here.
+As commenters argue, the discussion has nothing to do with double or triple *frame* buffering. We're only talking about the pixel simulation engine. The actual drawing routines are of course multiple-buffered and draw UI as well as particle elements on top. In fact, we've just seen how a lot of Noita's believability comes from a particle system which pretends its adding in simulated pixels. Spell, splash, and explosion effects for instance. That's an amazing feat in itself, but we're razor focused on the simulation engine here.
 
 Stuck deep in some of those comments, I also found [this YouTube video](https://www.youtube.com/watch?v=VLZjd_Y1gJ8) (Recreating Noita's Sand Simulation in C and OpenGL | Game Engineering) which actually puts out code and tries to follow the same approach. And what do you know, it looks like it works:
 
@@ -123,7 +123,7 @@ Stuck deep in some of those comments, I also found [this YouTube video](https://
 
 I especially like how the sand mingles with the water. This is exactly what I was referring to above and the GDC video didn't directly address. Noita heavily simulates materials with different densities, so in case you want to simulate pixels-as-objects, they need to be able to displace other pixels.
 
-Fantastically, the author of the video also [makes their code available](https://github.com/GameEngineering/EP01_SandSim). A quick perusal through the source code confirms it follows very much the non-CA style, and we can play around with the binary. The simulation is very solid:
+Fantastically, the author of the video also [makes their code available](https://github.com/GameEngineering/EP01_SandSim). A quick perusal through the source code confirms it follows very much the non-CA style, and we can play around with the binary. The simulation is very solid (even although the code reveals that the author also had a hard time with some aspects which arise in a single-buffered engine):
 
 ![Playing around](/images/2020/gdc_noita4.png)
 
@@ -131,7 +131,7 @@ What I especially like is that here too, materials are displaced and are moving 
 
 ![Pixels can move around a lot](/images/2020/gdc_noita2.png)
 
-In fact, this helps to alleviate the problem of the "gap" pattern somewhat with gasses, as mentioned above. The result is somewhat more random, looking movement, but actually helps to increase realism.
+In fact, this helps to alleviate the problem of the "gap" pattern as mentioned above. The result is somewhat more random, looking movement, but actually helps to increase realism.
 
 I was kind off planning to leave it here and conclude that single-buffered pixel-as-object approaches are indeed a fine alternative for CA. Remember that the last thing we did was:
 
@@ -140,19 +140,15 @@ I was kind off planning to leave it here and conclude that single-buffered pixel
 
 (You can play around with the simulation above. Pressing `o` cycles through the different material types to draw, `p` (un)pauses the simulation, `d` toggles debugging mode. Press `r` to reset everything. The initial setup loads in a closed system where water is heated, cycled, and cooled down.)
 
-Even if this alternative sometimes occurs a situation where a pixel is destroyed (and hence cannot deterministally represent a closed loop system), it would be acceptable in a game environment.
+Even if this alternative sometimes encounters a situation where a pixel is destroyed (and hence cannot deterministally represent a closed loop system), it would be acceptable in a game environment.
 
 But there was one more thing I wanted to try. Image we make an hourglass style setup with sand at the top part and steam at the bottom, and then open up the middle part:
 
 ![Hmmm...](/images/2020/gdc_noita5.png)
 
-That's no good. The steam particles are blocking the sand. Okay, this doesn't happen with water, and steam disappears over time so this issue resolves itself quite quickly. Still, the Noita engine seems to be more clever here. The same goes for liquids with different densities:
+That's no good. The steam particles are blocking the sand. Okay, this doesn't happen with water, and steam disappears over time so this issue resolves itself quite quickly. Still, the Noita engine seems to be more clever here.
 
-![Hmmm...](/images/2020/gdc_noita6.png)
-
-Acid doesn't really float to the top of the water, but only slightly floats up before disappearing as well.
-
-So with that noted, I wanted to see what a minimal implementation which would be able to handle this would look like. To summarize, we're going to start by implementing a single buffer, pixels-as-objects, non-CA approach, without the particle system, rigid bodies, higher-than-Moore rank neighborhoods, multi-threading and shaders (which are used to make e.g. bodies of water more fluid-looking). In other words, we won't go nearly as far as Noita's Falling Everything engine, but we do want to prove that the single buffer, pixels-as-objects approach can work, and also illustrate some of the problems compared with a CA approach.
+With that noted, I wanted to see what a minimal implementation which would be able to handle this would look like. To summarize, we're going to start by implementing a single-buffer, pixels-as-objects, non-CA approach, without the particle system, rigid bodies, higher-than-Moore rank neighborhoods, multi-threading and shaders (which are used to make e.g. bodies of water more fluid-behaving). In other words, we won't go nearly as far as Noita's Falling Everything engine, but we do want to prove that the approach can work, and also illustrate some of the problems compared with a CA approach.
 
 # A Minimal Implementation
 
@@ -219,11 +215,11 @@ You can play around with the result below:
 <div src="/iframes/cellular4/index-initial.html"
 	class="toggle" scrolling="no" frameborder="0" width="660" height="460"></div>
 
-Obviously, this is not perfect yet (you'll not that sand stacks on top of water), but before we fix that, there are a couple of other things to take care of. First of all, take a look at what happens if we drop water:
+Obviously, this is not perfect yet (you'll note that sand stacks on top of water), but before we fix that, there are a couple of other things to take care of. First of all, take a look at what happens if we drop water:
 
 ![A horizontal gap pattern appears](/images/2020/water1.gif)
 
-Not only does the water not flow naturally, it also creates a strange horizontal gap pattern. The reason why this happens is due to the order by which we go over the columns in each row:
+Not only does the water not flow naturally (it jumps to the right end), it also creates a strange horizontal gap pattern. The reason why this happens is due to the order by which we go over the columns in each row:
 
 ```javascript
 visit_grid(func) {
@@ -244,9 +240,9 @@ if (pixel.material.name == 'water') {
 }
 ```
 
-Imagine we have two water pixels with an empty space in between. Since we check from left to right, and we prefer to move right first, water will have a tendency to end up right-sided. Once there, the water creates gaps in between drops. The reason for this is because we first attempt to move a pixel to the right, then go right one step (which now has the previous pixel), can't move it right again, so move it left.
+Imagine we have two water pixels with an empty space in between. Since we check from left to right, and we prefer to move right first, water will have a tendency to end up right-sided. Once there, the water creates gaps in between drops. The reason for this is because we first attempt to move a pixel to the right, then go right one step (which now has the previous pixel), can't move it right again, so move it left, back to its original spot.
 
-We need to solve this problem first. Perhaps, once we have moved a pixel once in the current loop, we should avoid moving it again in the same update. So we will set use a dirty flag for pixels which gets set to false before each update, and then set to true once we have moved a pixel. Our update function then skips over dirty pixels.
+We need to solve this problem first. Perhaps, once we have moved a pixel once in the current loop, we should avoid moving it again in the same update. So we will use a dirty flag for pixels which gets set to false before each update, and then set to true once we have moved a pixel. Our update function then skips over dirty pixels.
 
 You can play with the result below:
 
@@ -261,8 +257,7 @@ Additionally, water still doesn't flow very naturally:
 
 ![Oscillating behavior](/images/2020/water3.gif)
 
-This is an issue which is hard to solve with single buffered simulation approaches, and is not trivial to fix. One common way is to alternate the direction of the update loop, e.g. based on the frame counter:
-
+This is an issue which is hard to solve with single buffered simulation approaches, and is not trivial to fix. One common way is to alternate the direction of the update loop, e.g. based on the frame counter (in fact, the code we found above also does so):
 
 ```javascript
 visit_grid(func) {
@@ -282,16 +277,22 @@ var firstSide = random() < 0.5 ? 1 : -1;
 var secondSide = firstSide < 0 ? 1 : -1;
 ```
 
-This helps a bit, but still leads to behavior which is somewhat erratic:
+This helps a bit, but still leads to behavior which is somewhat erratic (i.e. it can take a long time before a mass of water finds its stable, settled position):
 
 <div src="/iframes/cellular4/index-bf.html"
 	class="toggle" scrolling="no" frameborder="0" width="660" height="460"></div>
 
 # Improving the Simulation
 
-How do we continue to improve the simulation to make this behave a bit better. Basically, we'd like to solve two issues with our water. First, we'd like it to flow downwards where possible as quick as possible. Second, once it has reached a stable state, we'd like to avoid some pixels from erratically moving left and right forever. For the first problem, we could for instance consider higher-than-Moore rank neighborhoods, e.g. have water flow downwards move than one pixel away if there's no solid blocking the path. This could be done with a simple line ray check using [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm). The second problem could be avoided by checking if there is an empty spot available in the row under the pixel the pixel could eventually end up at. This is an extensive check though, and if resort to implementing this, we'd actually not be far away from implementing realistic pressure.
+How do we continue to improve the simulation to make this behave a bit better?
 
-However, we can also solve this by means of a simpler heuristic. We can assign assign each pixel a velocity vector which in this case is bounded to point to the right or left only. When we do a move check, we prefer trying going in the same direction first for each pixel. When we bump into something at the same height of us, we wait one world update iteration before checking the moves again but already change the velocity to point to the other side:
+Basically, we'd like to solve the following issues for our water. First, we'd like it to flow downwards where possible as quick as possible. Second, once it has reached a stable state, we'd like to avoid some pixels from erratically moving left and right forever. Third, we also want a row of water to be neatly filled up when possible, without in-between gaps.
+
+For the first problem, we could for instance consider higher-than-Moore rank neighborhoods, e.g. have water flow downwards move than one pixel away if there's no solid blocking the path. This is what Noita and the code we found does. This could be done with a simple line ray check using [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm). Alternatively, we could also go for a more full-on particle-simulation where we give each pixel a velocity vector. If we ensure this to be below the unit vector in size, pixels can still spread around in all directions but cannot mvoe past walls.
+
+The second problem could be avoided by checking if there is an empty spot available in the row under the pixel the pixel could eventually end up at. This is an extensive check though, and if resort to implementing this, we'd actually not be far away from implementing realistic pressure.
+
+However, we can also improve our situation by means of a simpler heuristic. That is, let's assign assign each pixel a velocity vector as mentioned above, but let us bound it to point to the right or left only. When we do a move check, we prefer trying going in the same direction first for each pixel. When we bump into something at the same height of us, we wait one world update iteration before checking the moves again but already change the velocity to point to the other side:
 
 ```javascript
 for (var move of checkMoves) {
@@ -316,7 +317,7 @@ The reason why we do the latter is because if we wouldn't, we would again get os
 <div src="/iframes/cellular4/index-vel.html"
 	class="toggle" scrolling="no" frameborder="0" width="660" height="460"></div>
 
-One thing you'll notice is that water pixels will still glide along a surface without ever settling down. If you look closely, this actually also happens in Noita and even in the example we found previously (although it is hard to see due to the pixels being so small). To resolve this, we could have pixels settle down once they've moved (in the same row) for *n* steps, and bring them back to live of e.g. their neighborhood changes. For now, we'll leave this is as.
+One thing you'll notice is that water pixels will still glide along a surface without ever settling down. If you look closely, this also sometimes happens in Noita and even in the example we found previously (although it is hard to see due to the pixels being so small). To resolve this, we could have pixels settle down once they've moved (in the same row) for *n* steps, and bring them back to life if e.g. their neighborhood changes. For now, we'll leave this is as.
 
 # Handling Densities
 
@@ -400,7 +401,7 @@ And this is the result. Try playing around with water, steam, and oil and see ho
 <div src="/iframes/cellular4/index-density.html"
 	class="toggle" scrolling="no" frameborder="0" width="660" height="460"></div>
 
-(Of course, the real world is always more complex, even when aiming to handle the simplest concepts only. Sand, for instance, is in a kind of intermediate solid-fluid state where it actually would disperse in a different way under water.)
+(Of course, the real world is always more complex, even when aiming to handle the simplest concepts only. Sand, for instance, is in a kind of intermediate solid-fluid state where it actually would disperse in a different way under water. [It's actually a very hard case for physics in general](https://www.nytimes.com/2020/11/09/science/what-makes-sand-soft.html).)
 
 # Adding Interactions
 
@@ -534,13 +535,12 @@ This has been a long post. The code fragments might seem out of place but you ca
 
 There's a couple of noteworthy things still to tackle:
 
-- Not that the bottom-up world update still stands. This means that e.g. steam has a tendency to immediately disperse when drawn in a vertical line (you can see this above). Strangely, this doesn't look too bad for gasses
-- We haven't dealt with higher order neighborhoods at all. See the discussion on this above. However, this wouldn't be too hard to add in at this stage
-- More generally, we might want to go towards a more realistic particle-style approach where we give each pixel a real velocity vector with ray check. This could also help to "splash up" liquids when a solid falls into them
-- Multithreading hasn't been dealt with at all -- but this is deliberately not a focus here. I'm also incapable quite honestly to implement this in JavaScript and p5.js
-- The same goes for shaders and more "effects. Again, this is a bare-bones as close to the basic simulation as we can get exercise. Not a full game engine
-- And similarly, rigid bodies are not dealt with at all
-- However, I **am convinced** now that single buffered simulation engines can be a viable and workable alternative for cellular automata. This comes with a lot of drawbacks (oscillation and so on), but also has nice benefits (interactions, more straightforward coding, faster)
-- Finally, something fun which we did tackle in an earlier part but didn't do here was pressure. I mentioned above that even a heuristic approach to do this (Dwarf Fortress style) is quite expensive. However, I do have a weird alternative idea for this: what if we go full rigid body simulation and simulate each particle as a unit circle but with mass determined by the distance from the bottom row? This could be easily investigated with something like [Box2D](https://box2d.org/), I think
+- Note that the bottom-up world update still stands. This means that e.g. steam has a tendency to immediately disperse when drawn in a vertical line (you can see this above). Luckily, this doesn't look too bad for gasses
+- We haven't dealt with higher order neighborhoods at all. See the discussion on this above. However, this wouldn't be too hard to add in at this stage, and we might do so in an eventual next part. More generally, we might want to go towards a more realistic particle-style approach where we give each pixel a real velocity vector. This could also help to "splash up" liquids when a solid falls into them
+- Multithreading hasn't been dealt with at all -- but this is deliberately not a focus here. I'm also quite honestly incapable to implement this in JavaScript and p5.js
+- The same goes for shaders and more effects. Again, this is a bare-bones as close to the basic simulation as we can get exercise. Not a full game engine
+- And similarly, rigid body physics are not dealt with at all
+- However, I am now convinced that single buffered simulation engines can be a viable and workable alternative for cellular automata. This comes with a lot of drawbacks (oscillation and so on), but also has nice benefits (interactions, more straightforward coding, faster)
+- Finally, something fun which we did tackle in an earlier part but didn't do here was pressure. I mentioned above that even a heuristic approach to do this (Dwarf Fortress style) is quite expensive. However, I do have a weird alternative idea for this: what if we not only adopt a full-on particle systems for the pixels but perhaps also simulate each particle as a unit circle in a more modern physics engine with mass determined by the distance from the bottom row? This could be easily investigated with something like [Box2D](https://box2d.org/), I think. Maybe also something for later
 
-In any case, these are some points to discuss for an optional Part 5, should it arrive.
+In any case, these are enough points to discuss for an optional Part 5, should it arrive.
