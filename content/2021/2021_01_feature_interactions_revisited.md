@@ -58,7 +58,7 @@ def compute_h_val(f_vals, selectedfeatures):
     denom_els = f_vals[tuple(selectedfeatures)].copy()
     for n in range(len(selectedfeatures)-1, 0, -1):
         for subfeatures in itertools.combinations(selectedfeatures, n):
-			sign = -1 if n == selectedfeatures - 1 else + 1
+			sign = -1 if n == selectedfeatures - 1 else +1
             numer_els += sign * f_vals[tuple(subfeatures)]
     numer = np.sum(numer_els**2)
     denom = np.sum(denom_els**2)
