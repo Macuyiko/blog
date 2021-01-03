@@ -311,13 +311,6 @@ class Game {
         }
     }
 
-    drawAll() {
-        this.drawBoard();
-        this.drawGems();
-        this.drawScore();
-        this.drawGrabbedTile();
-    }
-
 }
 
 
