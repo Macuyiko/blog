@@ -43,7 +43,7 @@ The problem, however, is that it is easy to drop features using this strategy in
 
 As an example, let us construct a synthetic data set where `y ~ x0 * x1 + x2 + noise`. I.e. x0 and x1 interact. If we train a random forest or gradient boosting model even such a simple data set and assess the feature importance scores using scikit-learn, the problem becomes clear:
 
-```plain
+```text
 print(gbr.feature_importances_)
 print(rfr.feature_importances_)
 
@@ -53,7 +53,7 @@ random forest rankings:			[0.19065131, 0.18586131, 0.62348737]
 
 scikit-learn doesn't implement permutation based importance rankings (at the time of writing; note that `feature_importances_` uses impurity based importance), but using `rfpimp` yields a similar result:
 
-```plain
+```text
 gradient boosting rankings:		[0.35668364, 0.37945421], 1.17092419]
 random forest rankings:			[0.42673270, 0.43211179], 1.24873006]
 ```
@@ -147,8 +147,8 @@ There are other aspects to consider as well (e.g. with regards to sampling to sp
 
 Especially in Python, the situation regarding the H-measure looks a bit bleak. Using `pdpbox` to extract partial dependence values, we can however set up an implementation of both measures which work for any model. For two-way interactions (hiding the exact calculation of the H-measure until a bit later), we can compare our result with what `sklearn_gbmi` tells us for H2(jk):
 
-```plain
-gradient boosting (first result is `sklearn_gbmi`, second is ours):
+```text
+gradient boosting (first result is sklearn_gbmi, second is ours):
 ('x0', 'x1') 0.3694527407798142 	0.21799393342197507
 ('x0', 'x2') 0.04741546008708799 	0.037965435191138985
 ('x1', 'x2') 0.0350484030284537 	0.03754977728770199
@@ -278,7 +278,7 @@ def pdp_multi_interact(model, dataset, model_features, features,
 
 And can now call:
 
-```plain
+```text
 pdp_multi_interact(gbr, tr_X, xs.columns, ['x0', 'x1', 'x2'])
 
 	x0			x1			x2			preds
@@ -353,7 +353,7 @@ def compute_h_val_any(f_vals, allfeatures, selectedfeature):
 
 Testing this on one of our models, we get, for the first-order H measure:
 
-```plain
+```text
 x0 is in interaction: 0.2688984990347688
 x1 is in interaction: 0.26778914050926556
 x2 is in interaction: 0.10167180905369481
@@ -361,8 +361,8 @@ x2 is in interaction: 0.10167180905369481
 
 We can then calculate the second-order H-measure, also for higher-order interactions:
 
-```plain
-gradient boosting (first result is `sklearn_gbmi`, second is ours):
+```text
+gradient boosting (first result is sklearn_gbmi, second is ours):
 ('x0', 'x1') 		0.3694527407798142 		0.3965718336359157
 ('x0', 'x2') 		0.04741546008708799 	0.04546491988445405
 ('x0', 'x1', 'x2') 	0.030489287134804244 	0.028760391025931864
@@ -371,7 +371,7 @@ random forest:
 ('x0', 'x1') 								0.42558760788710415
 ('x0', 'x2') 								0.05978441740731955
 ('x0', 'x1', 'x2') 							0.07713738471773776
-```plain
+```
 
 And that's it; a lot of "set-up" for a relatively simple payoff, though it does reveal how a deep understanding of the techniques you use is necessary to know in which cases they can fail, as well as the importance of taking a look at implementations to see what exactly they implement and what they do not.
 
