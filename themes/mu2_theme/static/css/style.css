@@ -1,34 +1,62 @@
-html { background: white; }
+html {
+	background: white;
+}
 
 body {
 	position: relative;
 	top: 0;
 	background-color: transparent;
 	height: 100%;
-	word-wrap:break-word;
+	word-wrap: break-word;
 	font-family: Bitter, Georgia, serif;
 	font-size: 1em;
 }
 
-iframe { margin-bottom: 2em; }
+iframe {
+	margin-bottom: 2em;
+}
 
-.highlighttable { border: 0 !important;  }
-.linenos { display: none !important; }
-td.code .highlight, td.linenos .linenodiv { border: 0 !important; }
-.highlighttable div.highlight { max-width: 60em !important; }
+.highlighttable {
+	border: 0 !important;
+}
 
-code { color: #444; }
+.linenos {
+	display: none !important;
+}
 
-ol li ul, ol li ol {  margin-bottom: 1.25em; }
-li { margin-left: 2em; }
+td.code .highlight, td.linenos .linenodiv {
+	border: 0 !important;
+}
+
+.highlighttable div.highlight {
+	max-width: 60em !important;
+}
+
+code {
+	color: #444;
+}
+
+ol li ul, ol li ol {
+	margin-bottom: 1.25em;
+}
+
+li {
+	margin-left: 2em;
+}
 
 article {
 	padding-left: 1em;
 	margin-bottom: 4em;
 }
 
-footer { color: #999; font-size: .7em; }
-footer div.row { padding-left: 1em; }
+footer {
+	color: #999;
+	font-size: .7em;
+}
+
+footer div.row {
+	padding-left: 1em;
+}
 
 .postheader {
 	position: relative;
@@ -78,8 +106,7 @@ footer div.row { padding-left: 1em; }
 
 .contentwrapper pre {
 	max-width: 100%;
-	font-family: 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
-	word-wrap: normal;
+	font-family: "JuliaMono-Regular", 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
 	white-space: pre;
 	margin-top: 1em;
 	margin-bottom: 1em;
@@ -90,6 +117,7 @@ footer div.row { padding-left: 1em; }
 	padding: 1em;
 	overflow: auto;
 	font-size: .85em;
+	line-height: 120%;
 }
 
 .caption {
@@ -113,10 +141,12 @@ footer div.row { padding-left: 1em; }
 
 .videowrapper {
 	position: relative;
-	padding-bottom: 56.25%; /* 16:9 */
+	padding-bottom: 56.25%;
+	/* 16:9 */
 	padding-top: 25px;
 	height: 0;
 }
+
 .videowrapper iframe {
 	position: absolute;
 	top: 0;
@@ -151,48 +181,110 @@ ul.button-group.navigation {
 	margin-bottom: 1em;
 }
 
-div.sidebar-title { margin-top: 1em; font-weight: bold; }
-.side-nav li a { color: #222; padding: 0em; }
-.side-nav li a:hover { text-decoration: underline; }
-.side-nav { padding: 0.5em 0; }
+div.sidebar-title {
+	margin-top: 1em;
+	font-weight: bold;
+}
 
-.article-info { color: #aaa; }
+.side-nav li a {
+	color: #222;
+	padding: 0em;
+}
+
+.side-nav li a:hover {
+	text-decoration: underline;
+}
+
+.side-nav {
+	padding: 0.5em 0;
+}
+
+.article-info {
+	color: #aaa;
+}
+
 .article-title {
-	margin-bottom: 0.2em; 
+	margin-bottom: 0.2em;
 	color: #444;
 	font-size: 2em;
 	font-weight: bold;
 }
-.article-title a { color: #222; }
+
+.article-title a {
+	color: #222;
+}
+
 .article-subtitle {
 	color: #444;
 	font-size: 1.2em;
 	font-style: italic;
 }
 
-#articlecontainer > article > p:nth-of-type(1), .article-summary {
+#articlecontainer>article>p:nth-of-type(1), .article-summary {
 	margin-top: 2em;
 }
 
-h1 { margin-top: 2.5em; color: #222; font-size: 1.8em; font-weight: bold; font-family: Bitter, Georgia, serif; }
-h2 { margin-top: 1.2em; color: #333; font-size: 1.6em; font-weight: bold; font-family: Bitter, Georgia, serif; }
-h3 { margin-top: 1.2em; color: #444; font-size: 1.4em; font-weight: bold; font-family: Bitter, Georgia, serif; }
-h4 { margin-top: 1.0em; color: #555; font-size: 1.2em; font-weight: normal; font-family: Bitter, Georgia, serif; }
-h5 { margin-top: 1.0em; color: #666; font-size: 1.0em; font-weight: normal; font-family: Bitter, Georgia, serif; }
+h1 {
+	margin-top: 2.5em;
+	color: #222;
+	font-size: 1.8em;
+	font-weight: bold;
+	font-family: Bitter, Georgia, serif;
+}
 
-.subheader { color: #aaa; margin-bottom: 1.2em; }
-a.article-info { color: #aaa; }
+h2 {
+	margin-top: 1.2em;
+	color: #333;
+	font-size: 1.6em;
+	font-weight: bold;
+	font-family: Bitter, Georgia, serif;
+}
 
-.table-archive { border: none; }
+h3 {
+	margin-top: 1.2em;
+	color: #444;
+	font-size: 1.4em;
+	font-weight: bold;
+	font-family: Bitter, Georgia, serif;
+}
+
+h4 {
+	margin-top: 1.0em;
+	color: #555;
+	font-size: 1.2em;
+	font-weight: normal;
+	font-family: Bitter, Georgia, serif;
+}
+
+h5 {
+	margin-top: 1.0em;
+	color: #666;
+	font-size: 1.0em;
+	font-weight: normal;
+	font-family: Bitter, Georgia, serif;
+}
+
+.subheader {
+	color: #aaa;
+	margin-bottom: 1.2em;
+}
+
+a.article-info {
+	color: #aaa;
+}
+
+.table-archive {
+	border: none;
+}
 
 hr.article {
-    border: 0px;
-    height: 0px;
-    margin-top: 3em;
-    margin-bottom: 3em;
+	border: 0px;
+	height: 0px;
+	margin-top: 3em;
+	margin-bottom: 3em;
 }
 
 .gist table, .gist tbody, .gist tr, .gist td {
-    line-height: 1.4em;
-    font-size: 1em;    
+	line-height: 1.4em;
+	font-size: 1em;
 }

@@ -2,7 +2,7 @@ Title: Revisiting Discovery of Interaction Effects
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2021-01-03 11:37
 
-[In 2019](|filename|/2019/2019_02_model_interpretation), I wrote on the topic of discovering which features interact in a model agnostic manner, using an approach from a [paper by Friedman and Popescu](https://arxiv.org/pdf/0811.1679.pdf) entitled Predictive Learning Via Rule Ensembles. I wanted to revisit the topic briefly and expand on it somewhat, given that scikit-learn has progressed a bit since then.
+[In 2019](|filename|/2019/2019_02_model_interpretation.md), I wrote on the topic of discovering which features interact in a model agnostic manner, using an approach from a [paper by Friedman and Popescu](https://arxiv.org/pdf/0811.1679.pdf) entitled Predictive Learning Via Rule Ensembles. I wanted to revisit the topic briefly and expand on it somewhat, given that scikit-learn has progressed a bit since then.
 
 ## Permutation Feature Importance, Partial Dependence, and Individual Conditional Expectation Plots
 
