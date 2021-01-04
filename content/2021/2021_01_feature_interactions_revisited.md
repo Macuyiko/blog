@@ -8,7 +8,7 @@ Date: 2021-01-03 11:37
 
 First the good news: scikit-learn has added support both for [permutation based feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) (and should now be your go-to approach instead of the `feature_importances_` attribute) as well as support for [partial dependence plots](https://scikit-learn.org/stable/modules/partial_dependence.html). ICE plots are also supported in the latest version through the `kind` parameter.
 
-Since `plot_partial_dependence` supports two-way interactions as well, this by itself already removes having to depend on lots of other libraries ( though I still recommend [`rfpimp`](https://github.com/parrt/random-forest-importances), if only for their more explicit handling of feature correlation).
+Since `plot_partial_dependence` supports two-way interactions as well, this by itself already removes having to depend on lots of other libraries (though I still recommend [`rfpimp`](https://github.com/parrt/random-forest-importances), if only for their more explicit handling of feature correlation).
 
 ## Revisiting Friedman's H-statistic
 
