@@ -1,3 +1,36 @@
+@font-face {
+	font-family: JuliaMono-Regular;
+	src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@latest/webfonts/JuliaMono-Regular.woff2");
+}
+
+@font-face {
+	font-family: JuliaMono-Medium;
+	src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@latest/webfonts/JuliaMono-Medium.woff2");
+	font-display: fallback;	/* allow 100 milliseconds then display fallback */
+	unicode-range: U+0020-00FF, U+2049-2050, U+2000-2020;
+}
+
+@font-face {
+	font-family: JuliaMono-Bold;
+	src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@latest/webfonts/JuliaMono-Bold.woff2");
+	font-display: fallback;	/* allow 100 milliseconds then display fallback */
+	unicode-range: U+0020-00FF, U+2049-2050, U+2000-2020;
+}
+
+@font-face {
+	font-family: JuliaMono-ExtraBold;
+	font-display: fallback;	/* allow 100 milliseconds then display fallback */
+	src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@latest/webfonts/JuliaMono-ExtraBold.woff2");
+	unicode-range: U+0020-00FF, U+2049-2050, U+2000-2020;
+}
+
+@font-face {
+	font-family: JuliaMono-Black;
+	font-display: fallback;	/* allow 100 milliseconds then display fallback */
+	src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono@latest/webfonts/JuliaMono-Black.woff2");
+	unicode-range: U+0020-00FF, U+2049-2050, U+2000-2020;
+}
+
 html {
 	background: white;
 }
@@ -105,14 +138,9 @@ footer div.row {
 	word-wrap: normal !important;
 }
 
-@font-face {
-    font-family: JuliaMono-Regular;
-    src: url("https://blog.macuyiko.com/theme/css/JuliaMono-Regular.woff2");
-}
-
 .contentwrapper pre {
 	max-width: 100%;
-	font-family: "JuliaMono", "JuliaMono-Regular", 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
+	font-family: JuliaMono-Regular, 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
 	white-space: pre;
 	margin-top: 1em;
 	margin-bottom: 1em;
