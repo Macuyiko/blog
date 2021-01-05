@@ -65,11 +65,6 @@ td.code .highlight, td.linenos .linenodiv {
 	max-width: 60em !important;
 }
 
-code {
-	color: #444;
-	font-weight: normal !important;
-}
-
 ol li ul, ol li ol {
 	margin-bottom: 1.25em;
 }
@@ -150,8 +145,14 @@ footer div.row {
 	border-left: 1px solid #ccc;
 	padding: 1em;
 	overflow: auto;
-	font-size: .85em;
+	font-size: .75em;
 	line-height: 120%;
+}
+
+code {
+	color: #444;
+	font-family: JuliaMono-Regular, 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
+	font-weight: normal !important;
 }
 
 .caption {
