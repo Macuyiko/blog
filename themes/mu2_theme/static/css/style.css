@@ -34,6 +34,7 @@ td.code .highlight, td.linenos .linenodiv {
 
 code {
 	color: #444;
+	font-weight: normal !important;
 }
 
 ol li ul, ol li ol {
@@ -104,9 +105,14 @@ footer div.row {
 	word-wrap: normal !important;
 }
 
+@font-face {
+    font-family: JuliaMono-Regular;
+    src: url("https://blog.macuyiko.com/theme/css/JuliaMono-Regular.woff2");
+}
+
 .contentwrapper pre {
 	max-width: 100%;
-	font-family: "JuliaMono-Regular", 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
+	font-family: "JuliaMono", "JuliaMono-Regular", 'Source Code Pro', 'Consolas', 'Courier New', 'monospace';
 	white-space: pre;
 	margin-top: 1em;
 	margin-bottom: 1em;
