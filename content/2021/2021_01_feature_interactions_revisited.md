@@ -4,7 +4,7 @@ Date: 2021-01-03 11:37
 
 [In 2019](|filename|/2019/2019_02_model_interpretation.md), I wrote on the topic of discovering which features interact in a model agnostic manner, using an approach from a [paper by Friedman and Popescu](https://arxiv.org/pdf/0811.1679.pdf) entitled Predictive Learning Via Rule Ensembles. I wanted to revisit the topic briefly and expand on it somewhat, given that scikit-learn has progressed a bit since then.
 
-## Permutation Feature Importance, Partial Dependence, and Individual Conditional Expectation Plots
+## On Permutation Feature Importance, Partial Dependence, and Individual Conditional Expectation Plots
 
 First the good news: scikit-learn has added support both for [permutation based feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) (and should now be your go-to approach instead of the `feature_importances_` attribute) as well as support for [partial dependence plots](https://scikit-learn.org/stable/modules/partial_dependence.html). ICE plots are also supported in the latest version through the `kind` parameter.
 
@@ -48,7 +48,7 @@ def compute_h_val_any(f_vals, allfeatures, selectedfeature):
 
 <div style="padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 2px; background-color: #eee;">
 <p><strong>Side note</strong></p>
-<p>The second order measure function is based on the <a href="https://github.com/ralphhaygood/sklearn-gbmi/blob/master/sklearn_gbmi/sklearn_gbmi.py#L207">implementation in sklearn-gbmi</a>, but looking at it now I am not 100% convinced its interpretation of the measure is correct. First, it returns `np.nan` in case it turns out to be higher than one (which technically, can happen). Second, it flips the sign around for every group size, though the original paper states that:</p>
+<p>The second order measure function is based on the <a href="https://github.com/ralphhaygood/sklearn-gbmi/blob/master/sklearn_gbmi/sklearn_gbmi.py#L207">implementation in sklearn-gbmi</a>, but looking at it now I am not 100% convinced its interpretation of the measure is correct. First, it returns `np.nan` in case it turns out to be higher than one (which technically, can actually happen, so I have amended this in the code above). Second, it flips the sign around for every group size, though the original paper states that:</p>
 <p><blockquote>This quantity tests for the presence of a joint three-variable interaction [...] by measuring the fraction of variance of H(jkl) not explained by the lower order interaction effects among these variables. Analogous statistics testing for even higher order interactions can be derived, if desired.</blockquote></p>
 <p>Based on which I'd probably use the following instead:</p>
 
@@ -65,7 +65,7 @@ def compute_h_val(f_vals, selectedfeatures):
     return np.sqrt(numer/denom)
 ```
 
-<p>I'm leaving it as is since we're not going to explore four-way and higher interactions (for two and three-way interactions, both give the same result), but I open to hear what the correct interpretation would look like.</p></div>
+<p>I'm leaving it as is since we're not going to explore four-way and higher interactions (for two and three-way interactions, both give the same result), but I am open to hear what the correct interpretation would look like.</p></div>
 
 Both of these need a calculated set of `f_vals`: partial dependence values, which basically boils down to centered predictions of our predictive model for all possible subsets of features predicted over the same data set, either based on the original train/test data set itself, or a synthetic one constructed over a grid.
 
@@ -286,6 +286,8 @@ subsets = []
 h_vals = []
 
 feats = list(X.columns)
+
+f_vals = compute_f_vals_manual(model, X, feats=feats)
 
 for subset in feats:
     h_val = compute_h_val_any(f_vals, feats, subset)
