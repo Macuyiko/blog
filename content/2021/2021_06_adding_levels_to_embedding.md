@@ -6,7 +6,7 @@ A friend of mine recently asked whether there was an easy way to introduce new l
 
 Note that this is not necessarily a good idea: the presence of new levels typically indicates that your model is due for a full maintenance retraining. The context in which we were discussing this originally was in a singular value decomposition setup of users and items (as it common in a recommender system setting, for instance). The question was whether we could keep the item embedding space for existing items fixed when introducing new items. Note that here too, this is suboptimal (assuming new items are being rated by existing users [^fn1]), especially so when we also want to user embeddings to stay fixed.
 
-Let us approach the problem using an easier setting. We will assume we have a data set X with every instance Xi = i with i ∈ 0..I with I our initial number of levels. We will train a model using an embedding layer to M(X) → y ∈ [0, 1] i.e. a binary classification model. We will then introduce a data set X' with every instance X'i = i' with i' ∈ I+1..I' and see how we can retrain our embedding layer.
+Let us approach the problem using an easier setting. We will assume we have a data set X with every instance Xi = c with c ∈ 0..C with C our initial number of levels. We will train a model using an embedding layer to M(X) → y ∈ [0, 1] i.e. a binary classification model. We will then introduce a data set X' with every instance X'i = c' with c' ∈ C+1..C' and see how we can retrain our embedding layer.
 
 First of all we need some imports:
 
