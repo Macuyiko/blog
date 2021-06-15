@@ -48,5 +48,5 @@ DEFAULT_PAGINATION = 10
 
 # Template
 
-THEME = "themes/mu2_theme"
+THEME = "themes/mu_theme"
 
