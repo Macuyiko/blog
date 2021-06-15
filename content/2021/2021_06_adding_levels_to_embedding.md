@@ -36,7 +36,7 @@ num_categories_init = len(np.unique(X_init))     # 80
 num_categories_all  = len(np.unique(X_together)) # 100
 ```
 
-Note that `X_init` contains the levels indexed 0 up to 80 [^fn2], X_new contains levels indexed 80 up to 100.
+Note that `X_init` contains the levels indexed 0 up to 80 [^fn2], `X_new` contains levels indexed 80 up to 100.
 
 ## Initial Model
 
