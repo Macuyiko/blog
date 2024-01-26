@@ -4,7 +4,7 @@ Date: 2021-01-05 10:03
 
 TL;DR: very likely not.
 
-A student once asked me whether it would make sense to tune the probability cutoff (a.k.a. threshold) for random forests. Let's explain first what we mean by that exactly. Assume a binary classification setting. Say we've trained a single decision tree. We know that the prediction is given by the leaf node, and that a probability P(y=1|x) can be assigned by the number of training examples in leaf node with positive outcome divided by the number of all training examples in leaf node (note that this is a fixed ratio for each leaf node and does not change once the tree is trained). This is not a well-calibrated probability, but does allow to rank predictions.
+A student once asked me whether it would make sense to tune the probability cutoff (a.k.a. threshold) for trees in a random forests. Let's explain first what we mean by that exactly. Assume a binary classification setting. Say we've trained a single decision tree. We know that the prediction is given by the leaf node, and that a probability P(y=1|x) can be assigned by the number of training examples in leaf node with positive outcome divided by the number of all training examples in leaf node (note that this is a fixed ratio for each leaf node and does not change once the tree is trained). This is not a well-calibrated probability, but does allow to rank predictions.
 
 Given such a probability P(y=1|x), it is then possible to specify a threshold T so that if P(y=1|x) >= T, we assume the outcome to be 1, and 0 otherwise. We can then tune T (e.g. through cross-validation) to get an optimal cutoff point given a metric we desire to optimise (accuracy, F1, or something else...) [^fn1].
 
@@ -129,8 +129,8 @@ print(f"RF AUC (best threshold = {best_thres}):", best_auc)
 As can be seen, this best threshold comes close to our averaged value. When repeating the run with a different random seed, we can find cases where the best threshold does slightly better. So what to take from this?
 
 - Tuning the threshold of individual trees is most likely not worth it
-- Except when (for some reason) you're using depth-limited trees and can not use an averaged ensemble prediction probability (but in which case it would be easier to implement that instead)
-- It might play a more important role when incorporating less trees in the ensemble
+- Except when (for some reason) you're using depth-limited trees and can not use an averaged ensemble prediction probability (but in which case it would be easier and better to implement that instead)
+- It might play a more important role when incorporating less trees in the ensemble (in which case it's better to use more trees)
 - We've used the same threshold for every tree in the ensemble, but tuning this on a per-tree basis would lead even further down the rabbit hole (metalearning-like)
 
 So in short: stick instead to the basics.

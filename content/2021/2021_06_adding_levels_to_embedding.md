@@ -2,7 +2,7 @@ Title: Adding New Levels to a Keras Embedding Layer Without Having to Completely
 Author: Seppe "Macuyiko" vanden Broucke
 Date: 2021-06-14 20:57
 
-A friend of mine recently asked whether there was an easy way to introduce new levels to an embedding layer in Keras and only training the embedding layer for those new levels, i.e. keeping the weights for the existing indexes fixed.
+A friend of mine recently asked whether there was an easy way to introduce new levels (i.e. items) to an embedding layer in Keras and only training the embedding layer for those new levels, i.e. keeping the weights for the existing indices fixed.
 
 Note that this is not necessarily a good idea: the presence of new levels typically indicates that your model is due for a full maintenance retraining. The context in which we were discussing this originally was in a singular value decomposition setup of users and items (as it common in a recommender system setting, for instance). The question was whether we could keep the item embedding space for existing items fixed when introducing new items. Note that here too, this is suboptimal (assuming new items are being rated by existing users [^fn1]), especially so when we also want to user embeddings to stay fixed.
 

@@ -6,9 +6,9 @@ Date: 2021-01-03 11:37
 
 ## On Permutation Feature Importance, Partial Dependence, and Individual Conditional Expectation Plots
 
-First the good news: scikit-learn has added support both for [permutation based feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) (and should now be your go-to approach instead of the `feature_importances_` attribute) as well as support for [partial dependence plots](https://scikit-learn.org/stable/modules/partial_dependence.html). ICE plots are also supported in the latest version through the `kind` parameter.
+First the good news: scikit-learn has added support both for [permutation based feature importance](https://scikit-learn.org/stable/modules/permutation_importance.html) (and should now be your go-to approach instead of the `feature_importances_` attribute) as well as support for [partial dependence plots](https://scikit-learn.org/stable/modules/partial_dependence.html). ICE plots are also supported through the `kind` parameter.
 
-Since `plot_partial_dependence` supports two-way interactions as well, this by itself already removes having to depend on lots of other libraries (though I still recommend [`rfpimp`](https://github.com/parrt/random-forest-importances), if only for their more explicit handling of feature correlation).
+Since `plot_partial_dependence` supports two-way interactions as well, this by itself already removes having to depend on lots of other libraries (though I still like [`rfpimp`](https://github.com/parrt/random-forest-importances) for their more explicit handling of feature correlation).
 
 ## Revisiting Friedman's H-statistic
 
@@ -69,7 +69,7 @@ def compute_h_val(f_vals, selectedfeatures):
 
 Both of these need a calculated set of `f_vals`: partial dependence values, which basically boils down to centered predictions of our predictive model for all possible subsets of features predicted over the same data set, either based on the original train/test data set itself, or a synthetic one constructed over a grid.
 
-We'll investigate three different implementations on how we can obtain these F values. As a somewhat realistic example, I'll use the [California Housing](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html) data set and train a straightforward random forest regressor [^fn1]:
+We'll investigate three different implementations on how we can obtain these F values. I'll use the [California Housing](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html) data set and train a straightforward random forest regressor [^fn1]:
 
 ```python
 X, y = fetch_california_housing(return_X_y=True, as_frame=True)
@@ -210,7 +210,7 @@ def compute_f_vals_sklearn(model, X, feats=None, grid_resolution=100):
 
 There are a couple of drawbacks here as well, the first one being that I'm taking a memory-hungry cartesian product of the results of `partial_dependence`, just so I can stick to the same synthetic grid and use `pd.merge`.
 
-As such, we are limited to a second-order H-measure with a limited subset of features here as well. Trying to work around the cartesian product doesn't even help a lot, as `partial_dependence` itself with run out of memory when trying to execute it on all features:
+As such, we are limited to a second-order H-measure with a limited subset of features here as well. Trying to work around the cartesian product doesn't even help a lot, as `partial_dependence` itself will run out of memory when trying to execute it on all features:
 
 ```python
 partial_dependence(model, X, [tuple(x for x in range(len(X.shape[1])))])
