@@ -1,4 +1,4 @@
-name: Deploy Blog Using PElican
+name: Deploy Blog Using Pelican
 
 on:
   push:
