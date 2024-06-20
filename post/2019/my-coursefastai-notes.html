@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>My course.fast.ai Notes</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 01 November 2019, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2019/my-coursefastai-notes.html" rel="bookmark"
+			title="Permalink to My course.fast.ai Notes">My course.fast.ai&nbsp;Notes</a></div>
+		</header>
+	
+	    <style>
+tag { background-color: #e8fbff; color: black;
+    border-radius: 4px; padding: 2px 4px; }
+tag::before { content: "#"; }
+</style>
+
+<p>Like many others, I&#8217;m a huge fan of <a href="https://course.fast.ai/">Jeremy Howard&#8217;s fast.ai courses</a>. Even when having worked in the machine learning field for years, I still find the material to be packed full with interesting tidbits, tips, and did-you-knows which you can&#8217;t easily find anywhere&nbsp;else.</p>
+<p>Because of this, I&#8217;ve rewatched the courses several times. Last time around, I decided to take a somewhat more long-term structured approach and make notes of things which strike me as&nbsp;noteworthy.</p>
+<p>Lots of other students and viewers have done so already and have made transcripts available, but I wanted to make my own notes as I find that the other&nbsp;notes</p>
+<ul>
+<li>are either too long with way too much&nbsp;detail;</li>
+<li>are way too short without enough&nbsp;detail;</li>
+<li>describe coding and theory elements which I know&nbsp;already;</li>
+<li>don&#8217;t describe some interesting things which I find very valuable to refer to later on and&nbsp;remember.</li>
+</ul>
+<p>I especially wanted to include the points which I&#8217;d like to refer to or mention in my own&nbsp;teaching.</p>
+<h2>Deep Learning 2017 Course: Part&nbsp;1</h2>
+<ul>
+<li>This course immediately adopts the concept of <tag>transfer learning</tag><ul>
+<li>Starting with <span class="caps">VGG</span> (ImageNet&nbsp;2014)</li>
+<li>Tip: always look at the data is was trained on as this will impact the settings you can use it to transfer&nbsp;learn</li>
+<li><span class="dquo">&#8220;</span>Last of powerful simple&nbsp;architectures&#8221;</li>
+</ul>
+</li>
+<li>Baseball analogy to explain bottom-up learning: &#8220;many students lose motivation or drop out along the way. In contrast, areas like sports or music are often taught in a top-down way in which a child can enjoy playing baseball, even if they don’t know many of the formal rules. Children playing baseball have a general sense of the “whole game”, and learn the details later, over&nbsp;time&#8221;</li>
+<li>Understanding <tag>LogLoss</tag> with <tag>Excel</tag><ul>
+<li>A small epsilon is applied to 0 and 1&nbsp;probabilities</li>
+<li>But you can clip these as well manually for overconfident&nbsp;models</li>
+<li>Will rank higher when scored on&nbsp;LogLoss</li>
+</ul>
+</li>
+<li>Idea is introduced of changing <tag>learning rate</tag> after a couple of epochs: this will be expanded much more later&nbsp;on</li>
+<li>Keep visualizing, also when evaluating<ul>
+<li>Look at (most) correct labels, (most) incorrect labels at random, most uncertain&nbsp;labels</li>
+<li><tag>My Take</tag> Generally in <span class="caps">ML</span>: data scientists tend to forget about this even with other&nbsp;models</li>
+</ul>
+</li>
+<li>Probabilities that come out of a deep learning network are not statistical probabilities (e.g. &#8220;how often right or wrong&#8221;&nbsp;interpretation)</li>
+<li>Visualization of a <span class="caps">CNN</span><ul>
+<li>Find examples of pieces of images that strongly activate each&nbsp;filter</li>
+<li>Lower layers: very similar to <a href="https://en.wikipedia.org/wiki/Gabor_filter">Gabor&nbsp;filters</a></li>
+<li>Experiment with the layers to fine&nbsp;tune</li>
+<li>Don&#8217;t reinitialize&nbsp;weights</li>
+</ul>
+</li>
+<li><tag>Initialization</tag>: start of with activations along the same scale and provide and output close to desired output<ul>
+<li>Xavier (Glorot), Kaiming initialization: <a href="https://towardsdatascience.com/weight-initialization-in-neural-networks-a-journey-from-the-basics-to-kaiming-954fb9b47c79">https://towardsdatascience.com/weight-initialization-in-neural-networks-a-journey-from-the-basics-to-kaiming-954fb9b47c79</a></li>
+<li>Most good toolkits do this for&nbsp;you</li>
+</ul>
+</li>
+<li><tag>Local minima</tag><ul>
+<li>Generally not an issue in <span class="caps">DL</span>: not really possible get to a point where there is not direction better because we have lots of&nbsp;parameters</li>
+<li>Sadle points are another&nbsp;issue</li>
+<li><tag>My Take</tag> It&#8217;s striking how many times I&#8217;ve gotten this question as&nbsp;well</li>
+<li>What is you don&#8217;t know the derivate or derivate can&#8217;t be calculated (like with ReLU)<ul>
+<li>All modern network libraries do symbolic&nbsp;differentiation</li>
+<li>ReLU doesn&#8217;t have a derivate at every point, mathematicians care but we dont<ul>
+<li>Doesn&#8217;t really matter if differentiable for the&nbsp;majority</li>
+</ul>
+</li>
+<li>So all non-linear activation functions work&nbsp;well</li>
+<li><tag>ReLU</tag> is very common but alternatives exist: <span class="caps">ELU</span>,&nbsp;LeakyReLU</li>
+<li>Also see <a href="https://openreview.net/forum?id=H1gJ2RVFPH">https://openreview.net/forum?id=H1gJ2RVFPH</a> for a cool new&nbsp;result</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Most simple way to transfer learn: use <span class="caps">VGG</span>&#8217;s 1000 outputs in a linear&nbsp;model</li>
+<li><code>bcolz</code> library to save Numpy&nbsp;arrays</li>
+<li>Recommends rmsprop instead of <span class="caps">SGD</span></li>
+<li>Matrix multiplications one after one another is itself a linear model<ul>
+<li>So that&#8217;s why we add in a non linear step on the&nbsp;activations</li>
+</ul>
+</li>
+<li>There&#8217;s a difference fine tuning and adding a&nbsp;layer</li>
+<li>Why softmax: e^ matches nicely with logloss, also overcompensates one output which matches hot encoded<ul>
+<li>Not good for&nbsp;multilabel</li>
+</ul>
+</li>
+<li>On <tag>convolutions</tag>:<ul>
+<li>Increasing number of filters after each&nbsp;maxpool</li>
+<li>Convolution is position&nbsp;invariant</li>
+<li>Solved by further filters down the&nbsp;road</li>
+<li>3x3 filters are better: use smaller filters, maxpooling, more filters and more&nbsp;layers</li>
+<li>Large images (at the time) still unsolved: attention might&nbsp;help</li>
+<li><span class="caps">CNN</span> utilizes a lot of compute, dense uses a lot of&nbsp;memory</li>
+<li>Maxpool usage is controversial, increasing stride is better<ul>
+<li>Useful for 1D convolutions as&nbsp;well</li>
+</ul>
+</li>
+<li><span class="caps">CNN</span> can hence also be used for any type of ordered data (<span class="caps">RNN</span>&nbsp;alternative)</li>
+<li>SxSxC tensor per filter, then&nbsp;sum</li>
+<li>Capsule networks briefly&nbsp;mentioned</li>
+</ul>
+</li>
+<li>On <tag>overfitting</tag>:<ul>
+<li>First of all build a model that overfits (since then we know we have enough model capacity and know that we can train&nbsp;it)</li>
+<li>Then gradually use a number of strategies to reduce the&nbsp;overfitting</li>
+<li>Add more&nbsp;data</li>
+<li><tag>Dropout</tag>: now also on the <span class="caps">CNN</span> layers, but not too much in&nbsp;beginning</li>
+<li>Use <tag>data augmentation</tag>: always, but what kind and how much can&nbsp;vary</li>
+<li>Add <tag>regularization</tag>: L2 or&nbsp;L1</li>
+<li>Reduce architecture&nbsp;complexity</li>
+<li>Throwing away model information is different from throwing away input&nbsp;information</li>
+<li><tag>BatchNorm</tag>: if inputs not scaled then all weights have very different gradients, same for weights in between<ul>
+<li>So also normalize activations, but doesn&#8217;t work by just&nbsp;normalizing</li>
+<li>Normalizes but also multiplies and adds to change mean, and take these two params in the <span class="caps">SGD</span></li>
+<li>Allows to use 10x higher learning rate and less overfitting without removing&nbsp;information</li>
+<li>Start with a batchnorm layer to get automatic normalization&nbsp;(trick)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Getting the <tag>learning rate</tag> right is critical: related to exploding gradients and vanishing gradients<ul>
+<li>Vast majority of space in loss function are saddle points: loses&nbsp;time</li>
+<li>Chain rule: derivative of f(g()) = derivative&nbsp;products</li>
+</ul>
+</li>
+<li>On <tag>optimizers</tag>, from <span class="caps">SGD</span>:<ul>
+<li>Momentum: keep track of average&nbsp;movement</li>
+<li>Dynamic <span class="caps">LR</span>: adagrad &#8212; different <span class="caps">LR</span> for different params: keep track of&nbsp;gradients</li>
+<li>rmsprop: similar, but better continuous update &#8212; doesn&#8217;t explode (exponentially weighted moving average)<ul>
+<li>Allows to keep the learning rate smaller and&nbsp;smaller</li>
+<li>Start small, then up, then decreasing: learning rate&nbsp;annealing</li>
+</ul>
+</li>
+<li>Adam: rmsprop and momentum&nbsp;combined</li>
+<li>Still very iterative&nbsp;changes</li>
+<li>Early stopping is pretty difficult to use correctly, especially since loss is jittery and can have&nbsp;plateaus</li>
+<li>Jumping too far at the start of training is easy<ul>
+<li>Often reasonable good answers that are easy to find: e.g. always predict 0: so look at the&nbsp;predictions!</li>
+<li>Once accuracy is better than random, we can start to increase the learning&nbsp;rate</li>
+</ul>
+</li>
+<li>Versus gradient descent (whole&nbsp;dataset)</li>
+<li>Versus online gradient descent (minibatch of&nbsp;1)</li>
+</ul>
+</li>
+<li>On <tag>pseudo labeling</tag>:<ul>
+<li>What do we do with instances for which we don&#8217;t have the&nbsp;labels?</li>
+<li>Can still help us to learn about the structure of the&nbsp;data</li>
+<li>Related to semi supervised&nbsp;learning</li>
+<li>Predict outputs for unlabeled set from a trained model: pseudo-labels (pretend they&#8217;re&nbsp;correct)</li>
+<li>And then train again (and&nbsp;repeat)</li>
+</ul>
+</li>
+<li>On <tag>knowledge distillation</tag>:<ul>
+<li>Knowledge distillation is model compression method in which a small model is trained to mimic a pre-trained, larger model (or ensemble of models). This training setting is sometimes referred to as &#8220;teacher-student&#8221;, where the large model is the teacher and the small model is the&nbsp;student</li>
+<li>In distillation, knowledge is transferred from the teacher model to the student by minimizing a loss function in which the target is the distribution of class probabilities predicted by the teacher&nbsp;model</li>
+<li>The output of a softmax function on the teacher model&#8217;s logits. However, in many cases, this probability distribution has the correct class at a very high probability, with all other class probabilities very close to 0. As such, it doesn&#8217;t provide much information beyond the ground truth labels already provided in the&nbsp;dataset</li>
+<li>To tackle this issue, Hinton et al., 2015 introduced the concept of &#8220;softmax&nbsp;temperature&#8221;</li>
+</ul>
+</li>
+<li>Collaborative filtering: embeddings as latent factors<ul>
+<li>Don&#8217;t forget to add&nbsp;bias</li>
+<li>Concatination and dense seems to work&nbsp;better </li>
+</ul>
+</li>
+<li>Embeddings and CNNs:<ul>
+<li>t-sne can still be misleading, just like <span class="caps">PCA</span></li>
+<li>Glove and word2vec constructed using linear models to reason in high dimensional&nbsp;space</li>
+<li>You should always (try to) use pre-trained word&nbsp;embeddings</li>
+<li>You can try different sizes of <span class="caps">CNN</span> filters and concat them together before&nbsp;connecting</li>
+</ul>
+</li>
+<li>Functional Keras <span class="caps">API</span> generally better<ul>
+<li>Intermediate outputs using&nbsp;Model()</li>
+</ul>
+</li>
+<li>RNNs<ul>
+<li>Keep memory about distant&nbsp;past</li>
+<li>Long term dependency&nbsp;handling</li>
+<li>Variable length&nbsp;sequences</li>
+<li>Stateful&nbsp;representation</li>
+<li>Attentional model: what should I look at next (very large&nbsp;images)</li>
+<li><span class="caps">RNN</span> collapses unrolled with shared&nbsp;weights</li>
+<li>First make embeddings and then pass to <span class="caps">RNN</span></li>
+<li>Predict n from&nbsp;n-1</li>
+<li>Initialize hidden state with identity, causes hidden state not to change at all<ul>
+<li>A simple way to initialize&nbsp;RNNs</li>
+</ul>
+</li>
+<li>Predict 2 to n from 1 to n-1<ul>
+<li>Initial (1) input with&nbsp;zeroes</li>
+<li>return_sequences = True: return output after every input&nbsp;step</li>
+</ul>
+</li>
+<li>Long-term dependencies<ul>
+<li>Cannot initialize to zeroes after every sequence: we want to keep the hidden state over the sequences<ul>
+<li>stateful = true: don&#8217;t reset the hidden activation after every sequence<ul>
+<li>Training stateful models is&nbsp;hard</li>
+<li>Because hidden state weights gets applied a&nbsp;lot</li>
+<li>So scaling issues can lead exploding&nbsp;activations</li>
+</ul>
+</li>
+<li>The stateful <span class="caps">RNN</span> keeps the hidden state across batches, but doesn’t backprop between batches<ul>
+<li>Time steps still&nbsp;matter</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Thought impossible to train until <span class="caps">LSTM</span><ul>
+<li>Neural network inside the loop that decides how much state to&nbsp;keep</li>
+<li>&#8230; and&nbsp;BatchNorm</li>
+<li>inside of the loop: layer&nbsp;normalization</li>
+</ul>
+</li>
+<li>See also <a href="http://philipperemy.github.io/keras-stateful-lstm/">http://philipperemy.github.io/keras-stateful-lstm/</a></li>
+</ul>
+</li>
+<li><span class="caps">RNN</span> feeding into an <span class="caps">RNN</span><ul>
+<li>Add dropout to <span class="caps">RNN</span> on U and&nbsp;W</li>
+</ul>
+</li>
+<li><span class="caps">GRU</span> as a simpler <span class="caps">LSTM</span><ul>
+<li>Also makes sure activations don&#8217;t&nbsp;explode</li>
+<li>Might work better than <span class="caps">LSTM</span> depending on&nbsp;setting</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Combining RNNs and CNNs<ul>
+<li>Attention</li>
+<li>Caption&nbsp;generation</li>
+</ul>
+</li>
+<li>ResNet as a new development<ul>
+<li>Adds identity of input to output in each&nbsp;Resnet</li>
+<li>Works as a way to model residuals: comparable to&nbsp;boosting!</li>
+<li>GlobalAveragePooling&nbsp;introduced</li>
+<li>Inception: multiple filter sizes and concatinate, small&nbsp;improvement</li>
+</ul>
+</li>
+<li>Data leakage: fisheries competition example<ul>
+<li>Redundant&nbsp;metadata</li>
+<li>Bounding boxes<ul>
+<li>Human help can&nbsp;help</li>
+<li>Multi output can help, even if we don&#8217;t use it: more&nbsp;info</li>
+<li>Better to give compatible tasks at&nbsp;once</li>
+</ul>
+</li>
+<li><span class="dquo">&#8220;</span>Don&#8217;t just <em>eff</em> around with architectures and&nbsp;hyperparameters&#8221;</li>
+<li>Easy to set sizes with pretrained network, contrary to what some people say<ul>
+<li><span class="caps">FCN</span> with&nbsp;GlobalAveragePooling</li>
+<li>Can be used to make&nbsp;heatmaps</li>
+<li>Again, draw pictures of activations, weights,&nbsp;gradients</li>
+</ul>
+</li>
+<li>Ensembling by reinitializing the network a couple of&nbsp;times</li>
+</ul>
+</li>
+</ul>
+<h2>Deep Learning 2017 Course: Part&nbsp;2</h2>
+<ul>
+<li>From Theano to TensorFlow:<ul>
+<li><span class="caps">API</span> getting&nbsp;easier</li>
+<li>Productionization&nbsp;story</li>
+<li><span class="caps">ML</span> Toolkit Tensor&nbsp;Forest</li>
+<li>Pytorch mentioned in context of <span class="caps">RNN</span></li>
+<li>Define through run (dynamic&nbsp;computation)</li>
+</ul>
+</li>
+<li>Artistic style transfer:<ul>
+<li>Loss function as <span class="caps">MSE</span><ul>
+<li>Better to use intermediate convolution activations of a <span class="caps">CNN</span><ul>
+<li><span class="caps">VGG</span>, Resnet also possible but&nbsp;harder</li>
+<li>loss(activ of orig, activ of modified) -&gt; tune&nbsp;modified</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Average Pooling in Generative models<ul>
+<li>Better than&nbsp;Maxpooling</li>
+</ul>
+</li>
+<li>No need to use <span class="caps">SGD</span><ul>
+<li>Deterministic optimization based on line search&nbsp;(fmin_l_vfgs_b)</li>
+<li>Still can give issues in sadle point<ul>
+<li>Conjugate direction: most downhill and most&nbsp;different</li>
+</ul>
+</li>
+<li>Optimize arbitrary Keras&nbsp;function</li>
+</ul>
+</li>
+<li>Gram matrix for&nbsp;style</li>
+<li>Starting point of optimizer&nbsp;matters!</li>
+<li>Many more tuning possibilities, eg blur chaining, different activation layers weighted<ul>
+<li>likemo.net</li>
+<li>pix2pix</li>
+</ul>
+</li>
+<li>Alternative: train <span class="caps">CNN</span> to generate a new image rather from an original content than optimizing random input image<ul>
+<li>Play with padding and valid convolutions, otherwise weird &#8220;checkerboard&#8221;&nbsp;artifacts</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Super resolution:<ul>
+<li>Only content&nbsp;loss</li>
+<li>Deconvolutions</li>
+<li>Start of with large convolution many large filters to increase receptive field of later&nbsp;ones</li>
+<li>Removing activation of last layer per resnet&nbsp;block</li>
+<li>Loss in lambda and then fake&nbsp;targets</li>
+<li>Checkerboard artifacts<ul>
+<li>Because of stride 2 size 3, 4 is&nbsp;better</li>
+<li>Or not use deconv&#8217;s but upsampling and normal&nbsp;convolution</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Image preprocessing: resize by chopping instead of&nbsp;borders</li>
+<li>Broadcasting: nice historical link to <span class="caps">APL</span> and&nbsp;J</li>
+<li>Multi-modal models; that is, models which can combine multiple types of data in joint feature space<ul>
+<li>Cotraining</li>
+<li>Resnet does not name the merge layers<ul>
+<li>Just before last bottleneck layer is a good place for transfer&nbsp;learning</li>
+<li>Or not&#8230; requires&nbsp;experimentation</li>
+</ul>
+</li>
+<li>Average&nbsp;Pooling</li>
+<li>Cosine&nbsp;distance</li>
+<li><span class="dquo">&#8220;</span>In high dimensional space, everything sits at an edge of one of the&nbsp;dimensions&#8221;</li>
+<li>Approximate nearest neighbors: locality sensitive hashing (<span class="caps">LSH</span>) LSHForest<ul>
+<li>Spilltrees is an&nbsp;alternative</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>GANs:<ul>
+<li>Most people see <span class="caps">GAN</span> as an alternative to <span class="caps">CNN</span> based generation<ul>
+<li>But even better to stick it on top of&nbsp;it</li>
+</ul>
+</li>
+<li>Back and forth training approach<ul>
+<li>Hard to interpret loss functions&nbsp;:(</li>
+<li>Mode collapse: G and D reach a stalemate&nbsp;:(</li>
+</ul>
+</li>
+<li><span class="caps">DCGAN</span> tries to solve this problem<ul>
+<li><span class="caps">CNN</span>, use use strided convs, no&nbsp;maxpooling</li>
+<li>No fully connected&nbsp;layers</li>
+<li>User&nbsp;batchnorm</li>
+<li>Upsampling even better for G with&nbsp;conv&#8217;s</li>
+<li>Still not&nbsp;fantastic</li>
+</ul>
+</li>
+<li>Wasserstein <span class="caps">GAN</span><ul>
+<li>Loss curves finally mean&nbsp;something</li>
+<li>Train D&#8230; then train G&#8230; back and&nbsp;forth</li>
+<li>Use <span class="caps">MSE</span> and constrain the weights in small&nbsp;area</li>
+<li>Care about the difference between two loss functions: Jenson-Shannon distance<ul>
+<li>That loss function is hideous, non smooth, not&nbsp;differentiable</li>
+<li>When using cross&nbsp;entropy</li>
+<li>Other distances (<span class="caps">KL</span>) could be used as&nbsp;well</li>
+</ul>
+</li>
+<li>Still not easy when data set has many&nbsp;categories</li>
+</ul>
+</li>
+<li><span class="caps">BEGAN</span> (new result), CycleGAN,&nbsp;&#8230;</li>
+</ul>
+</li>
+<li>Some more tuning insights:<ul>
+<li><span class="caps">ELU</span> seems to work&nbsp;well</li>
+<li>Linear combination convolution of the channels&nbsp;1x1</li>
+</ul>
+</li>
+<li>Noisy&nbsp;labels</li>
+<li>Mentions <tag>cyclical learning rates</tag> by Leslie Smith<ul>
+<li>And fairly automated <span class="caps">LR</span> picking approack (<tag>one cycle</tag>)</li>
+<li>Will be expanded later on but is a key&nbsp;tip</li>
+</ul>
+</li>
+<li>3d volume cancer detection<ul>
+<li><span class="dquo">&#8220;</span>Anti-fan of clustering: unsupervised techniques are looking for a problem to&nbsp;solve&#8221;</li>
+<li><span class="dquo">&#8220;</span>K-means sucks (kernel k means is a bit&nbsp;better)&#8221;</li>
+<li>Mean shift clustering in 5 dimensions is nice&nbsp;though</li>
+</ul>
+</li>
+<li>Memory networks and chatbots:<ul>
+<li><span class="dquo">&#8220;</span>For sentence embeddings, they just add the embeddings&nbsp;up&#8221;</li>
+<li>Kind of&nbsp;messy</li>
+<li><span class="dquo">&#8220;</span>Chatbots state of art is&nbsp;terrible&#8221;</li>
+<li>Recurrent entity network + attentional networks are&nbsp;better</li>
+</ul>
+</li>
+<li>On <tag>attention models</tag>:<ul>
+<li>Dropout in RNNs is a bit different from normal dropout: best to dropout the same things in every time&nbsp;step</li>
+<li>Bidirectional <span class="caps">RNN</span><ul>
+<li>Look forwards and&nbsp;backwards</li>
+<li>Doubles the number of features by&nbsp;concatinating</li>
+</ul>
+</li>
+<li>Matrix -&gt; <span class="caps">RNN</span> (Encoder: sequence to vector) -&gt; vector -&gt; <span class="caps">RNN</span> (decoder) -&gt; output sequences<ul>
+<li>Copy vector state and make copies&nbsp;(RepeatVector)</li>
+<li>Still not perfect for longer words since we try to encode in a single&nbsp;vector</li>
+</ul>
+</li>
+<li>BiLSTM + attention<ul>
+<li>Used a lot in <span class="caps">NLP</span>, &#8220;replaces everything before in linguistics&#8221; according to Chris&nbsp;Manning</li>
+</ul>
+</li>
+<li>Attentional model<ul>
+<li>Weighted sum over decoded state where the weights represent how important each input element is to get the&nbsp;output</li>
+<li>Weights are trained using <span class="caps">SGD</span>: single hidden layer<ul>
+<li>Jointly&nbsp;trained!</li>
+<li>No reason to not make it more complex but allows for easy&nbsp;visualisations</li>
+</ul>
+</li>
+<li>Also applied on sound waves for speech&nbsp;recognition</li>
+<li><tag>Feature forcing</tag>: pass encoder hidden state and answer for previous time state<ul>
+<li>Sounds like cheating, but makes training easier early&nbsp;on</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Embedding -&gt; Bidir -&gt; rnn -&gt; rnn -&gt; attention (x + feature forced) -&gt; timedistributed<ul>
+<li>Attention is a custom keras&nbsp;layer</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Reinforcement learning: &#8220;almost no real practical examples&#8221;<ul>
+<li>Evolutionary models turn out to be better,&nbsp;even&#8230;</li>
+</ul>
+</li>
+<li><tag>Class imbalance</tag>: one way is to simply adjust your mini batches before doing&nbsp;under/over-sampling</li>
+<li>Transfer learning: why does vgg still work so well vs inception and resnet<ul>
+<li>Redundant intermediate&nbsp;representations</li>
+</ul>
+</li>
+<li>Find best output given list of predictions (&#8220;top1k problem&#8221;)<ul>
+<li>Doesn&#8217;t work well with&nbsp;sequences</li>
+<li>Find best pathway through&nbsp;predictions</li>
+<li>Step by step adding up log of predictions (Viterbi)<ul>
+<li><span class="caps">NP</span>-complete&nbsp;:(</li>
+</ul>
+</li>
+<li>Beam search is better (pick the top few so far), or A*<ul>
+<li>Used by majority of practical approaches for&nbsp;decoding</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Neural machine translation of rare words with subword units<ul>
+<li>What do I do with a word I haven&#8217;t seen before? Or I don&#8217;t want a large&nbsp;vocab?</li>
+<li><span class="caps">BPE</span>: encoder - tokens that are not necessarily the same of the words, e.g. [er],&nbsp;[am]</li>
+</ul>
+</li>
+<li>Densely Connected Convolutional Networks<ul>
+<li>Replace addition with concatination in ResNet&nbsp;blocks</li>
+<li>Works well with limited amounts of&nbsp;data!</li>
+<li>Compression and&nbsp;bottlenecking</li>
+<li><span class="dquo">&#8220;</span>The One Hundred Layers Tiramisu&#8221;<ul>
+<li>Good for <tag>image segmentation</tag></li>
+<li>U-net model, but uses DenseNet block<ul>
+<li>Skip&nbsp;connections</li>
+<li>Also&nbsp;nice</li>
+</ul>
+</li>
+<li>Data augmentations&nbsp;helps</li>
+<li>Original did 1x1 conv and maxpooling<ul>
+<li>Stride 2 seems to work&nbsp;better</li>
+<li>Also, deconv2d works better than upsampling + <span class="caps">CNN</span>&nbsp;here</li>
+</ul>
+</li>
+<li>works even better on video frames than models that incorporate time&nbsp;component</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Time series<ul>
+<li>Dynamic mortality risk predictions using <span class="caps">RNN</span></li>
+<li>Rosmann sales: <tag>entity embeddings</tag> of categorical variables<ul>
+<li><tag>My Take:</tag> I really like this&nbsp;case</li>
+<li>Each categorical one hot embedding, concat, two dense layers and an output&nbsp;layer</li>
+<li>Continuous variables get pushed directly in the&nbsp;network</li>
+<li>Embeddings can be used in other models as&nbsp;well</li>
+<li>Draw some&nbsp;projections</li>
+<li>Google trends used as data&nbsp;source</li>
+<li><code>vtreat</code> package</li>
+<li>Supervised embeddings vs unsupervised like autoencoders &#8212; is the latter more generalized?<ul>
+<li><span class="dquo">&#8220;</span>Bah! I don&#8217;t like unsupervised&nbsp;models&#8221;</li>
+<li><span class="dquo">&#8220;</span>Always better to define a loss function &#8212; any loss&nbsp;function&#8221;</li>
+</ul>
+</li>
+<li>How long until previous/next holiday<ul>
+<li>Still good human feature engineering&nbsp;necessary!</li>
+</ul>
+</li>
+<li>Nice that Pandas has a lot of time series&nbsp;stuff</li>
+<li>Dimensionality not so high, so embedding length set manually per categorical level<ul>
+<li>Or <code>max(50, levels//2)</code></li>
+</ul>
+</li>
+<li><code>sklearn_pandas</code> package</li>
+<li>Removed all rows where store was closed<ul>
+<li>What happens before and&nbsp;after?</li>
+<li>Sales for stores that are open on sunday are higher -&gt; should be a&nbsp;feature</li>
+</ul>
+</li>
+<li>log and division with max log -&gt; so we can use sigmoid<ul>
+<li>Doesn&#8217;t seem to matter much&nbsp;here</li>
+<li>For sigmoid it&#8217;s really hard to get to the&nbsp;maximum!</li>
+<li>So max log * 1.1 would have been&nbsp;better</li>
+</ul>
+</li>
+<li>Did not normalize continuous? and other weird changes<ul>
+<li>Turns out scaling and a good init and single dense works&nbsp;well</li>
+</ul>
+</li>
+<li><span class="dquo">&#8220;</span>xgboost is&nbsp;fantastic&#8221;</li>
+<li>feature importance plots are important<ul>
+<li><span class="dquo">&#8220;</span>Credit scoring with 3000 vars, only 9&nbsp;mattered&#8221;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Actually already done artificial neural networks applied to taxi destination prediction<ul>
+<li>Yoshua&nbsp;Bengio</li>
+<li>Simple embedding&nbsp;dimension</li>
+<li><span class="caps">GPS</span> points: just first and final&nbsp;points</li>
+<li>Softmax, centroid with mean-shift clustering to come up with 3000&nbsp;destinations</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2>Deep Learning 2018 Course: Part&nbsp;1</h2>
+<ul>
+<li>Starts off with ResNet model for cats vs dogs and introduction of fast.ai library<ul>
+<li>Most top researcher are using PyTorch. Note: returns log of&nbsp;predictions</li>
+</ul>
+</li>
+<li>Visualizing again important: look at correct and incorrect ones<ul>
+<li><span class="dquo">&#8220;</span>Why do you want to look at your data?&#8221;<ul>
+<li>Take advantage of things model is doing well and fix what is is&nbsp;not</li>
+<li>Learn about the data set&nbsp;itself</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Nice example of image classifiers on mouse movement to predict&nbsp;fraud</li>
+<li>Neural networks don&#8217;t solve the <span class="caps">UAT</span> non-exponentially<ul>
+<li>But multiple layers&nbsp;helps!</li>
+</ul>
+</li>
+<li><tag><span class="caps">LR</span> finder</tag> (<tag>cyclical learning rates</tag>)<ul>
+<li><span class="caps">LR</span> is the hyperparameter that&nbsp;matters</li>
+<li>Regardless of optimizer, even if they do adaptive learning rate, annealing still&nbsp;important</li>
+</ul>
+</li>
+<li>And so is <tag>data augmentation</tag>!</li>
+<li><span class="caps">SGD</span> with restart<ul>
+<li>Cosine annealing with jump back up<ul>
+<li>Gradually increase length of cycle as&nbsp;well</li>
+</ul>
+</li>
+<li>Helps to avoid spiky minima<ul>
+<li>Change every mini&nbsp;batch</li>
+<li>Alternative for restarts with init/ensemble people did&nbsp;before</li>
+<li>Snapshot ensemble: save weights at every bottom point before&nbsp;restart</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Different learning rates when transfer learning per part of the model<ul>
+<li>Don&#8217;t need to unfreeze only a part any&nbsp;more</li>
+</ul>
+</li>
+<li><tag>Test time augmentation</tag>: average 1+4 preds<ul>
+<li>But mayble sliding window might be&nbsp;enough</li>
+</ul>
+</li>
+<li>First train on smaller images and then on larger&nbsp;images</li>
+<li>Unbalanced data not a big problem<ul>
+<li>Best way is just to make copies of the rare class or adjust&nbsp;minibatches</li>
+</ul>
+</li>
+<li>Multilabel classification: don&#8217;t use softmax,&nbsp;obviously</li>
+<li><tag>Dropout</tag> still&nbsp;important</li>
+<li>Year and dayofweek -&gt; categorical<ul>
+<li>Cardinality: number of&nbsp;levels</li>
+<li>Binning can be&nbsp;helpful</li>
+<li>Unknown category (for year): actually pretty&nbsp;meaningful</li>
+<li>Neural nets really like&nbsp;~N(0,1)</li>
+<li>Cardinality versus length of vector<ul>
+<li>Rule of thumb here: <code>min(50, card+1 // 2)</code></li>
+</ul>
+</li>
+<li>Advantage versus onehot? Would work, but makes that the concept of e.g. Sunday can only be associated with one floating number<ul>
+<li>Linear&nbsp;behavior</li>
+<li>Concepts in higher dimensional space allows to capture more richer&nbsp;semantics</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>import dill as pickle</code></li>
+<li><span class="caps">NLP</span><ul>
+<li>Lots of new&nbsp;stuff</li>
+<li>Language modeling: predict next word/char<ul>
+<li>Use it as a pretrained&nbsp;model</li>
+<li>Fine tuning really powerful here as&nbsp;well</li>
+<li>char-rnn a bit similar, but word level&nbsp;easier</li>
+</ul>
+</li>
+<li>Spacy shows up: &#8220;super good&nbsp;tokenizer&#8221;</li>
+<li>Stemming or lemmatization not 100% required&nbsp;here</li>
+<li>Bag of words no longer&nbsp;useful</li>
+<li>Length X BatchSize step over <span class="caps">BPTT</span> (backprop through time)<ul>
+<li>Shuffle <span class="caps">BPTT</span>&nbsp;length</li>
+</ul>
+</li>
+<li>First step is embedding&nbsp;matrix</li>
+<li>Adam defaults need to be changed for <span class="caps">NLP</span></li>
+<li><span class="caps">AWD</span> <span class="caps">LSTM</span> language model: uses dropout (all over the place)<ul>
+<li>Need to experiment&nbsp;tho</li>
+<li>Clip the learning rate (gradient&nbsp;clipping)</li>
+</ul>
+</li>
+<li>word2vec or glove would also be okay in this case, but<ul>
+<li>Pretrained doesn&#8217;t really add that&nbsp;much</li>
+<li>Pretrained language models is&nbsp;nicer</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Collaborative filtering<ul>
+<li><code>dask</code></li>
+<li>PyTorch underscore trailing means do it in&nbsp;place</li>
+<li>Bias is important,&nbsp;still</li>
+<li>PyTorch now has&nbsp;broadcasting</li>
+<li>Put ratings through a sigmoid function -&gt; 0..1 * 4 + 1 . not state of art but&nbsp;helps</li>
+<li>Not strictly a matrix factorization (harder to deal with sparse matrices -&gt; predict&nbsp;0)</li>
+<li>Here too cycle opt can&nbsp;help</li>
+<li>Then a neural net again (linear layer has bias)<ul>
+<li>Concat both embeddings, linear, relu and linear again and sigmoid<ul>
+<li>And&nbsp;dropout</li>
+<li>Dimensionality for users and movies doesnt need to be the same any&nbsp;more</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="caps">SGD</span><ul>
+<li>Finite differentiation<ul>
+<li>Actually fine, computers are discrete&nbsp;anyway</li>
+<li>But problem in high dimensional space: slow!<ul>
+<li><a href="https://explained.ai/matrix-calculus/">https://explained.ai/matrix-calculus/</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Analytic differentiation<ul>
+<li>Chain rule most important f(g(x)) -&gt; relu(lin(x)) &#8230;<ul>
+<li>And that&#8217;s just backpropagation &#8212;&nbsp;really</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Take a hint that&#8217;s a good direction -&gt; momentum (linear interpolation)<ul>
+<li>alpha(t) +&nbsp;(1-alpha)(t&#8217;-1)</li>
+<li>can be tuned (esp with well behaved loss) but almost no one&nbsp;does</li>
+</ul>
+</li>
+<li>Adam: much faster but final answers not quite as good as sgd + momentum, esp in nlp
+        - Solved two weeks ago: weight decay had a nasty bug, AdamW fixes this<ul>
+<li>Incorporates adaptive (dynamic) learning&nbsp;rate</li>
+</ul>
+</li>
+<li><tag>Weight decay</tag>&#8230; more params than data points<ul>
+<li>Regularization and&nbsp;dropout</li>
+<li>Weight decay = l2, add square of weights to loss<ul>
+<li>Penalize params when high unless gradient varies a&nbsp;lot</li>
+<li>So actually needs to be handled separately from&nbsp;loss</li>
+<li><span class="dquo">&#8220;</span>decoupling weight decay&#8221; from the momentum term (Sebastian&nbsp;Ruder)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No rmsprop any&nbsp;more</li>
+</ul>
+</li>
+<li>PyTorch will get rid of tensor -&gt; var concept<ul>
+<li>Use Numpy except for derivatives or needs to run on gpu, that&#8217;s&nbsp;fine</li>
+</ul>
+</li>
+<li>Categorical embeddings<ul>
+<li>Best way to turn unsupervised to supervised is to invent some labels<ul>
+<li>Unsupervised = &#8220;fake&nbsp;labels&#8221;</li>
+</ul>
+</li>
+<li>Trains better with a quick matrix multiply instead of&nbsp;deep</li>
+<li>Does the &#8220;task&#8221; in the supervised matter<ul>
+<li>Hard question, e.g. predict augmented image from non-augmented, predict context word, predict next&nbsp;word</li>
+<li>Though fake task often works well<ul>
+<li><span class="dquo">&#8220;</span>Ultimate fake task is&nbsp;autoencoder&#8221;</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="dquo">&#8220;</span>Look, don&#8217;t touch &#8212; no assumptions doesn&#8217;t mean not looking&#8221; (don&#8217;t delete closed store&nbsp;days)</li>
+</ul>
+</li>
+<li><span class="caps">RNN</span><ul>
+<li>Merge add, or concat, both are&nbsp;possible</li>
+<li>Character model again now<ul>
+<li>Sometimes might want to combine both (word/char byte-pair encoding (<span class="caps">BPE</span>))</li>
+</ul>
+</li>
+<li>Hyperbolic tan still used&nbsp;here</li>
+</ul>
+</li>
+<li>BatchNorm<ul>
+<li>Normalize every layer, not just&nbsp;input</li>
+<li>Prevent activations vanishing or&nbsp;exploding</li>
+<li>Would be simple, but <span class="caps">SGD</span> is bloody-minded<ul>
+<li>Just trying to substract mean and devide by stds won&#8217;t do&nbsp;it</li>
+<li><span class="caps">SGD</span> would just try to undo it again next&nbsp;time</li>
+</ul>
+</li>
+<li>Where do you put the batchnorm?<ul>
+<li>Original paper got it wrong: no ablation study, after relu is better<ul>
+<li>Though not easy to&nbsp;say</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Regularization effect but more about&nbsp;convergence</li>
+<li>No reason not to use it, there were cases where it was hard to use correctly (like <span class="caps">RNN</span>)</li>
+<li>Data normalization not required but still a good&nbsp;idea</li>
+</ul>
+</li>
+<li>Singular conv2d layer at the start<ul>
+<li>Because we just want more filters except for the three channels, e.g. 10 5x5&nbsp;filters</li>
+<li>Most modern archs use&nbsp;this</li>
+<li>E.g. 32&nbsp;11x11</li>
+<li>Stride 1 padding 2: output will have the same&nbsp;dimension</li>
+</ul>
+</li>
+<li>ResNet: y = x + f(x)  f(x) = y - x -&gt; fit function for difference previous layer and output<ul>
+<li><span class="dquo">&#8220;</span>Residuals net&#8221;: trying to fit the&nbsp;residual</li>
+<li>So far ignored in non-image domains<ul>
+<li>Transformer model does it as wel: skip connections, skipping over layer and identity add<ul>
+<li>Works&nbsp;well</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Adaptiveaveragepooling -&gt;&nbsp;heatmaps</li>
+</ul>
+<h2>Deep Learning 2018 Course: Part&nbsp;2</h2>
+<ul>
+<li>Regularization recap: reducing architecture complexity should be last thing but often what people do&nbsp;first</li>
+<li>Bounding boxes<ul>
+<li>Atart out by classifying the largest object in each&nbsp;image</li>
+<li>Next, we try to find the bounding box&#8230; simply regression output<ul>
+<li>Easy but crappy if there are multiple&nbsp;objects</li>
+</ul>
+</li>
+<li>And then combine both with a custom head<ul>
+<li>Again, seems to do a bit better, seems counterintuitive<ul>
+<li>Shared goals/computation are always&nbsp;better</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>And then multilabel classification<ul>
+<li>Instead of 4+c we could have 16x(4+c)<ul>
+<li>Assuming we have a reasonably loss function, that would work -&gt; <span class="caps">YOLO</span> network&nbsp;style</li>
+<li>We could also make a conv2d with stride 2: 4x4x(4+c) -&gt; <span class="caps">SSD</span></li>
+<li>Both are used, but yolo v3 used the ssd way<ul>
+<li><tag>Anchor boxes</tag></li>
+<li>Ane more class for&nbsp;background</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>4x4 grid cells: anchor boxes, prior boxes, default boxes<ul>
+<li>Get out&nbsp;class</li>
+<li>Convert to bounding&nbsp;boxes</li>
+</ul>
+</li>
+<li>Possible to make anchor boxes of different&nbsp;sizes</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>defaultdict</code> is&nbsp;handy</li>
+<li><span class="dquo">&#8220;</span>Width by height, rows by columns&#8221;&nbsp;:)</li>
+<li><code>matplotlib</code> has an object oriented api, but almost no one uses it<ul>
+<li><code>subplots</code> is is super handy, returns fig, ax; use ax.<something></li>
+</ul>
+</li>
+<li><code>pdb.set_trace()</code> to set a breakpoint, <code>%debug</code> to trace an error<ul>
+<li>h(elp) s(tep into)/n(ext)/c(ontinue) l(ist context) p(rint) varname / u(p callstack context) or&nbsp;d(own)</li>
+</ul>
+</li>
+<li>l1loss generally better than mse: absolute values, less penalization of&nbsp;errors</li>
+<li>Transfer learning for <span class="caps">NLP</span> </li>
+<li>Slanted triangular learning rate: again, all about the learning&nbsp;rate</li>
+<li>GANs getting closer to being proven useful<ul>
+<li>But still cutting&nbsp;edge</li>
+<li>Many architectures slow as molasses and take a lot of&nbsp;memory</li>
+<li>Still using Wassertein <span class="caps">GAN</span>, take care of checkerboard&nbsp;artifacts</li>
+<li><span class="dquo">&#8220;</span>If you train a model with synthetic data, the neural net will become fantastically good at recognizing the specific problems of your synthetic data and that’ll end up what it’s learning&nbsp;from&#8221;</li>
+<li>Darknet</li>
+<li>Adaptiveavgpooling instead of averagepooling<ul>
+<li>Set size of output instead of&nbsp;window</li>
+</ul>
+</li>
+<li>LeakyReLU</li>
+<li>SeLU not so&nbsp;great</li>
+<li>Cyclegan</li>
+</ul>
+</li>
+<li>Nice writeup on ethics: <a href="https://medium.com/@hiromi_suenaga/deep-learning-2-part-2-lesson-13-43454b21a5d0">https://medium.com/@hiromi_suenaga/deep-learning-2-part-2-lesson-13-43454b21a5d0</a></li>
+<li>L-<span class="caps">BFGS</span> also needs second&nbsp;derivative</li>
+<li>Image segmentation with <span class="caps">UNET</span></li>
+</ul>
+<h2>Deep Learning 2019 Course: Part&nbsp;1</h2>
+<ul>
+<li>Cricket vs baseball with just 30&nbsp;images</li>
+<li>Normalizing is&nbsp;important</li>
+<li>Still ResNet works very&nbsp;well</li>
+<li>Image sizes still tricky: square and fixed&nbsp;size</li>
+<li>Use <tag>onecycle</tag></li>
+<li>Even works on mouse movement pictures and sound with the same&nbsp;setup</li>
+<li>Learning rate and epochs most important things to&nbsp;tune</li>
+<li><span class="caps">UNET</span> still for&nbsp;segmentation</li>
+<li>Language model and classifier for&nbsp;nlp</li>
+<li><a href="https://link.springer.com/chapter/10.1007/978-3-319-10590-1_53">Zeiler and Fergus&nbsp;paper</a></li>
+<li><tag>Sigmoids</tag>: A sigmoid actually asymptotes at whatever the maximum is so actually it&#8217;s slightly better to make your Y range go from a little bit less than the minimum to a little bit more than the&nbsp;maximum</li>
+<li>Reflection is nearly always better for data&nbsp;augmentation</li>
+<li>Spectral normalization to make GANs work nowadays<ul>
+<li>GANs hate momentum when you&#8217;re training&nbsp;them</li>
+<li>Wasserstein <span class="caps">GAN</span> now older but still&nbsp;useful</li>
+<li><span class="dquo">&#8220;</span>Can we get rid of GANs entirely?&#8221; Obviously, the thing we really want to do is come up with a better loss&nbsp;function</li>
+</ul>
+</li>
+<li><tag>Perceptual Losses</tag> for Real-Time Style Transfer and Super-Resolution: &#8220;Justin Johnson et al. created this thing they call perceptual losses. It&#8217;s a nice paper, but I hate this term because they&#8217;re nothing particularly perceptual about them. I would call them &#8220;feature losses&#8221;&#8220;<ul>
+<li><span class="caps">VGG</span> model on this generated image, but let&#8217;s take something in the middle. Let&#8217;s take the activations of some layer in the&nbsp;middle</li>
+<li>We then take the target (i.e. the actual y value) and we put it through the same pre-trained <span class="caps">VGG</span> network, and we pull out the activations of the same layer. Then we do a mean square error&nbsp;comparison</li>
+</ul>
+</li>
+</ul>
+<h2>Deep Learning 2019 Course: Part&nbsp;2</h2>
+<ul>
+<li><span class="dquo">&#8220;</span>Overfit, reduce overfit, no step 3&#8221;<ul>
+<li>Overfit: doesn&#8217;t mean train loss &lt; validation&nbsp;loss!</li>
+<li>Means validation error gets&nbsp;worse!</li>
+</ul>
+</li>
+<li>More data, augment, generalizable architecture, regularization, reduce complexity: in that&nbsp;order</li>
+<li><code>fire</code> as handy <span class="caps">CLI</span>&nbsp;library</li>
+<li>If we multiply numbers initialized with normal distribution (mean=0;std=1) even 28 times they become NaN which mean that they are too big<ul>
+<li>What if we multiply the weights with 0.01? Then the problem is that numbers become&nbsp;zeros</li>
+<li>The answer is to divide with the square root of the size of column of the&nbsp;matrix</li>
+</ul>
+</li>
+<li>Training loop looks like this: Calculate predictions, Calculate loss, Backward pass, Subtract learning rate with gradients, Zero gradients<ul>
+<li><span class="dquo">&#8220;</span>Why we need to zero our gradients in PyTorch? If we don’t zero the gradients in every loop it is going to add the new gradients to the old ones. Then why can’t PyTorch just zero the grads automatically? This is because sometimes we want to use multiple different modules and if PyTorch would automatically zero the gradients we couldn’t do&nbsp;this&#8221;</li>
+</ul>
+</li>
+<li>Variance means how much data point varies which is same as how far they are from the mean on average<ul>
+<li>Positive and negative so either square or abs<ul>
+<li>Square needs to be undone:&nbsp;sd</li>
+<li>abs: mean absolute&nbsp;deviation</li>
+</ul>
+</li>
+<li>The standard deviation is more sensitive to outliers and that is why we more often use absolute deviation<ul>
+<li>Why square: just because it makes some math easier&nbsp;:)</li>
+<li>Replacing squares with abs values often works&nbsp;better!</li>
+</ul>
+</li>
+<li>Variance: (X - e(X)) ^2 = e(X^2) -&nbsp;e(X)^2</li>
+<li>Covariance: this number tells how well points line up<ul>
+<li>Higher: how much these things vary in the same&nbsp;way</li>
+<li>e(xy) -&nbsp;e(x)e(y)</li>
+</ul>
+</li>
+<li>These numbers can be at any range so we calculate correlation which is always between -1 and 1<ul>
+<li>Good question: why scaled with standard deviation? Not variance or&nbsp;mean?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Softmax: e to the power divided by sum<ul>
+<li>Different outputs can end up giving the same&nbsp;softmax!</li>
+<li>Softmax likes to pick one thing and make it&nbsp;high</li>
+<li>Terrible idea unless you to single-output multiclass<ul>
+<li>Otherwise use&nbsp;binomial</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><span class="dquo">&#8220;</span>We want to see how the mean and standard deviation changes of activitities&#8221;<ul>
+<li><span class="dquo">&#8220;</span>These values increases exponentially and collapse suddenly many times at the start. Then later the values stay better at some range which means that model starts to train. If these values just goes up and down model is not learning&nbsp;anything&#8221;</li>
+<li><span class="dquo">&#8220;</span>When we look at the first ten loops we notice that the standard deviation drops further we go from the first layer. And to recall we wanted this to be close to&nbsp;one&#8221;</li>
+<li>Kaiming initialization solves&nbsp;this</li>
+</ul>
+</li>
+<li><span class="dquo">&#8220;</span>Another thing we want to assure is that the activations aren’t really small in later layers&#8221;<ul>
+<li><span class="dquo">&#8220;</span>This can be seen using histogram of sd&#8217;s: the idea of the colorful dimension is to express with colors the mean and standard deviation of activations for each batch during training. Vertical axis represents a group (bin) of activation values. Each column in the horizontal axis is a batch. The colours represent how many activations for that batch have a value in that&nbsp;bin&#8221;</li>
+<li><span class="dquo">&#8220;</span>These plots show us right away a problem. There is a yellow line going bottom of each plot and that means there is a lot of values and that is something we don’t&nbsp;want&#8221;</li>
+<li><span class="dquo">&#8220;</span>The plots above show how many percentages of activations are nearly zero. This tells us more about the yellow line we saw on previous plots: how much acts are we&nbsp;wasting?&#8221;</li>
+<li>LeakyReLU</li>
+</ul>
+</li>
+<li>We have reached our limit and to go further we need to use normalization. BatchNorm is probably the most common normalization method<ul>
+<li>If we use BatchNorm we don’t need bias because there is already a bias in&nbsp;BatchNorm.</li>
+<li>BatchNorm works well in most of the cases but it cannot be applied to online learning&nbsp;tasks</li>
+<li>Another problem is the RNNs. We can’t use BatchNorm with RNNs and small&nbsp;batches.</li>
+<li>LayerNorm is just like BatchNorm except instead of (0,2,3) we have (1,2,3) and this doesn’t use the running average. It is not even nearly as good as BatchNorm but for RNNs it is something we want to use because we can’t use&nbsp;BatchNorm.</li>
+<li>The problem with LayerNorm is that it combines all channels into one. InstanceNorm is a better version of LayerNorm where channels aren’t combined&nbsp;together.</li>
+</ul>
+</li>
+<li>Layerwise Sequential Unit Variance (<tag><span class="caps">LSUV</span></tag>)<ul>
+<li>As we have seen getting a variance of one through a model is quite hard because even little things can spoil this. The high-level idea behind <span class="caps">LSUV</span> is to let the computer make all these&nbsp;decisions</li>
+<li>First, we start by creating a normal learner. Then we take one mini-batch out of this learner. We take all our layers and then create a hook that gives an ability to see the mean and standard deviation of the layers. Because we didn’t have any initialization the mean and standard deviation isn’t what we hope. Normally at this point we would test a bunch of initialization methods to see what works best. This time, although, we use the mini-batch we took previously and iteratively try to solve the&nbsp;problem</li>
+</ul>
+</li>
+<li><tag>Mixup</tag> / <tag>Label smoothing</tag>:<ul>
+<li>The idea is to combine two images by taking some amount of another image and some amount of another. We also do this for the labels. So, for example, we might take 30% of a plane image and 70% of a dog image and then label for that combination will be 30% of a plane and 70% of a&nbsp;dog</li>
+<li>In softmax, there is one number a lot higher than others. This is not good for the mixup. Label smoothing is something where we don’t use one-hot-encoding but something like 0.9-hot-encoding. It means that instead of trying to give one for some class it tries to give 0.9 for one class and 0.1 for other classes<ul>
+<li>This is a simple but very effective technique for noisy data. You actually want to use this almost always unless you are certain that there is only one right&nbsp;label</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Mixed Precision Training: instead of using 32-bit floats we use 16-bit floats. This will speed up the training about&nbsp;3x</li>
+<li><span class="dquo">&#8220;</span>Big companies try to brag with how big batches they can train once. For us, normal people, increasing the learning rate is something we want. That way we can speed training and generalize&nbsp;better&#8221;</li>
+<li>Discriminative <span class="caps">LR</span> and param groups: <tag>discriminative <span class="caps">LR</span></tag> was where we have different learning rates for different&nbsp;layers.</li>
+<li>ULMFiT is transfer learning applied to <span class="caps">AWD</span>-<span class="caps">LSTM</span></li>
+</ul>
+<h2>Machine Learning&nbsp;Course</h2>
+<ul>
+<li>What&#8217;s the correct range of r^2? Mininf to&nbsp;1</li>
+<li>Ensembling: construct multiple models which are better than nothing and where the errors are, as much as possible, not correlated with each&nbsp;other</li>
+<li><code>%prun</code></li>
+<li>Calibrate your validation set, especially on Kaggle: check variance, also check whether a classifier could distinguish between train and&nbsp;validation</li>
+<li>Check data leakage,&nbsp;collinearity</li>
+<li><span class="dquo">&#8220;</span>The overall effect of the max_features is the same — it’s going to mean that each individual tree is probably going to be less accurate but the trees are going to be more varied. In particular, here this can be critical because imagine that you got one feature that is just super predictive. It’s so predictive that every random subsample you look at always starts out by splitting on that same feature then the trees are going to be very similar in the sense they all have the same initial split. But there may be some other interesting initial splits because they create different interactions of variables. So by half the time that feature won’t even be available at the top of the tree, at least half the tree are going to have a different initial split. It definitely can give us more variation and therefore it can help us to create more generalized trees that have less correlation with each other even though the individual trees probably won’t be as&nbsp;predictive&#8221;</li>
+<li><span class="dquo">&#8220;</span>It’s pretty much always possible to create a simple logistic regression which is as good as pretty much any random forest if you know ahead of time exactly what variables you need, exactly how they interact, exactly how they need to be transformed. In this case, for example, we could have created a new field which was equal to sale year minus year made and we could have fed that to a model and got that interaction for us&#8221;<ul>
+<li><span class="dquo">&#8220;</span>Our coefficients are telling you “in your totally wrong model, this is how important those things are” which is basically meaningless. Where else, the random forest feature importance is telling you in this extremely high parameter, highly flexible functional form, with few if any statistical assumptions, this is your feature importance. So I would be very&nbsp;cautious&#8221;</li>
+<li><span class="dquo">&#8220;</span>The problem is that when you look at a univariate relationship like this, there is a whole lot of collinearity going on — a whole lot of interactions that are being&nbsp;lost&#8221;</li>
+<li><span class="dquo">&#8220;</span>So again, as data scientists, one of the things you are going to keep seeing is that at the companies that you join, people will come to you with these kind of univariate charts where they’ll say “oh my gosh, our sales in Chicago have disappeared. They got really baed.” or “people aren’t clicking on this add anymore” and they will show you a chart that looks like this and ask what happened. Most of the time, you’ll find the answer to the question “what happened” is that there is something else going&nbsp;on&#8221;</li>
+<li><span class="dquo">&#8220;</span>So the <span class="caps">PDP</span> approach is where we actually say let’s try and remove all of these externalities. So if something is sold on the same day to the same person of the same kind of vehicle, then actually how does year made impact the price. This basically says, for example, if I am deciding what to buy at an auction, then this is saying to me that getting a more recent vehicle on average really does give you more money which is not what the naive univariate plot&nbsp;said&#8221;</li>
+</ul>
+</li>
+<li>What is the benefit of using cross-validation over a standard validation set: you can use all of the data. You don’t have to put anything aside. And you get a little benefit as well in that you’ve now got five models that you could ensemble together, each one used 80% of the data. So sometimes that ensemble can be&nbsp;helpful</li>
+<li>Here is the problem with random forests when it comes to extrapolation<ul>
+<li>So in this case, what I wanted to do was to first of all figure out what’s the difference between our validation set and our training&nbsp;set</li>
+<li>I’ve gone back and I’ve got my whole data frame with the training and validation all together and I’ve created a new column called is_valid which I’ve set to one and then for all of the stuff in the training set, I set it to zero. So I’ve got a new column which is just is this in the validation set or not and then I’m going to use that as my dependent variable and build a random forest. This is a random forest not to predict price but predict is this in the validation set or not. So if your variable were not time dependent, then it shouldn’t be possible to figure out if something is in the validation set or&nbsp;not</li>
+<li>I still want them in my random forest if they are important. But if they are not important, then taking them out if there are some other none-time dependent variables that work just as well — that would be better. Because now I am going to have a model that generalizes over time&nbsp;better</li>
+</ul>
+</li>
+<li>The variance of the predictions of the trees. Normally the prediction is just the average, this is variance of the trees, and is also interesting to&nbsp;show!</li>
+<li>A matrix with one column is not the same thing as a&nbsp;vector</li>
+<li>L2 tries to make things zero&#8230; That’s kind of true but if you’ve got two things that are highly correlated, then L2 regularization will move them both down together. It won’t make one of them zero and one of them nonzero. So L1 regularization actually has the property that it will try to make as many things zero as possible where else L2 regularization has a property that it tends to try to make everything&nbsp;smaller</li>
+<li>Random forest similarity: computes similarity between instances with classification of out-of-bag instances. If two out-of-bag cases are classified in the same tree leaf the proximity between them is&nbsp;incremented</li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Sacrifice RAM Problem (Or: Fixing an Old Game)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 13 July 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html" rel="bookmark"
+			title="Permalink to Sacrifice RAM Problem (Or: Fixing an Old Game)">Sacrifice <span class="caps">RAM</span> Problem (Or: Fixing an Old&nbsp;Game)</a></div>
+		</header>
+	
+	    <p>Update: check out new post with updated instructions <a href="|filename/2008_10_sacrifice-revisited.md">over here</a>.</p>
+<p>Recently I found my old copy of Sacrifice (<a href="http://www.gamespot.com/pc/strategy/sacrifice/">Gamespot link</a>). I really like this game because it reminds me of <a href="http://en.wikipedia.org/wiki/Julian_Gollop">Jullian Gollop</a>&#8216;s Chaos. (Has anyone ever played this game on the Spectrum?) Basically, it&#8217;s a bunch of wizards fighting it&nbsp;out.</p>
+<p>The graphics are not as amazing anymore as they used to be. But who cares about that if you get a great gameplay experience (running at 120fps)? So I decided to install this game&#8230; on Windows <span class="caps">XP</span>&#8230; with more that 4Ghz processing power&#8230; and <span class="caps">4GB</span> <span class="caps">RAM</span>&#8230; You could say this meets the minimum&nbsp;requirements.</p>
+<p>Install went fine, I start the game and&#8230; I get an error thrown into my face. &#8220;Not enough Virtual&nbsp;Memory&#8221;.</p>
+<p>After reading on various message boards I found that the best solution was to &#8220;completely disable all virtual memory&#8221;. So I did, and now the game worked. But I did not want to sacrifice (pun intended if you will) my virtual memory. And thus I did not play the game for another week or&nbsp;so.</p>
+<p>I was just about to uninstall it when a friend of mine tried to install another old game on a fairly new machine: Championship Manager 01-02, which also gave an &#8220;hey you do not have enough <span class="caps">RAM</span>&#8221;-error.</p>
+<p>So back to the message boards, where I found that people had been using an advanced compatibility tool from Microsoft. Which gave a lot more options than those you get when doing &#8220;Properties -&gt; Compatibility&#8221;. It&#8217;s called <code>QFixApp</code>. And it lives in your Windows <span class="caps">XP</span> <span class="caps">CD</span> under <code>\Support\Tools\act20.exe</code>. After running it you had to follow the following&nbsp;steps:</p>
+<ol>
+<li>Open <code>QFixApp</code>.</li>
+<li>On Layers select <code>ProfilesSetup</code>.</li>
+<li>On Fixes select <code>GlobalMemoryStatusLie</code> (check&nbsp;it).</li>
+<li>Now from the browse button select <code>cm0102.exe</code>.</li>
+<li>Click on&nbsp;Run.</li>
+<li>Play the&nbsp;game.</li>
+</ol>
+<blockquote>
+<p>After you have checked the box click the advanced button and then click the create fix support button. It will then ask if you want to install the fix click yes compatibility permanently implemented into a fixes database so cm will run every time, the compatibility in the properties of an application are only basic the app wizard gives more detailed&nbsp;options.</p>
+</blockquote>
+<p>This situation, of course, reminded me of my own Sacrifice-experience, so I tried to hunt down the program. (&#8220;Where&#8217;s that damned <span class="caps">XP</span> <span class="caps">CD</span>!&#8221;) Only to download it a few minutes later of eMule (just search for &#8220;QFixApp&#8221; or drop me an&nbsp;e-mail).</p>
+<p>After setting up the options and checking <code>GlobalMemoryStatusLie</code> and <code>GlobalMemoryStatusTrim</code> too (!), Sacrifice worked and now runs like a&nbsp;dream.</p>
+<p>There are a lot of other fixes too (who knew Microsoft had released such a helpful tool) so why not try it on some older programs which refuse to run on <span class="caps">XP</span>.</p>
+<p>The &#8220;not enough <span class="caps">RAM</span> while I do have enough&#8221; is quite old. In fact, I remember trying to install Duke Nukem 3D Plutonium Pack on my new Pentium machine back in the day. (Which had, what: 133 Mhz and 32 <span class="caps">MB</span> <span class="caps">RAM</span>?) The installer threw a nice error out saying &#8220;You need at least <span class="caps">XX</span> or more memory!&#8221; while I had plenty&#8230; A pity that Internet wasn&#8217;t that common in those&nbsp;days.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

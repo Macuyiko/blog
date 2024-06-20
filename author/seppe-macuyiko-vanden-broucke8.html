@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - Articles by Seppe "Macuyiko" vanden Broucke</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 14 May 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/python-web-scraping-tools.html" rel="bookmark"
+				title="Permalink to Python Web Scraping Tools">Python Web Scraping&nbsp;Tools</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Just a note for myself, a list of interesting Python tools for my next web scraping&nbsp;project:</p>
+<ul>
+<li><a href="http://docs.python.org/library/urllib2.html">urllib2</a>: extensible library for opening&nbsp;URLs</li>
+<li><a href="http://pyquery.org/">PyQuery</a>: jQuery-like traversing and selecting for&nbsp;Python</li>
+<li><a href="http://wwwsearch.sourceforge.net/mechanize/">mechanize</a>: stateful programmatic web browsing in&nbsp;Python</li>
+<li><a href="http://www.crummy.com/software/BeautifulSoup/">Beautiful Soup</a>: not supported/maintained that much anymore. Latest versions are rather slow …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/python-web-scraping-tools.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 23 April 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/installing-heroes-of-might-and-magic-iii-3-on-linux-ubuntu.html" rel="bookmark"
+				title="Permalink to Installing Heroes Of Might And Magic III (3) On Linux (Ubuntu)">Installing Heroes Of Might And Magic <span class="caps">III</span> (3) On Linux&nbsp;(Ubuntu)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>&#8230;to remind myself because I always seem to forget how&nbsp;to.</p>
+<p><strong>1.</strong> Put the contents of the <span class="caps">CD</span> somewhere (e.g. <code>/tmp/heroes</code>).</p>
+<p><strong>2.</strong>&nbsp;Install:</p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ ./setup.sh
+</code></pre></div>
+
+<p><strong>3.</strong> Download and run patch with <code>--keep</code>:</p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ wget ftp://mirrors.dotsrc.org/lokigames/updates/heroes3/heroes3-1.3.1a-unified-x86.run …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/installing-heroes-of-might-and-magic-iii-3-on-linux-ubuntu.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 02 March 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general-part-2.html" rel="bookmark"
+				title="Permalink to The University Of Waterloo CS Club Tron Challenge, And Some Minimax In General - Part 2">The University Of Waterloo <span class="caps">CS</span> Club Tron Challenge, And Some Minimax In General - Part&nbsp;2</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is the second and final part in the University Of Waterloo <span class="caps">CS</span> Club Tron
+Challenge post series. You can find the first part
+<a href="////blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general.html">here</a>.)</p>
+<p>Now that the contest is finished, congratulations go out to the first place
+winner: a1k0n, well&nbsp;done!</p>
+<p>I also wanted to pass on a few …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general-part-2.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 25 February 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general.html" rel="bookmark"
+				title="Permalink to The University Of Waterloo CS Club Tron Challenge, And Some Minimax In General">The University Of Waterloo <span class="caps">CS</span> Club Tron Challenge, And Some Minimax In&nbsp;General</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is the first part in the University Of Waterloo <span class="caps">CS</span> Club Tron Challenge post series. You can find the second part <a href="////blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general-part-2.html">here</a>.)</p>
+<p>The Computer Science Club of the University of Waterloo is currently organizing an <a href="http://csclub.uwaterloo.ca/contest/index.php"><span class="caps">AI</span> challenge</a>, sponsored by Google. I&#8217;m (as always) a bit late with my …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 31 December 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/get-a-list-of-steam-games.html" rel="bookmark"
+				title="Permalink to Get A List Of Steam Games">Get A List Of Steam&nbsp;Games</a></div>
+			</header>
+			<div class="article-summary">
+					<p><strong>Update</strong>: see <a href="////blog.macuyiko.com/post/2010/get-a-list-of-steam-games-as-of-may-2010.html">here</a>for a new version which works on the new steam&nbsp;site.</p>
+<p>Using Python and <a href="http://www.crummy.com/software/BeautifulSoup/">Beautiful Soup</a>. Just a quick (ugly) script thrown together for future&nbsp;reference.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">BeautifulSoup</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">BeautifulSoup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">urlopen</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">codecs</span>
+
+<span class="n">html_text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;http://store.steampowered.com/search/?advanced=0 …</span></code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/get-a-list-of-steam-games.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 05 December 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/building-a-presenter-view-for-linux.html" rel="bookmark"
+				title="Permalink to Building A Presenter View For Linux">Building A Presenter View For&nbsp;Linux</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Recently, I had to give a presentation and wanted to use a &#8220;presenter screen&#8221;, allowing to view a clock, current and next slide, and slide notes on my laptop screen. Of course, the audience only sees the current slide fullscreened on the projector&nbsp;screen.</p>
+<p>Powerpoint comes with this option built-in …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/building-a-presenter-view-for-linux.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 02 November 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/dont-get-caught-in-this-steam-phishing-scam-how-phishers-work.html" rel="bookmark"
+				title="Permalink to Don’t Get Caught In This Steam Phishing Scam - How Phishers Work">Don&#8217;t Get Caught In This Steam Phishing Scam - How Phishers&nbsp;Work</a></div>
+			</header>
+			<div class="article-summary">
+					<p>So I just got this mail in my&nbsp;inbox:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/Su9YncAJhVI/AAAAAAAAPQQ/NilcjCkx6AY/s400/Screenshot1.png"></p>
+<p>Needless to say, I was pretty surprised, I didn&#8217;t know Steam accounts could expire. Sure enough the e-mail looks legit, it&#8217;s mailed from support@steam.com, didn&#8217;t get caught by Gmail&#8217;s spam filter, and the corporate footer …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/dont-get-caught-in-this-steam-phishing-scam-how-phishers-work.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 29 July 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/solving-color-problem-red-grass-purple-water-in-age-of-empires-2-age-of-kings-the-conquerors-and-others-too-on-vista-and-windows-7.html" rel="bookmark"
+				title="Permalink to Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows 7">Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows&nbsp;7</a></div>
+			</header>
+			<div class="article-summary">
+					<p><strong>Legacy note</strong>: this program was pretty popular around 2010-2012, but now has fallen out of use, since most games have been patched to prevent this issue. The source code and last binary release have been moved to <a href="https://github.com/Macuyiko/palettestealer-suspender">GitHub</a>, as Google was thinking it was malware and flagging my&nbsp;blog.</p>
+<h3>Changelog …</h3>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/solving-color-problem-red-grass-purple-water-in-age-of-empires-2-age-of-kings-the-conquerors-and-others-too-on-vista-and-windows-7.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 23 June 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/solving-a-tetris-cube-recursive-backtracking-algorithm-x-oh-my.html" rel="bookmark"
+				title="Permalink to Solving A Tetris Cube, Recursive Backtracking, Algorithm X, Oh My!">Solving A Tetris Cube, Recursive Backtracking, Algorithm X, Oh&nbsp;My!</a></div>
+			</header>
+			<div class="article-summary">
+					<p>A few days ago I got my hands on one of&nbsp;these:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SsWhepcG4cI/AAAAAAAAPPw/Q4bKUWnAUL4/s200/41j38E8H-5L._SL500_AA280_.jpg"></p>
+<p>A Tetris Cube. Twelve pieces, and a box of 4 by 4 by 4. Your task: to put the pieces neatly in the box again. The box said there are more than 9000 solutions, but I knew nonetheless …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/solving-a-tetris-cube-recursive-backtracking-algorithm-x-oh-my.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 28 April 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/ubuntu-jauntu-skype-worked-before-now-problem-with-audio-capture.html" rel="bookmark"
+				title="Permalink to Ubuntu Jauntu: Skype Worked Before, Now: “Problem with audio capture”">Ubuntu Jauntu: Skype Worked Before, Now: &#8220;Problem with audio&nbsp;capture&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>There are two things I currently not like about Ubuntu or Linux in general: the whole sound mess, and the whole graphics mess (but both are getting better). This problem is about the first&nbsp;mess.</p>
+<p>Skype was working perfectly in Interprid, now in Jaunty it was telling me that there …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/ubuntu-jauntu-skype-worked-before-now-problem-with-audio-capture.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke7.html">&laquo; Prev</a>
+	Page 8 of 12	
+	<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke9.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

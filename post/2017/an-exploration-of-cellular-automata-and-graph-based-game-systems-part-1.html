@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>An Exploration of Cellular Automata and Graph Based Game Systems: Part 1</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+	<div class="postheader">
+		<div class="postheader-wrap">
+			<img class="postheader-trans" src="data:image/gif;base64,R0lGODlhMgAVAPAAAP///wAAACH5BAEAAAAALAAAAAAyABUAAAIfhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8dTAQA7">
+			<img class="postheader-cover" src="/images/backgrounds/gameoflife.png">
+		</div>
+	</div>
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 09 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-1.html" rel="bookmark"
+			title="Permalink to An Exploration of Cellular Automata and Graph Based Game Systems: Part 1">An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;1</a></div>
+<div class="article-subtitle">Introduction to Cellular Automata</div>		</header>
+	
+	    <script>
+$(function() {
+    $('.toggle').each(function(index) {
+        var toggler = $('<div style="margin: 8px 0; background-color: #E3E0FF; cursor: pointer; padding: 8px;">Toggle iframe</div>');
+        toggler.insertBefore($(this));
+        toggler.click(function() {
+            var elt = $(this).next('.toggle');
+            var newElt = $("<iframe></iframe>")
+            Array.prototype.slice.call(elt.get(0).attributes).forEach(function(a) {
+                newElt.attr(a.name, a.value);
+            });
+            if (!$(this).hasClass('toggled')) {
+                elt.append(newElt);
+                $(this).addClass('toggled');
+            } else {
+                elt.html('');
+                $(this).removeClass('toggled');
+            }
+        });
+    });
+});
+</script>
+
+<p>I&#8217;ve been spending way too much time with <a href="http://store.steampowered.com/app/457140/Oxygen_Not_Included/">Oxygen Not Included</a>. It&#8217;s a great and addictive base building game with lots of challenges to tackle, though the most interesting component &#8212; for me, at least &#8212; is the way how the game simulates the behavior of gasses, liquids, temperature, and&nbsp;elektricity.</p>
+<p><img alt="Screenshot of water moving around in Oxygen Not Included" src="/images/2017/oni1.png"></p>
+<p>Oxygen Not Included is certainly not the only game incorporating similar systems. Minecraft, of course, does the same with water, lava, and redstone (albeit in different ways), and so do other games like Cities: Skylines and the more recent SimCity&nbsp;incarnation:</p>
+<p><img alt="Screenshot of pollution spreading in SimCity" src="/images/2017/sc1.png"></p>
+<p>Once you start noticing these systems, you see them popping up everywhere, from simple mobile games like The Sandbox to little &#8220;<a href="https://en.wikipedia.org/wiki/Falling-sand_game">falling sand</a>&#8221; web&nbsp;games.</p>
+<p><img alt="Screenshot of The Sandbox" src="/images/2017/sandbox.png"></p>
+<p><img alt="Screenshot of a falling sand game" src="/images/2017/sandbox2.png"></p>
+<p>Many of these games&#8217; systems are based on the same underlying fundamentals. In this series of articles, I&#8217;ll go through explaining two popular concepts and how they work inside such games: cellular automata, and graphs. As a side goal, I also wanted to take the opportunity to play around a bit with <a href="https://p5js.org/">p5.js</a> to visualize and create such&nbsp;systems.</p>
+<h1>Cellular&nbsp;automata</h1>
+<p>Cellular automata have been around for quite some time already (originally discovered in the 1940s by Stanislaw Ulam and John von Neumann). A cellular automaton is a &#8220;discrete model, consisting of a regular grid of cells, each in one of a finite number of states&#8221; (<a href="https://en.wikipedia.org/wiki/Cellular_automaton">Wikipedia</a>). For each cell, a set of cells called its neighborhood is defined relative to the specified cell. From an initial state, a simulation is started where each new generation is created according to a set of rules that determines the new state of each cell in terms of the current state of the cell and the states of the cells in its neighborhood. In basic terms, this defines a &#8220;main loop&#8221; over our grid as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">forever</span><span class="o">:</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">each</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">grid</span><span class="o">:</span>
+<span class="w">        </span><span class="kd">get</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">neighborhood</span>
+<span class="w">        </span><span class="n">determine</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="n">based</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">cell</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">neighborhood</span>
+<span class="w">    </span><span class="n">swap</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">grid</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">current</span><span class="w"> </span><span class="n">grid</span>
+</code></pre></div>
+
+<p>That&#8217;s the basic idea, and it&#8217;s this system that is driving all the water, sand, &#8230; systems in the games listed above. Of course, the main interestingsness from using this approach comes from the pieces left to you to plug in,&nbsp;namely:</p>
+<ul>
+<li>How you define the neighborhood of a&nbsp;cell</li>
+<li>How you define the state of a&nbsp;cell</li>
+<li>How you define the rules to determine the state in a new&nbsp;generation</li>
+</ul>
+<p>Let&#8217;s start by implementing this basic idea in JavaScript using <a href="https://p5js.org/">p5.js</a>. First, let&#8217;s define a <code>Cell</code> object as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">Cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">parent</span><span class="p">,</span><span class="w"> </span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">parent</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">col</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">row</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">reset</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="nx">Cell</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The state we&#8217;re going to keep here is simply one number. We also set aside an attribute to keep track of what the next state is going to be. Note that we could also create a seperate <code>State</code> object and attach it to the cells, but let&#8217;s keep our representation simple for&nbsp;now.</p>
+<p>Next up, we define a <code>Grid</code> object holding the&nbsp;cells:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">var</span><span class="w"> </span><span class="nx">Grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">cols</span><span class="p">,</span><span class="w"> </span><span class="nx">rows</span><span class="p">,</span><span class="w"> </span><span class="nx">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="nx">cols</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">cols</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Array</span><span class="p">(</span><span class="nx">rows</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">cols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cols</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">rows</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">size</span><span class="p">;</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">self</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">Cell</span><span class="p">(</span><span class="nx">self</span><span class="p">,</span><span class="w"> </span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+
+<span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">visit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">callable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cols</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">rows</span><span class="p">;</span><span class="w"> </span><span class="nx">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">callable</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span><span class="w"> </span><span class="nx">j</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Again, there&#8217;s some room for improvement. We&#8217;re mixing representational concepts (&#8220;what is a grid&#8221;) with graphics responsibilities: the <code>size</code> attribute will be used to determine how large the boxes should be when drawing the grid. We could decouple this, but this is fine for&nbsp;now.</p>
+<p>Speaking of graphics, let&#8217;s also attach a helper and drawing function directly to our <code>Grid</code> (again, we could decouple this in a <code>GridDrawer</code>, but early abstraction is the enemy of getting things&nbsp;done):</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">mouseToGrid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">,</span><span class="w"> </span><span class="nx">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">floor</span><span class="p">(</span><span class="nx">x</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">);</span>
+<span class="w">    </span><span class="nx">row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">floor</span><span class="p">(</span><span class="nx">y</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">[</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">draw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">self</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="p">];</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">clr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">color</span><span class="p">(</span><span class="nx">floor</span><span class="p">((</span><span class="mf">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">cell</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="o">*</span><span class="mf">255</span><span class="p">))</span>
+<span class="w">        </span><span class="nx">fill</span><span class="p">(</span><span class="nx">clr</span><span class="p">);</span><span class="w"> </span>
+<span class="w">        </span><span class="nx">stroke</span><span class="p">(</span><span class="mf">10</span><span class="p">);</span>
+<span class="w">        </span><span class="nx">rect</span><span class="p">(</span><span class="nx">col</span><span class="o">*</span><span class="nx">self</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="o">*</span><span class="nx">self</span><span class="p">.</span><span class="nx">size</span><span class="p">,</span><span class="w"> </span><span class="nx">self</span><span class="p">.</span><span class="nx">size</span><span class="o">-</span><span class="mf">1</span><span class="p">,</span><span class="w"> </span><span class="nx">self</span><span class="p">.</span><span class="nx">size</span><span class="o">-</span><span class="mf">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The way how we&#8217;ll draw our grid is very simple for now: a state of 1 (which we&#8217;ll assume as our maximum value) is drawn as a black square, and a state of 0 (our minimum) as a white square, with greyscale values in&nbsp;between.</p>
+<p>Let&#8217;s also define a function to get a neighborhood of cells for a certain column/row position. The way how we&#8217;ll do so is by taking a standard <a href="https://en.wikipedia.org/wiki/Von_Neumann_neighborhood">Von Neumann neighborhood</a>, returning the cell itself, and its up, down, left, and right&nbsp;neighbors:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">neighborhood</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">me</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">col</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="o">-</span><span class="mf">1</span><span class="p">][</span><span class="nx">row</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">col</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">cols</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="o">+</span><span class="mf">1</span><span class="p">][</span><span class="nx">row</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">row</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="o">-</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">down</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">row</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">rows</span><span class="w"> </span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="o">+</span><span class="mf">1</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">n</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Finally, we need a method that will go over all cells and determine their next state based on a user-supplied rule&nbsp;method:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">update</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">callable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">callable</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">neighborhood</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">))</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>And we also need a method to finish the&nbsp;generation:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">finish</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">callable</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">self</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">;</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">visit</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">cell</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">self</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="p">];</span>
+<span class="w">        </span><span class="nx">cell</span><span class="p">.</span><span class="nx">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">cell</span><span class="p">.</span><span class="nx">next_state</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h1>Exploring some simple&nbsp;systems</h1>
+<p>We&#8217;re now ready to start exploring some simple systems. The most basic rule set we can come up with is to &#8220;keep everything the same&#8221;, so for every &#8220;tick&#8221; where we calculate a new generation, we just&nbsp;do:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">tick</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Next state will be the same as the current one</span>
+<span class="w">        </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">state</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">finish</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Try this out below. Drag the mouse to change the state for the cells. Even though this simulation is running, nothing interesting is really happening&nbsp;here:</p>
+<div src="/iframes/cellular/index.firstexample.html"
+    class="toggle" scrolling="no" frameborder="0" width="520" height="320"></div>
+
+<p>What happens if we try a rule where the state of each next cell is set to the state of the cell on its&nbsp;left:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">tick</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">left</span><span class="w"> </span><span class="o">?</span>
+<span class="w">            </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">left</span><span class="p">.</span><span class="nx">state</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">finish</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div src="/iframes/cellular/index.secondexample.html"
+    class="toggle" scrolling="no" frameborder="0" width="520" height="320"></div>
+
+<p>As a more interesting rule set, we can use the famous &#8220;<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a>&#8221; which defines the following&nbsp;rules:</p>
+<ul>
+<li>Any live cell with fewer than two live neighbours dies, as if caused by&nbsp;underpopulation.</li>
+<li>Any live cell with two or three live neighbours lives on to the next&nbsp;generation.</li>
+<li>Any live cell with more than three live neighbours dies, as if by&nbsp;overpopulation.</li>
+<li>Any dead cell with exactly three live neighbours becomes a live cell, as if by&nbsp;reproduction.</li>
+</ul>
+<p>To make this work, we first need to change our neighborhood definition to include diagonals (called a <a href="https://en.wikipedia.org/wiki/Moore_neighborhood">Moore neighborhood</a>) and to &#8220;wrap around&#8221; the grid. We don&#8217;t need to return all the cells themselves, however, the current cell and a count of its live neighbors is&nbsp;enough:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">Grid</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">neighborhood</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">(</span><span class="nx">col</span><span class="p">,</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{};</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">me</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">col</span><span class="p">][</span><span class="nx">row</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">n</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">col</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">col</span><span class="o">+</span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">c</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">row</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">row</span><span class="o">+</span><span class="mf">1</span><span class="p">;</span><span class="w"> </span><span class="nx">r</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">col</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">r</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">row</span><span class="p">)</span>
+<span class="w">        </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// Wrap around the grid</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">wrapped_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">c</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">wrapped_row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">r</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wrapped_col</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="nx">wrapped_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cols</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wrapped_row</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="nx">wrapped_row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">rows</span><span class="o">-</span><span class="mf">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wrapped_col</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cols</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="nx">wrapped_col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wrapped_row</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">rows</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="nx">wrapped_row</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">        </span><span class="nx">n</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">cells</span><span class="p">[</span><span class="nx">wrapped_col</span><span class="p">][</span><span class="nx">wrapped_row</span><span class="p">].</span><span class="nx">state</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">n</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>We can then use this in our tick function as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="kd">function</span><span class="w"> </span><span class="nx">tick</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Any live cell with fewer than two live neighbours dies</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">2</span><span class="p">)</span>
+<span class="w">                </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// Any live cell with two or three live neighbours lives on</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span>
+<span class="w">                </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">            </span><span class="c1">// Any live cell with more than three live neighbours dies</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span>
+<span class="w">                </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Any dead cell with exactly three live neighbours becomes a live cell</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">live_neighbors</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">3</span><span class="p">)</span>
+<span class="w">                </span><span class="nx">neighborhood</span><span class="p">.</span><span class="nx">me</span><span class="p">.</span><span class="nx">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w">    </span>
+<span class="w">    </span><span class="p">});</span>
+<span class="w">    </span><span class="nx">grid</span><span class="p">.</span><span class="nx">finish</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Which gives us the following result (try scribbling over the&nbsp;grid):</p>
+<div src="/iframes/cellular/index.gameoflife.html"
+    class="toggle" scrolling="no" frameborder="0" width="520" height="320"></div>
+
+<h1>A more complicated&nbsp;example</h1>
+<p>Let&#8217;s try implementing a more involved cellular automaton, we&#8217;re going to implement <a href="https://en.wikipedia.org/wiki/Wireworld">Wireworld</a>, a cellular automaton first proposed by Brian Silverman in 1987 and particularly suited to simulating electronic logic elements, or &#8220;gates&#8221;. Wireworld is Turing-complete, even, meaning that you could simulate a full computer system with&nbsp;it.</p>
+<p>We need to make the following changes. Cells can now have four distinct&nbsp;states:</p>
+<ul>
+<li>Empty</li>
+<li>Electron head (drawn in&nbsp;blue)</li>
+<li>Electron tail (drawn in&nbsp;red)</li>
+<li>Conductor, a wire (drawn in&nbsp;yellow)</li>
+</ul>
+<p>The rule set is as&nbsp;follows:</p>
+<ul>
+<li>Empty cells stay&nbsp;empty</li>
+<li>Electron heads become electron&nbsp;tails</li>
+<li>Electron tails become&nbsp;conductors</li>
+<li>Conductor become an electron head if exactly one or two of the neighbouring cells are electron heads, otherwise remains&nbsp;conductor</li>
+</ul>
+<p>The neighborhood again includes diagonal cells, but we&#8217;re not going to wrap around the grid. The implemented example looks as follows (press <code>p</code> to pause the simulation so you can draw freely &#8212; you might need to click in the iframe first to give it&nbsp;focus):</p>
+<div src="/iframes/cellular/index.wireworld.html"
+    class="toggle" scrolling="no" frameborder="0" width="520" height="320"></div>
+
+<h1>Finishing&nbsp;up</h1>
+<p>Cellular automata are very versatile indeed. As a final example, let us consider <a href="https://en.wikipedia.org/wiki/Langton%27s_ant">Langton&#8217;s Ant</a>. This can be modelled as a discrete agent walking over a grid, but as the Wikipedia page mentions, it&#8217;s possible to formulate the behavior by means of a cellular automaton as well. Our state now&nbsp;encodes:</p>
+<ul>
+<li>Whether a cell is white or&nbsp;black</li>
+<li>Whether a cell contains an ant or not. If it contains an an, the numbers 1 to 4 indicate the direction of the&nbsp;ant</li>
+</ul>
+<p>The rule set is as&nbsp;follows:</p>
+<ul>
+<li>The next cell&#8217;s color is equal to the current one, except if the ant is here, in which case we flip the&nbsp;color</li>
+<li>If the ant is on a cell, first figure out the new direction of the&nbsp;ant</li>
+<li>If the current cell&#8217;s color is black, turn 90 degrees&nbsp;left</li>
+<li>If it&#8217;s white, turn 90 degrees&nbsp;right</li>
+<li>The ant is removed from the next&nbsp;cell</li>
+<li>The ant is place on the next cell matching the new direction of the&nbsp;ant</li>
+</ul>
+<p>In fact, we don&#8217;t even have to define a neighborhood here, except for knowing to which new cell to move our ant. This simple rule set leads to a beautiful pattern over time (this cellular automaton runs on its own, no way to scribble over it&nbsp;here):</p>
+<div src="/iframes/cellular/index.langton.html"
+    class="toggle" scrolling="no" frameborder="0" width="520" height="520"></div>
+
+<p>That&#8217;s enough for the first part in this series. In the next part, we&#8217;ll use the building blocks we&#8217;ve constructed and explored so far, and start taking a look at using cellular automata to simulate water, sand, lava, and so on, as is done in several&nbsp;games.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

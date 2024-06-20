@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bypassing Android Cert Pinning Using a Rooted Emulator (AVD)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 29 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/bypassing-android-cert-pinning-using-a-rooted-emulator-avd.html" rel="bookmark"
+			title="Permalink to Bypassing Android Cert Pinning Using a Rooted Emulator (AVD)">Bypassing Android Cert Pinning Using a Rooted Emulator (<span class="caps">AVD</span>)</a></div>
+		</header>
+	
+	    <p>A while ago I was interested in performing some <span class="caps">HTTPS</span> <span class="caps">MITM</span> analysis on an Android app, without having to rely on a real device but instead using an Android Virtual Device, or in other words: an emulated device. It turns out that this is surprisingly tricky with a lot of gotcha&#8217;s, but in the end I managed to get it to&nbsp;work:</p>
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Got it to work&#8230; <a href="https://twitter.com/hashtag/certpinning?src=hash&amp;ref_src=twsrc%5Etfw">#certpinning</a> <a href="https://twitter.com/hashtag/android?src=hash&amp;ref_src=twsrc%5Etfw">#android</a> <a href="https://twitter.com/hashtag/hacking?src=hash&amp;ref_src=twsrc%5Etfw">#hacking</a> <a href="https://twitter.com/hashtag/makesuretoremembertowritethisdownsoon?src=hash&amp;ref_src=twsrc%5Etfw">#makesuretoremembertowritethisdownsoon</a> <a href="https://t.co/i163GAqkQ1">pic.twitter.com/i163GAqkQ1</a></p>&mdash; Seppe vanden Broucke (@Macuyiko) <a href="https://twitter.com/Macuyiko/status/935245648315731969?ref_src=twsrc%5Etfw">November 27, 2017</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>Here are the steps you need to follow if you want to do this&nbsp;yourself.</p>
+<p>First, get your <span class="caps">MITM</span> proxy tool up and running. I&#8217;m using <a href="https://www.telerik.com/fiddler">Fiddler</a> here, but any <span class="caps">MITM</span> tool which comes with an <span class="caps">HTTPS</span> root cert should&nbsp;work. </p>
+<p>I assume Android Studio is installed. Create a new <span class="caps">AVD</span> device (<code>Tools -&gt; Android -&gt; AVD Manager</code>) with Android 7.1.1 as the target (<span class="caps">API</span> level 25) and <span class="caps">CPU</span> architecture x86. Newer <span class="caps">API</span> levels might also work, but I haven&#8217;t tested this. Older <span class="caps">API</span> levels might work with different, older tools, but don&#8217;t offer support for the app I was planning to analyze, so 7.1.1 is a solid middle&nbsp;ground.</p>
+<p>Open a console window in <code>C:\Users\&lt;USERNAME&gt;\AppData\Local\Android\sdk\platform-tools\</code> or the corresponding installation directory on your system (it should contain an <code>adb.exe</code>). Start the emulator&nbsp;using:</p>
+<div class="highlight"><pre><span></span><code><span class="c">..\emulator\emulator.exe -avd Pixel_API_25 -writable-system</span>
+</code></pre></div>
+
+<p>Note down the local <span class="caps">IP</span> address of your computer, and use it to set the proxy address in Android&#8217;s WiFi or cellular settings accordingly (your <span class="caps">IP</span> address might&nbsp;vary):</p>
+<p><img alt="Setting the proxy" src="/images/2017/certpin1.png"></p>
+<p>(Note: the emulator settings themselves also offer a way to set the proxy for the emulator, but I like to do it in Android itself as this allows me to switch between a proxied connection (WiFi) and non-proxied (cellular) without too much&nbsp;hassle.)</p>
+<p>Open Chrome on the Android device and navigate to the same address, e.g. <code>192.168.182.4:8888</code>. You will be presented with a Fiddler Echo Service page offering to download the FiddlerRoot Certificate. Do so, and add it to the Android credential store. You&#8217;ll be required to set a <span class="caps">PIN</span>&nbsp;code.</p>
+<p>Once this is done, open a second console window in <code>C:\Users\&lt;USERNAME&gt;\AppData\Local\Android\sdk\platform-tools\</code>. We&#8217;re going to transfer the apps we need using <code>adb</code>. Put the following <span class="caps">APK</span>&#8217;s in <code>\platform-tools\</code> (or somewhere else if you prefer to keep things&nbsp;neat):</p>
+<ul>
+<li>app.apk: the application you want to&nbsp;analyze</li>
+<li>SuperSU, which you can obtain from <a href="http://www.supersu.com/download">http://www.supersu.com/download</a>, I&#8217;m using <code>eu.chainfire.supersu_v2.82-282_Android-2.3.apk</code>. Also download the latest &#8220;Recovery Flashable.zip&#8221; from there and extract the <code>x86</code> folder as well (e.g. so you have a <code>C:\Users\&lt;USERNAME&gt;\AppData\Local\Android\sdk\platform-tools\x86\su.pie</code>)</li>
+<li>The Xposed framework: the installer can be downloaded from <a href="http://repo.xposed.info/module/de.robv.android.xposed.installer">this page</a>, but note that for Android 5.0 or higher, you need to rely on the versions posted over at <a href="https://forum.xda-developers.com/showthread.php?t=3034811">https://forum.xda-developers.com/showthread.php?t=3034811</a>, so go there and obtain <code>XposedInstaller_3.1.4.apk</code></li>
+<li>JustTrustMe: obtain from <a href="https://github.com/Fuzion24/JustTrustMe/releases">https://github.com/Fuzion24/JustTrustMe/releases</a></li>
+</ul>
+<p>Note that there&#8217;s also <a href="https://github.com/iSECPartners/Android-SSL-TrustKiller">TrustKiller</a>, though this works through <a href="http://www.cydiasubstrate.com/">Cydia Substrate</a>, which offers similar functionality as Xposed but is outdated and not maintained any longer, so we&#8217;re not using these here. There&#8217;s also <a href="https://github.com/ac-pm/SSLUnpinning_Xposed">this</a>, but this didn&#8217;t work quite well in my&nbsp;setup.</p>
+<p>Once you have all the files downloaded, install&nbsp;them:</p>
+<div class="highlight"><pre><span></span><code>.\adb install app.apk
+.\adb install eu.chainfire.supersu_v2.82-282_Android-2.3.apk
+.\adb install XposedInstaller_3.1.4.apk
+.\adb install JustTrustMe.apk
+</code></pre></div>
+
+<p>Then&nbsp;run:</p>
+<div class="highlight"><pre><span></span><code>.\adb root
+.\adb shell setenforce 0
+.\adb remount
+.\adb push .\x86\su.pie /system/bin/su
+.\adb push .\x86\su.pie /system/xbin/su
+.\adb shell chmod 0755 /system/bin/su
+.\adb shell chmod 0755 /system/xbin/su
+.\adb shell su --install
+.\adb shell &quot;su --daemon&amp;&quot;
+</code></pre></div>
+
+<p>Now switch back to the emulator. First open the SuperSU app. SuperSU will complain about the <span class="caps">SU</span> binary which needs to be updated, but press &#8220;<span class="caps">CANCEL</span>&#8221; instead of &#8220;<span class="caps">CONTINUE</span>&#8221;! Otherwise, you risk ending up stuck in&nbsp;boot.</p>
+<p><img alt="Pick CANCEL here" src="/images/2017/certpin2.png"></p>
+<p>Next, open the Xposed Installer app. Press &#8220;<span class="caps">INSTALL</span>/<span class="caps">UPDATE</span>&#8221; here and &#8220;Install&#8221; (not &#8220;Install via&nbsp;recovery&#8221;!):</p>
+<p><img alt="Installing Xposed" src="/images/2017/certpin3.png"></p>
+<p>Press &#8220;<span class="caps">GRANT</span>&#8221; when asked by&nbsp;SuperSU:</p>
+<p><img alt="Press GRANT" src="/images/2017/certpin4.png"></p>
+<p>Your device will automatically reboot. Booting might take a few minutes, but should work. Each time you reboot the device, execute the following commands&nbsp;again:</p>
+<div class="highlight"><pre><span></span><code>.\adb root
+.\adb shell setenforce 0
+.\adb remount
+.\adb push .\x86\su.pie /system/bin/su
+.\adb push .\x86\su.pie /system/xbin/su
+.\adb shell chmod 0755 /system/bin/su
+.\adb shell chmod 0755 /system/xbin/su
+.\adb shell su --install
+.\adb shell &quot;su --daemon&amp;&quot;
+</code></pre></div>
+
+<p>(Note: in case you&#8217;d need to restart the emulator altogether, don&#8217;t forget to start the <code>emulator.exe</code> with the <code>writable-system</code> flag.)</p>
+<p>Try navigating to a page in Chrome to verify your Fiddler setup is still working. Once you&#8217;ve verified the <span class="caps">MITM</span> is working in the browser, you can install the cert pinning remover. Open Xposed Installer again. It should now indicate that the framework is active. In the menu, pick &#8220;Modules&#8221; and activate&nbsp;JustTrustMe.</p>
+<p><img alt="Activate JustTrustMe" src="/images/2017/certpin5.png"></p>
+<p>You&#8217;ll have to reboot again for the changes to become active. To avoid having to execute the commands above again, pick &#8220;soft reboot&#8221; from Xposed&#8217;s&nbsp;menu.</p>
+<p>That&#8217;s it, you should now be able to capture <span class="caps">HTTPS</span> requests from the app. Well, sort of&#8230; cert pinning circumvention is getting harder and harder, and especially Facebook is trying damn hard to prevent the practice (by shipping native libs with cert pinning included therein instead of in Java .class&#8217;es, making the hooking approach as done by JustTrustMe insufficient). In my particular setting, the app to be analyzed first required users to login with Facebook. As such, I first had to disable JustTrustMe in Xposed, login to Facebook using the non-proxied cellular connection, activate JustTrustMe again, soft reboot, switch back to the proxied WiFi, and then use the app (which luckily was happy to use the local Facebook token in its own less secure <span class="caps">API</span> requests, where JustTrustMe was able to do the job and reveal the&nbsp;requests).</p>
+<p>Things are getting harder to circumvent. After spending some time recently to try to extract 3d objects from the web version of Google Earth, it seems that the web too might soon have various ways to prevent scraping altogether. Imagine rendering a normal website through WebGL where content is streamed in dynamically using on-the-fly constructed protobuf messages returning shader fragments&#8230;&nbsp;yikes.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

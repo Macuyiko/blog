@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu Search</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 29 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html" rel="bookmark"
+			title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu Search">Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu&nbsp;Search</a></div>
+		</header>
+	
+	    <p>(This is part 6 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p><a href="http://en.wikipedia.org/wiki/Tabu_search">Tabu search</a> is not really &#8220;modern&#8221; anymore, but still widely used&nbsp;nonetheless.</p>
+<p>The pseudocode looks like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">Construct</span><span class="w"> </span><span class="nv">an</span><span class="w"> </span><span class="nv">initial</span><span class="w"> </span><span class="nv">solution</span>
+<span class="k">Until</span><span class="w"> </span><span class="nv">timelimit</span><span class="w"> </span><span class="nv">hit</span><span class="w"> </span><span class="nv">or</span><span class="w"> </span><span class="nv">satisfying</span><span class="w"> </span><span class="nv">solution</span><span class="w"> </span><span class="nv">found</span><span class="w"> </span><span class="k">do</span>:
+<span class="w">    </span><span class="nv">Find</span><span class="w"> </span><span class="nv">all</span><span class="w"> </span><span class="nv">neighbours</span><span class="w"> </span><span class="nv">which</span><span class="w"> </span><span class="nv">are</span><span class="w"> </span><span class="nv">not</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">tabu</span><span class="w"> </span><span class="nv">list</span>,<span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="nv">calculate</span><span class="w"> </span><span class="nv">their</span><span class="w"> </span><span class="nv">score</span>
+<span class="w">    </span><span class="nv">Pick</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">best</span><span class="w"> </span><span class="nv">neighbour</span>,<span class="w"> </span><span class="nv">add</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">previous</span><span class="w"> </span><span class="nv">solution</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">tabu</span><span class="w"> </span><span class="nv">list</span>`
+</code></pre></div>
+
+<p>Notice that the &#8220;best neighbour&#8221; must not necessarily be better than the current solution, or than the ever best found&nbsp;solution.</p>
+<p>Maintaining a tabu list can be time and memory consuming, alternatively we could construct a list like this: add the difference between two following solutions to the list (so that they cannot be undone), and keep it in the list for n iterations. N, or the length of the list is important: make it too long and the algorithm might get stuck, make it too short and the algorithm will tend towards local&nbsp;maxima.</p>
+<p>This time, I&#8217;ve coded the example in <span class="caps">PHP</span>, I hope nobody&nbsp;minds:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="p">?</span><span class="n">php</span>
+<span class="nv">$target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">300</span><span class="p">;</span>
+
+<span class="sr">//co</span><span class="n">nstruct</span><span class="w"> </span><span class="n">an</span><span class="w"> </span><span class="n">initial</span><span class="w"> </span><span class="n">solution</span>
+<span class="nv">$tabulist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">array</span><span class="p">(</span><span class="s">&#39;ttl&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">array</span><span class="p">(),</span><span class="w"> </span><span class="s">&#39;change&#39;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">array</span><span class="p">());</span>
+<span class="nv">$solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">array</span><span class="p">();</span>
+
+<span class="nv">$min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="nv">$max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="nv">$solution</span><span class="o">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">rand</span><span class="p">(</span><span class="nv">$min</span><span class="p">,</span><span class="nv">$max</span><span class="p">);</span>
+
+<span class="sr">//</span><span class="k">until</span><span class="w"> </span><span class="n">solution</span><span class="w"> </span><span class="n">found</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">true</span><span class="p">){</span>
+<span class="w">    </span><span class="nv">$best_neighbour_solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">$best_neighbour_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">$best_neighbour_tabu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nv">$position</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$position</span><span class="o">&lt;</span><span class="mi">6</span><span class="p">;</span><span class="nv">$position</span><span class="o">++</span><span class="p">){</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">in_array</span><span class="p">(</span><span class="s">&quot;$position+&quot;</span><span class="p">,</span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;change&#39;</span><span class="p">])</span>
+<span class="w">                </span><span class="ow">and</span><span class="w"> </span><span class="nv">$solution</span><span class="p">[</span><span class="nv">$position</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nv">$max</span><span class="p">){</span>
+<span class="w">            </span><span class="nv">$temp_solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$solution</span><span class="p">;</span>
+<span class="w">            </span><span class="nv">$temp_solution</span><span class="p">[</span><span class="nv">$position</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+<span class="w">            </span><span class="nv">$score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fitness</span><span class="p">(</span><span class="nv">$temp_solution</span><span class="p">,</span><span class="nv">$target</span><span class="p">);</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">$score</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nv">$best_neighbour_score</span><span class="p">){</span>
+<span class="w">                </span><span class="nv">$best_neighbour_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$score</span><span class="p">;</span>
+<span class="w">                </span><span class="nv">$best_neighbour_solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$temp_solution</span><span class="p">;</span>
+<span class="w">                </span><span class="sr">//m</span><span class="n">ake</span><span class="w"> </span><span class="n">sure</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="n">doesn</span><span class="s">&#39;t get undone</span>
+<span class="s">                $best_neighbour_tabu = &quot;$position-&quot;;</span>
+<span class="s">            }</span>
+<span class="s">        }</span>
+<span class="s">        if(!in_array(&quot;$position-&quot;,$tabulist[&#39;</span><span class="n">change</span><span class="s">&#39;])</span>
+<span class="s">                and $solution[$position] &gt; $min){</span>
+<span class="s">            $temp_solution = $solution;</span>
+<span class="s">            $temp_solution[$position]--;</span>
+<span class="s">            $score = fitness($temp_solution,$target);</span>
+<span class="s">            if ($score &lt; $best_neighbour_score){</span>
+<span class="s">                $best_neighbour_score = $score;</span>
+<span class="s">                $best_neighbour_solution = $temp_solution;</span>
+<span class="s">                //make sure this step doesn&#39;</span><span class="n">t</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">undone</span>
+<span class="w">                </span><span class="nv">$best_neighbour_tabu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;$position+&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="sr">//</span><span class="n">pick</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="n">neighbour</span>
+<span class="w">    </span><span class="nv">$solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$best_neighbour_solution</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">$fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fitness</span><span class="p">(</span><span class="nv">$solution</span><span class="p">,</span><span class="nv">$target</span><span class="p">);</span>
+<span class="w">    </span><span class="n">echo</span><span class="w"> </span><span class="s">&quot;Iteration $iterations: fitness = $fitness\n&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">$fitness</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">        </span><span class="n">echo</span><span class="w"> </span><span class="s">&quot;Perfect solution found:\n&quot;</span><span class="p">;</span>
+<span class="w">        </span><span class="n">print_r</span><span class="p">(</span><span class="nv">$solution</span><span class="p">);</span>
+<span class="w">        </span><span class="nb">die</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="sr">//</span><span class="n">add</span><span class="w"> </span><span class="n">change</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">tabu</span><span class="w"> </span><span class="n">list</span>
+<span class="w">    </span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;ttl&#39;</span><span class="p">][</span><span class="nv">$iterations</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"> </span><span class="sr">//</span><span class="n">remember</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">iteration</span>
+<span class="w">    </span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;change&#39;</span><span class="p">][</span><span class="nv">$iterations</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$best_neighbour_tabu</span><span class="p">;</span>
+<span class="w">    </span><span class="sr">//</span><span class="n">update</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">tabulist</span>
+<span class="w">    </span><span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;ttl&#39;</span><span class="p">]</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="nv">$key</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="nv">$val</span><span class="p">){</span>
+<span class="w">        </span><span class="nv">$val</span><span class="o">--</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nv">$val</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">            </span><span class="n">unset</span><span class="p">(</span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;ttl&#39;</span><span class="p">][</span><span class="nv">$key</span><span class="p">]);</span>
+<span class="w">            </span><span class="n">unset</span><span class="p">(</span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;change&#39;</span><span class="p">][</span><span class="nv">$key</span><span class="p">]);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">echo</span><span class="w"> </span><span class="s">&quot;Iteration $iterations: tabulist now contains &quot;</span>
+<span class="w">        </span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="nv">$tabulist</span><span class="p">[</span><span class="s">&#39;ttl&#39;</span><span class="p">])</span><span class="o">.</span><span class="s">&quot; items \n&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="nv">$iterations</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">function</span><span class="w"> </span><span class="n">fitness</span><span class="p">(</span><span class="nv">$array</span><span class="p">,</span><span class="w"> </span><span class="nv">$target</span><span class="p">){</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">abs</span><span class="p">(</span><span class="n">array_sum</span><span class="p">(</span><span class="nv">$array</span><span class="p">)</span><span class="o">-</span><span class="nv">$target</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The neighbour calculation could be done a little better (there&#8217;s a bit of ugly duplicate code), but the following output is&nbsp;given:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Iteration</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">57</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">56</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">55</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">54</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">3</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">4</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">53</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">4</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">5</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">52</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">5</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">items</span>
+<span class="o">...</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">55</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">56</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">56</span><span class="o">:</span><span class="w"> </span><span class="n">tabulist</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="n">contains</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">items</span>
+<span class="n">Iteration</span><span class="w"> </span><span class="mi">57</span><span class="o">:</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">Perfect</span><span class="w"> </span><span class="n">solution</span><span class="w"> </span><span class="n">found</span><span class="o">:</span>
+<span class="n">Array</span>
+<span class="o">(</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">66</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">14</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">2</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">3</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">99</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">4</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">14</span>
+<span class="w">    </span><span class="o">[</span><span class="mi">5</span><span class="o">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">87</span>
+<span class="o">)</span>
+</code></pre></div>
+
+<p>With this sample problem, such an output was, of course, expected. Notice that I&#8217;ve used the second method of keeping a&nbsp;tabulist.</p>
+<p>This post concludes this series, we only have one post to go, with a general&nbsp;conclusion.</p>
+<hr>
+<p>Table Of Contents (click a link to jump to that&nbsp;post)</p>
+<p>1- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">Introduction</a>
+2- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html">Genetic Algorithms</a>
+3- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html"><span class="caps">CHC</span> Eshelman</a>
+4- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html">Simulated Annealing</a>
+5- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html">Ant Colony Optimization</a>
+6- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html">Tabu Search</a>
+7- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html">Conclusion</a></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

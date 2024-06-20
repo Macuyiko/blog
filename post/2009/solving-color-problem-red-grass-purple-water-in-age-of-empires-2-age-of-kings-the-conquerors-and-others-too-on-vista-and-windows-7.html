@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows 7</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 29 July 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/solving-color-problem-red-grass-purple-water-in-age-of-empires-2-age-of-kings-the-conquerors-and-others-too-on-vista-and-windows-7.html" rel="bookmark"
+			title="Permalink to Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows 7">Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows&nbsp;7</a></div>
+		</header>
+	
+	    <p><strong>Legacy note</strong>: this program was pretty popular around 2010-2012, but now has fallen out of use, since most games have been patched to prevent this issue. The source code and last binary release have been moved to <a href="https://github.com/Macuyiko/palettestealer-suspender">GitHub</a>, as Google was thinking it was malware and flagging my&nbsp;blog.</p>
+<h3>Changelog</h3>
+<ul>
+<li>Update (07-Nov-2017): Final update: source code and binary moved to <a href="https://github.com/Macuyiko/palettestealer-suspender">GitHub</a>.</li>
+<li>Update (30-Jul-2011): A new update for the Palettestealersuspender program is up. This release brings some significant <span class="caps">UI</span> changes. The tool now loads and saves settings and hides to the notification area so it can run and monitor games in the background. I&#8217;ve restructured the accompanying blog post to move program instructions to a separate&nbsp;page.</li>
+<li>Update (24-Apr-2011): A new update for my PaletteStealerSuspender program is up. This release fixes some bugs, and adds the ability to use the program in &#8220;batch/console&#8221;-mode. The readme contains usage details. The download link below leads you to the latest&nbsp;version.</li>
+<li>Update (08-Sep-2010): I&#8217;ve added explanation for the new registry method. Also added a link to <a href="http://sol.gfxile.net/ddhack/">Jari Komppa&#8217;s Ddraw implementation</a>.</li>
+<li>Update (18-Apr-2010): A new version of the program is up again. This version includes the ability to wait for a game until it is started instead of starting the game itself. This is useful when using launchers or lobby programs like Garena which start the game for&nbsp;you.</li>
+<li>Update (27-Mar-2010): I&#8217;ve added a new version of the program which fixes the &#8220;<span class="caps">CD</span> not found&#8221;-issue when using patch 1.0c for The Conquerors. Turns out the working directory for the executable should be set to &#8220;C:\Install Path\Age Of Empires 2&#8221; and not C:\Install Path\Age Of Empires&nbsp;2\age2_x1&#8221;.</li>
+<li>Update (7-Feb-2010): I&#8217;ve added a new version of the program to fix a minor error which caused an exception to appear when starting the game in some rare cases. Download link still&nbsp;below.</li>
+</ul>
+<h3>Introduction</h3>
+<p>Recently I wanted to play an old favourite of mine: Age Of Kings: The Conquerors. The game had been running fine all the way from Windows 98 (and <span class="caps">NT</span> 4 as well, which was a pain to play games on at the time, but I digress) until Windows Vista. However, with Windows 7 - which I&#8217;ve been running happily for some time now - I stumbled on a roadblock: the colours were all&nbsp;wrong.</p>
+<p>This is not an uncommon problem. Many people have had problems when running the game on Vista or Windows 7, this is how you could describe&nbsp;it:</p>
+<ul>
+<li>Basically, the colors are all&nbsp;off.</li>
+<li>It&#8217;s Age Of Empires: Mars&nbsp;Edition.</li>
+<li>Grass turns red, or green, after playing a few&nbsp;seconds&#8230;</li>
+<li>&#8230;or the water turns&nbsp;purple.</li>
+<li>Some trees turn red as&nbsp;well.</li>
+</ul>
+<p>And this is what it looks&nbsp;like:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/Sm9qKTG5QxI/AAAAAAAAPNE/dMiZGWxevro/s400/is.jpg"></p>
+<p>The thumbnail doesn&#8217;t really bring it out, look at this (&#8220;zoom,&nbsp;enhance&#8221;):</p>
+<p><img alt="" src="http://2.bp.blogspot.com/_X4W-h82Vgjw/Sm9qnQGXgkI/AAAAAAAAPNU/K7r-u6wXlTs/s400/zoom.png"></p>
+<p>The tree has an ugly red border around it and the grass turns too green (your experience might be&nbsp;worse).</p>
+<p>Age Of Kings isn&#8217;t the only game with this problem. Basically a lot of old <a href="http://en.wikipedia.org/wiki/DirectDraw">Directdraw</a> games suffer from this problem, like the first Age Of Empires, Worms Armageddon, and even&nbsp;Starcraft:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/Sm9tLcw1ckI/AAAAAAAAPNc/aBkiIRA3VxE/s400/starcraft+2009-07-28+22-58-25-57.png"></p>
+<p>It&#8217;s not too bad here though, most of the terrain looks&nbsp;okay.</p>
+<h3>Solutions and&nbsp;methods</h3>
+<p>There are a few different solutions floating around. Let&#8217;s list the most common ones. I&#8217;ve also listed how well they work next to each number, so you can quickly scan the list. Newest and best performing methods come&nbsp;last.</p>
+<h4>Unreliable and/or hard&nbsp;methods</h4>
+<p>Most methods below are unreliable, or do not work with everyone. Most of them are pretty annoying and/or hard to execute as well. If you want better solutions, just skip this&nbsp;part&#8230;</p>
+<p><strong>(1 - unreliable)</strong> Alt-tab out of the game, and then maximize it again. This worked in <span class="caps">XP</span> (and in Vista for some users), and works in some cases in later versions of Windows. I had no luck with this anymore though. The colors would work for a few seconds, but then changed&nbsp;again.</p>
+<p><strong>(2 - unreliable)</strong> Change your in-game resolution. Doesn&#8217;t work in Windows 7 or later anymore either. After switching resolutions, the colors even became worse. This might work in Vista, but this solution is not really preferred (you want to play on the best resolution&nbsp;possible).</p>
+<p><strong>(3 - unreliable)</strong> Before starting the game, open a explorer window. My Computer, a random folder, anything works. Surprisingly, this often worked in Vista with most Directdraw games. In Windows 7, not&nbsp;anymore.</p>
+<p><strong>(4 - unreliable)</strong> Mess around with the compatibility options, especially <code>Run in 256 colors</code>, <code>Disable visual themes</code>, <code>Disable desktop composition</code>, <code>Display display scaling on high DPI settings</code> and <code>Run as administrator</code>. This works for some games/users, but I don&#8217;t really like this method as it has a lot of drawbacks (desktop windows/icons messed up when you exit&nbsp;etc&#8230;).</p>
+<p><strong>(5 - mostly reliable but annoying)</strong> Close <code>explorer.exe</code> using the Task Manager. This works for most games, but if you&#8217;re like me, you don&#8217;t like to close your 5+ open explorer&nbsp;windows.</p>
+<p>This method has been added to the program (see below). Another way is to create a batch script, if you don&#8217;t want to use the&nbsp;program:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">REM</span><span class="w"> </span><span class="nv">kill</span><span class="w"> </span><span class="nv">explorer</span>.<span class="nv">exe</span>
+<span class="nv">taskkill</span><span class="w"> </span><span class="o">/</span><span class="nv">f</span><span class="w"> </span><span class="o">/</span><span class="nv">IM</span><span class="w"> </span><span class="nv">explorer</span>.<span class="nv">exe</span>
+<span class="nv">REM</span><span class="w"> </span><span class="nv">start</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">game</span><span class="w"> </span><span class="nv">and</span><span class="w"> </span><span class="k">wait</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">finish</span>
+<span class="nv">REM</span><span class="w"> </span><span class="nv">note</span>:<span class="w"> </span><span class="o">/</span><span class="nv">D</span><span class="w"> </span><span class="nv">indicates</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">starting</span><span class="w"> </span><span class="nv">directory</span>,<span class="w"> </span><span class="nv">often</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">same</span><span class="w"> </span><span class="nv">as</span><span class="w"> </span><span class="nv">your</span>
+<span class="nv">game</span><span class="err">&#39;s exe</span>
+<span class="err">start /WAIT /D &quot;C:\path\to\game.exe&quot; &quot;C:\path\to\game.exe&quot;</span>
+<span class="err">REM start explorer.exe again</span>
+<span class="err">start explorer.exe</span>
+</code></pre></div>
+
+<p>Or, another&nbsp;method:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">taskkill</span><span class="w"> </span><span class="o">/</span><span class="nv">f</span><span class="w"> </span><span class="o">/</span><span class="nv">IM</span><span class="w"> </span><span class="nv">explorer</span>.<span class="nv">exe</span>
+<span class="s2">&quot;C:\path\to\game.exe&quot;</span>
+<span class="nv">REM</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">game</span><span class="w"> </span><span class="nv">finishes</span><span class="w"> </span><span class="nv">press</span><span class="w"> </span><span class="nv">enter</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">restart</span><span class="w"> </span><span class="nv">explorer</span>
+<span class="k">pause</span>
+<span class="nv">start</span><span class="w"> </span><span class="nv">explorer</span>.<span class="nv">exe</span>
+</code></pre></div>
+
+<p><strong>(6 - mostly reliable but annoying)</strong> Download a mod or tool for Age Of Kings: The Conquerors to play it in windowed mode. You can get it <a href="http://veg.slutsk.net/aoe/aoe_tc_vegmod.zip">here</a>. Unzip the archive into your installation folder, and run <code>AoC.eXe</code>. If you want, you can also mess around in the <code>config.xml</code> file to change some options. This is how it&nbsp;looks:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/Sm9w5YpNrVI/AAAAAAAAPNk/iPHE3kGmxh0/s400/aoe-windowed.jpg"></p>
+<p>On my large monitor, I actually enjoy playing this&nbsp;way.</p>
+<p>There are other mods out there for other games which allow to run them in windowed mode. For Age Of Empires: Rise Of Rome, you can get <a href="http://veg.slutsk.net/aoe/aoe_ror_vegmod.zip">this mod</a>. Or you can get <a href="http://www.nynaeve.net/?p=52">DxWnd</a> which forces Directdraw (DirectX &gt;=7) games to run in a window. I had no luck with it for The Conquerors however. For Starcraft, there are also some tools floating around to fix the resolution/window/colors. For Worms: Armageddon, CyberShadow is working on a fix for the game (see <a href="http://forum.team17.com/showthread.php?t=38762">here</a>), so you might want to keep an eye out for&nbsp;that.</p>
+<p><strong>(7 - mostly reliable but annoying)</strong> This is the newly found strange &#8220;Screen Resolution&#8221;-method. Found on <a href="http://www.sevenforums.com/gaming/2981-starcraft-fix-holy-cow.html"> this</a> forum recently. This is a weird workaround but seems to work on every game I&#8217;ve tried. Follow these steps exactly: right click on your desktop and pick <code>Screen Resolution</code>. In the Screen Resolution window, click <code>Advanced settings</code>. Another window will open - click the <code>Monitor</code>-tab in that window. Now, leave these windows open, and start the&nbsp;game.</p>
+<h4>Newer and/or reliable&nbsp;methods</h4>
+<p>You&#8217;ll find the easier, newer and more reliable methods in this&nbsp;section.</p>
+<p><strong>(8 - reliable)</strong> <a href="https://github.com/Macuyiko/palettestealer-suspender/releases">Download a tool</a> I whipped up to play Directdraw games in fullscreen without them changing colors. This tool will act as a launcher which places itself in your notification area and automatically suspends all applications which are changing the game&#8217;s colors and will bring them back alive when you close the&nbsp;game</p>
+<p><strong>(9 - reliable)</strong> Thanks to this a reader comment, I found out that Windows 7 actually provides a compatibility hack build in to allow running old DirectDraw games in all their glorious colors. The <code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\DirectDraw\Compatibility\</code> registry entry (or <code>HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\DirectDraw\Compatibility\</code> for 64bit Windows) contains entries for some popular games, such as Age Of Empires and&nbsp;Starcraft.</p>
+<p>Then why are those games not working right? It turns out that the <span class="caps">ID</span> used in the registry entries are very specific to the game version. You can follow along with <a href="http://go.hopx.net/2010/05/256-color-issues-with-directdraw-and.html">this blogpost</a> to find out all about this&nbsp;hack.</p>
+<p>If you don&#8217;t want to download <code>procmon</code> to figure out the application <span class="caps">ID</span> yourself then you can download a tool by Mudlord called &#8220;w7ddpatcher.zip&#8221; (you&#8217;ll have to Google around). The source code is included, and looks clean. To use it, open the <code>w7ddpatcher.exe</code> executable, and press <code>Patch</code> to add a DirectDraw application to the registry. After patching, the game should always work with correct colors, and you won&#8217;t have to use the program every time you want to play the game (unless you change the executable e.g., by updating the&nbsp;game).</p>
+<p><strong>(!):</strong> note that this tool might not work with Windows Vista or <span class="caps">XP</span>, I&#8217;ve only tested it with Windows 7 myself. If you&#8217;re using <span class="caps">XP</span>, you&#8217;re probably better off using my tool (see #8 above), since it probably doesn&#8217;t come with those registry entries. Also, the tool won&#8217;t work out of the box for Age Of Empires 2 (and other SafeDisc using games), as that game needs an entry for <code>age2_x1.icd</code> instead for <code>age2_x1.exe</code>, as stated on <a href="http://www.sevenforums.com/gaming/100379-how-i-fixed-corrupt-color-palette-some-old-games-windows-7-a-2.html">this forum thread</a>. Take a look at <code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\DirectDraw\MostRecentApplication</code> to find out the correct application <span class="caps">ID</span> and edit the registry entry manually&nbsp;accordingly.</p>
+<p><strong>(10 - reliable for certain games)</strong> A few days ago, <a href="http://sol.gfxile.net/ddhack/">this writeup</a> from Jari Komppa got my attention. This coding wizzard has programmed a custom ddraw.dll which wraps all DirectDraw calls and redirects them to an OpenGL surface. Tip of the hat to this guy. Download the DirectDraw Hack <span class="caps">DLL</span> binary from <a href="http://sol.gfxile.net/ddhack/">his site</a> and put it in the same directory as the game executable you&#8217;re trying to run. It should work for Wing Commander, StarCraft 1, WarCraft 2, Fallout and Fallout&nbsp;2.</p>
+<p><strong>(!):</strong> the <span class="caps">DLL</span> alas, does currently (as per last update to this blog post) not work for Age Of Empires 2. So I&#8217;m still shamelessly plugging my tool for that game (see #8&nbsp;above).</p>
+<h3>Technical&nbsp;explanation</h3>
+<p>If you&#8217;re interested in a little background on why this problem is happening, read&nbsp;on.</p>
+<p>When I first encountered this problem, I already knew a little about <a href="http://en.wikipedia.org/wiki/DirectX">DirectX</a>, the <a href="http://en.wikipedia.org/wiki/Graphics_Device_Interface"><span class="caps">GDI</span></a> and the <a href="http://en.wikipedia.org/wiki/Windows_API">Windows <span class="caps">API</span></a>. Basically, back in the day, DirectX (which handles a lot of the graphics and multimedia workload in games and other program) included a component called Directdraw, used for rendering 2D&nbsp;graphics.</p>
+<p>PCs back then weren&#8217;t really powerful. Everything had to be as fast as possible, even color handling. So something which Directdraw did for you was maintaining a palette of 256 colors. Like a painter, programmers could fill this palette with 256 colors they would use: ten greens for grass, 6 blues for water, and so on. Some of these 256 colors are static (but then again, not always) and cannot be changed. If you&#8217;re interested in the deep and dirty details: <a href="http://www.compuphase.com/palette.htm">this page</a> does a good job explaining&nbsp;it.</p>
+<p>Now this is the thing: if you&#8217;re a fullscreen game, you don&#8217;t want other programs screwing up the system palette, changing your beautiful chosen colors to ugly greens and reds. And this is what&#8217;s happening in Windows 7. If you read <a href="http://msdn.microsoft.com/en-us/library/dd145128(VS.85).aspx">System Palette and Static Colors</a> on <span class="caps">MSDN</span>, it states that &#8220;However, because changing the static colors can have an immediate and dramatic effect on all windows on the display, an application should not call SetSystemPaletteUse, unless it has a maximized window and the input focus.&#8221; Alas, this is not enforced by Windows, and thus <code>explorer.exe</code> (which comes from Microsoft mind you) and other programs will happily call <code>SetSystemPaletteUse</code> and mess the poor fullscreen DirectDraw game&nbsp;up.</p>
+<p>I googled a bit around to see if I could find any clues. <a href="http://stackoverflow.com/questions/1054365/exclusive-directdraw-palette-isnt-actually-exclusive">This message</a> at Stackoverflow describes the same problem. This message is actually posted by the maintainers of Worms: Armageddon. No-one provided an answer though. I opened up Visual Studio (which was still installed) to quickly throw something together in <span class="caps">VB</span>.<span class="caps">NET</span> to intercept the <code>WM_SYSCOLORCHANGE</code>, <code>WM_PALETTECHANGED</code>, <code>WM_PALETTEISCHANGING</code> and <code>WM_QUERYNEWPALETTE</code> messages and look at where they&#8217;re coming from. Basically, three processes are&nbsp;fighting:</p>
+<div class="highlight"><pre><span></span><code>CHANGING from (0)
+CHANGED from Age of Empires II Expansion (135458)
+Device context: 16847861
+Process: 4508: age2_x1
+Got 256 palette size scr
+[...]
+CHANGED from GDI+ Window (917744)
+Device context: 184626156
+Process: 2452: explorer
+Got 256 palette size scr
+CHANGED from (65552)
+Device context: 1744905863
+Process: 540: csrss
+Got 256 palette size scr
+[...]
+</code></pre></div>
+
+<p>The game itself, <code>explorer.exe</code>, and <code>csrss.exe</code>.</p>
+<p>I then wanted to make a program which would change the palette back every time an outside process tried to change it. A had a whole list of functions loaded and code written, but it just didn&#8217;t work out and turned out to be too difficult. Also, I was beginning to suspect that this method could work, but would still result in flickering while changing palettes. I was browsing around at the Worms Armageddon <a href="http://forum.team17.com/showthread.php?t=38762">forums</a>, and found out that somebody wrote a <span class="caps">DLL</span> with source code for this problem. The code was written in Delphi and easy enough to read: grab a process, find every thread, and send the suspend message to every thread. I converted this code to <span class="caps">VB</span>.<span class="caps">NET</span> and slapped it on a form which would grab every <code>WM_PALETTECHANGED</code> message to update its list of&nbsp;processes.</p>
+<p>Note that there is actually also a lesser known way to suspend a process with one <span class="caps">API</span> call, without iterating all the threads, which is used in the PsSuspend- and Process Explorer tools made by&nbsp;SysInternals:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">Public</span><span class="w"> </span><span class="nv">Shared</span><span class="w"> </span><span class="nv">Function</span><span class="w"> </span><span class="nv">NtSuspendProcess</span><span class="ss">(</span><span class="nv">ByVal</span><span class="w"> </span><span class="nv">ProcessHandle</span><span class="w"> </span><span class="nv">As</span><span class="w"> </span><span class="nv">IntPtr</span><span class="ss">)</span><span class="w"> </span><span class="nv">As</span><span class="w"> </span><span class="nv">Integer</span>
+<span class="k">End</span><span class="w"> </span><span class="nv">Function</span>
+
+<span class="nv">Public</span><span class="w"> </span><span class="nv">Shared</span><span class="w"> </span><span class="nv">Function</span><span class="w"> </span><span class="nv">NtResumeProcess</span><span class="ss">(</span><span class="nv">ByVal</span><span class="w"> </span><span class="nv">ProcessHandle</span><span class="w"> </span><span class="nv">As</span><span class="w"> </span><span class="nv">IntPtr</span><span class="ss">)</span><span class="w"> </span><span class="nv">As</span><span class="w"> </span><span class="nv">Integer</span>
+<span class="k">End</span><span class="w"> </span><span class="nv">Function</span>
+</code></pre></div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

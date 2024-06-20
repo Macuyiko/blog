@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - 2008 category</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 09 December 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/trying-googles-native-client.html" rel="bookmark"
+				title="Permalink to Trying Google’s Native Client">Trying Google&#8217;s Native&nbsp;Client</a></div>
+			</header>
+			<div class="article-summary">
+					<p>From <a href="http://blogoscoped.com/archive/2008-12-09-n82.html">Google Blogoscoped</a>:</p>
+<blockquote>
+<p>Google has released something to the open source world they call the <a href="http://code.google.com/p/nativeclient/">Native Client</a>. It is meant as a way for website developers to execute rich code faster within the browser&#8230; by having it run &#8220;natively&#8221; on the computer. This could help any program needing fast graphics …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/trying-googles-native-client.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 07 December 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/trying-arch-linux.html" rel="bookmark"
+				title="Permalink to Trying Arch Linux">Trying Arch&nbsp;Linux</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve been hearing some good things about <a href="http://www.archlinux.org/">Arch Linux</a> lately, and I wanted to see how it compares to Ubuntu, which I&#8217;ve been using for a few years now. I loaded up a new VMWare virtual machine and mounted the iso. Let&#8217;s see how this&nbsp;goes&#8230;</p>
+<p>I …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/trying-arch-linux.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 26 October 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/sacrifice-revisited.html" rel="bookmark"
+				title="Permalink to Sacrifice Revisited">Sacrifice&nbsp;Revisited</a></div>
+			</header>
+			<div class="article-summary">
+					<p><a href="////blog.macuyiko.com/post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html">A while ago I posted</a> on this blog how you could resolve the &#8220;Insufficient page file space&#8221; problem in Sacrifice. Since then a few people have emailed me, saying that the fix described in that post does not longer work. After trying various things with various people (thanks for all …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/sacrifice-revisited.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 07 September 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/virtualbox-expanding-a-disk-drive.html" rel="bookmark"
+				title="Permalink to Virtualbox: Expanding A Disk Drive">Virtualbox: Expanding A Disk&nbsp;Drive</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I love Virtualbox, it&#8217;s definitely my virtualization platform of choice for daily tasks [1] on a Linux-host, and it&#8217;s quickly replacing VMware on Windows hosts as&nbsp;well.</p>
+<p>However, recently I had to expand a virtual partition of a Windows guest. There are already lots of options and methods …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/virtualbox-expanding-a-disk-drive.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 17 July 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/odbc-missing-driver-64-bit.html" rel="bookmark"
+				title="Permalink to ODBC Missing Driver… 64 Bit"><span class="caps">ODBC</span> Missing Driver&#8230; 64&nbsp;Bit</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Note to self, if you can&#8217;t find your installed <span class="caps">ODBC</span>-driver. It might be because you installed a 32-bit driver on a 64-bit system. Try looking in <code>C:\Windows\SysWOW64\odbcad32.exe</code></p>
+<p>That&#8217;s&nbsp;all.</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/odbc-missing-driver-64-bit.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 27 June 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/is-w32codecs-freezing-your-ubuntu.html" rel="bookmark"
+				title="Permalink to Is w32codecs Freezing Your Ubuntu?">Is w32codecs Freezing Your&nbsp;Ubuntu?</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Wanted to play an Realmedia file? Installed w32codecs? Now Totem is freezing your Ubuntu Hardy? And by freezing, I mean: you can move the mouse, nothing else works, no ctrl-alt-backspace, no&nbsp;ctrl-alt-F1.</p>
+<p>Then do the&nbsp;following:</p>
+<ol>
+<li>Make sure you have gstreamer0.10-pitfdll&nbsp;installed.</li>
+<li>Install (if you haven&#8217;t already)&nbsp;w32codecs …</li></ol>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/is-w32codecs-freezing-your-ubuntu.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 26 June 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/muxtape-downloader-shell-script.html" rel="bookmark"
+				title="Permalink to Muxtape Downloader Shell Script">Muxtape Downloader Shell&nbsp;Script</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I got to confess something: I love Muxtape! Did you know there is a <a href="http://userscripts.org/scripts/show/24382">userscript</a> which lets you download the songs? It&#8217;s not encouraged&nbsp;though&#8230;</p>
+<p>I&#8217;ve been trying to learn Shell Scripting. So I decided: why not make a Muxtape downloader. This is my first shell script (longer …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/muxtape-downloader-shell-script.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 14 March 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/assembly-component-303994ba-6487-47ae-af1d-7af6088eebdb.html" rel="bookmark"
+				title="Permalink to Assembly Component {303994BA-6487-47AE-AF1D-7AF6088EEBDB}">Assembly Component {<span class="caps">303994BA</span>-6487-<span class="caps">47AE</span>-<span class="caps">AF1D</span>-<span class="caps">7AF6088EEBDB</span>}</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I recently tried to install the Nokia Software Updater, but it gave me this&nbsp;error:</p>
+<blockquote>
+<p>Error 1935. An error occured during the installation of assembly component{<span class="caps">303994BA</span>-6487-<span class="caps">47AE</span>-<span class="caps">AF1D</span>-<span class="caps">7AF6088EEBDB</span>}.</p>
+</blockquote>
+<p>Quick research showed that this had something to do with <span class="caps">MSXML</span> 4.0. So I went <a href="http://www.microsoft.com/downloads/details.aspx?familyid=3144b72b-b4f2-46da-b4b6-c5d7485f2b42&amp;displaylang=en">here</a> and downloaded …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/assembly-component-303994ba-6487-47ae-af1d-7af6088eebdb.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 20 January 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/javascript-browser-detection-using-dom-capabilities.html" rel="bookmark"
+				title="Permalink to Javascript Browser Detection using DOM Capabilities">Javascript Browser Detection using <span class="caps">DOM</span>&nbsp;Capabilities</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Just found this, pretty&nbsp;handy!</p>
+<div class="highlight"><pre><span></span><code><span class="o">//</span><span class="w"> </span><span class="n">browser</span><span class="w"> </span><span class="n">detection</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">document</span><span class="o">.</span><span class="n">all</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE7</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">window</span><span class="o">.</span><span class="n">XMLHttpRequest</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">window</span><span class="o">.</span><span class="n">ActiveXObject</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">document</span><span class="o">.</span><span class="n">implementation</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isgteIE6</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE7</span><span class="w"> </span><span class="n">isIE6</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE5</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">window</span><span class="o">.</span><span class="n">print</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isgteIE6</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIEDOM2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE5</span><span class="w"> </span><span class="n">isgteIE6</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isIEDOM2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">navigator</span><span class="o">.</span><span class="n">cookieEnabled</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isIE3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">isIE</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isIE4</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">isIEDOM2</span><span class="p">;</span>
+<span class="k">var</span><span class="w"> </span><span class="n">isNS …</span></code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/javascript-browser-detection-using-dom-capabilities.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+	&laquo; Prev
+	Page 1 of 1	
+	Next &raquo;
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

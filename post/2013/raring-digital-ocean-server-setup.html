@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Raring / Digital Ocean Server Setup</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 20 June 2013, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2013/raring-digital-ocean-server-setup.html" rel="bookmark"
+			title="Permalink to Raring / Digital Ocean Server Setup">Raring / Digital Ocean Server&nbsp;Setup</a></div>
+		</header>
+	
+	    <p>Two years after having moved to Linode, coming <a href="////blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html">from Slicehost</a>, it seems that a new competitor is once again at the horizon, namely <a href="https://www.digitalocean.com">Digital Ocean</a>.</p>
+<p>I&#8217;d heard good things about them already, especially on Hacker News, praising their competitive pricing and clean dashboard. However, being newcomers to the field, I didn&#8217;t want to jump ship too abruptly, as I was still a happy Linode&nbsp;customer.</p>
+<p>But, in April, Linode got <a href="http://slashdot.org/firehose.pl?op=view&amp;type=submission&amp;id=2603667">hacked</a>. Password hashes, source code fragments and even credit card statements were all rumored to be extracted. So okay, things like this happen, but the way how Linode dealt with the whole situation was less than optimal: first, they tried to ignore the problem; then, this was followed by a <a href="https://blog.linode.com/2013/04/12/security-notice-linode-manager-password-reset/">statement</a> afterwards advising people to reset their password due to &#8220;security precautions&#8221;. This is turn was followed by <a href="https://blog.linode.com/2013/04/16/security-incident-update/">an update</a> which was a bit more transparent, but still somewhat&nbsp;surprising.</p>
+<p>One of the staff mentions the following in the comments of the update&nbsp;post:</p>
+<blockquote>
+<p>@Eivind. our private key is stored only in encrypted format. The passphrase is not guessable, sufficiently long and complex, not based on dictionary words, and not stored anywhere but in our&nbsp;heads.</p>
+</blockquote>
+<p>The hackers, on the other hand, came out with a <a href="http://turtle.dereferenced.org/~nenolod/linode/linode-abridged.txt">different statement</a>&nbsp;altogether:</p>
+<blockquote>
+<p>06:00 \&lt;AlexC_&gt; ryann: So, are you saying <span class="caps">CC</span> details have also been compromised?
+06:00 \&lt;ryann&gt; Yep
+06:00 \&lt;AlexC_&gt; ryann: And you plan on releasing these?
+06:00 \&lt;ryann&gt; They did try to encrypt them, but using public key encryption doesn&#8217;t work if you have the public and private key in the same&nbsp;directory</p>
+</blockquote>
+<p>Of course, statements such as these should be taken with a grain of salt, as it could easily be hyperbolic bragging. Still, the whole ordeal left many Linode users with a bitter&nbsp;aftertaste.</p>
+<p>So recently, I had a look at Digital Ocean to see if they&#8217;re worth their salt. First difference is in pricing, and it&#8217;s a pretty big&nbsp;one:</p>
+<ul>
+<li>DigitalOcean: $10 / mo. for <span class="caps">1GB</span>, 1 Core, <span class="caps">30GB</span> space, <span class="caps">2TB</span>&nbsp;transfer</li>
+<li>Linode: $20 / mo. for <span class="caps">1GB</span>, 8 Cores, <span class="caps">24GB</span> space, <span class="caps">2TB</span>&nbsp;transfer</li>
+</ul>
+<p>Linode has DigitalOcean beat on <span class="caps">CPU</span> power, but DigitalOcean has the <span class="caps">SSD</span> advantage. Jason Ormand has performed <a href="http://jasonormand.com/2013/02/08/linode-vs-digitalocean-performance-benchmarks/">a benchmark</a> and goes more into the technical&nbsp;details.</p>
+<p>So with a new host comes a new opportunity to execute a clean Ubuntu install. In the same vein as the <a href="////blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html">previous post</a>, let&#8217;s get right to&nbsp;it&#8230;</p>
+<h2>1. Install&nbsp;Ubuntu</h2>
+<p>This is a single-click process with DigitalOcean. I&#8217;m using Ubuntu Server 13.04 x64. You will get a root account with&nbsp;password.</p>
+<h2>2. Always be updating and&nbsp;upgrading</h2>
+<div class="highlight"><pre><span></span><code>apt-get update
+apt-get upgrade
+</code></pre></div>
+
+<h2>3. Synchronize the system&nbsp;clock</h2>
+<p>Synchronize the system clock with an <span class="caps">NTP</span> server over the&nbsp;Internet.</p>
+<div class="highlight"><pre><span></span><code>apt-get install ntp ntpdate
+</code></pre></div>
+
+<p><span class="caps">SSH</span> is installed already, so we skip this. We also don&#8217;t have to configure our network, but you can check the hostname&nbsp;with:</p>
+<div class="highlight"><pre><span></span><code>hostname
+</code></pre></div>
+
+<h2>4. Add&nbsp;users</h2>
+<p>Add some users. Adding a <code>webmaster</code> is&nbsp;recommended:</p>
+<div class="highlight"><pre><span></span><code>useradd -d /home/webmaster -m webmaster
+passwd webmaster
+adduser webmaster sudo
+</code></pre></div>
+
+<h2>5. Secure <span class="caps">SSH</span></h2>
+<p>Edit <code>/etc/ssh/sshd_config</code>:</p>
+<div class="highlight"><pre><span></span><code># Always a good idea to not listen at the default port
+Port    44422
+
+# Prohibit root logins
+PermitRootLogin no
+</code></pre></div>
+
+<p>Then restart <span class="caps">SSH</span> and login again with a normal&nbsp;user:</p>
+<div class="highlight"><pre><span></span><code>service ssh restart
+</code></pre></div>
+
+<p>Using <code>sudo su</code> should allow you to continue as&nbsp;root.</p>
+<h2>6.&nbsp;MySQL</h2>
+<p>Install MySQL. You will be asked for a root&nbsp;password.</p>
+<div class="highlight"><pre><span></span><code>apt-get install mysql-server mysql-client
+</code></pre></div>
+
+<p>We keep <code>bind-address = 127.0.0.1</code> in <code>/etc/mysql/my.cnf</code>.</p>
+<p>If you wish, you can also opt to use MariaDB&nbsp;instead.</p>
+<h2>7. Postfix for <span class="caps">SMTP</span>&nbsp;support</h2>
+<div class="highlight"><pre><span></span><code>apt-get install postfix procmail
+</code></pre></div>
+
+<p>Make sure to pick the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">General</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">configuration</span><span class="p">?</span>
+<span class="w"> </span><span class="o">--</span><span class="p">&gt;</span><span class="w"> </span><span class="nx">Internet</span><span class="w"> </span><span class="nx">Site</span>
+</code></pre></div>
+
+<p>Run:</p>
+<div class="highlight"><pre><span></span><code>dpkg-reconfigure postfix
+</code></pre></div>
+
+<p>And would through the questions. Defaults are fine, but you can disable IPv6 if you want&nbsp;to.</p>
+<p>Next, we make sure to listen to local interface&nbsp;only:</p>
+<div class="highlight"><pre><span></span><code>postconf -e &#39;inet_interfaces = loopback-only&#39;
+</code></pre></div>
+
+<p>Restart&nbsp;Postfix:</p>
+<div class="highlight"><pre><span></span><code>service postfix restart
+</code></pre></div>
+
+<h2>8. Apache/<span class="caps">PHP5</span></h2>
+<p>Install:</p>
+<div class="highlight"><pre><span></span><code>apt-get install apache2 apache2-mpm-prefork apache2-utils ssl-cert
+
+apt-get install libapache2-mod-php5 php5 php5-common php5-curl php5-dev php5-gd php5-idn php-pear php5-imagick php5-imap php5-json php5-mcrypt php5-memcache php5-mhash php5-ming php5-mysql php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+</code></pre></div>
+
+<p>Enable some&nbsp;modules:</p>
+<div class="highlight"><pre><span></span><code><span class="n">a2enmod</span><span class="w"> </span><span class="n">ssl</span>
+<span class="n">a2enmod</span><span class="w"> </span><span class="n">rewrite</span>
+<span class="n">a2enmod</span><span class="w"> </span><span class="n">suexec</span>
+<span class="n">a2enmod</span><span class="w"> </span><span class="n">status</span>
+<span class="n">a2enmod</span><span class="w"> </span><span class="n">include</span>
+
+<span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">apache2</span><span class="w"> </span><span class="n">force</span><span class="o">-</span><span class="n">reload</span>
+</code></pre></div>
+
+<p>Adding subdomains is done with vhosts in <code>/etc/apache2/sites-enabled</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="err">*</span><span class="nt">&gt;</span>
+<span class="w">  </span>ServerAdmin<span class="w"> </span>info@sitename.com
+<span class="w">  </span>ServerName<span class="w"> </span>sitename.com
+<span class="w">  </span>ServerAlias<span class="w"> </span>*.sitename.com
+<span class="w">  </span>DocumentRoot<span class="w"> </span>/var/www/sitename.com/
+
+<span class="w">  </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span>Options<span class="w"> </span>FollowSymLinks
+<span class="w">    </span>AllowOverride<span class="w"> </span>All
+<span class="w">  </span><span class="nt">&lt;/Directory&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="err">/var/www/sitename.com</span><span class="nt">/&gt;</span>
+<span class="w">    </span>Options<span class="w"> </span>Indexes<span class="w"> </span>FollowSymLinks<span class="w"> </span>MultiViews
+<span class="w">    </span>DirectoryIndex<span class="w"> </span>index.html<span class="w"> </span>index.htm<span class="w"> </span>index.php
+<span class="w">    </span>AllowOverride<span class="w"> </span>All
+<span class="w">    </span>Order<span class="w"> </span>allow,deny
+<span class="w">    </span>allow<span class="w"> </span>from<span class="w"> </span>all
+<span class="w">  </span><span class="nt">&lt;/Directory&gt;</span>
+
+<span class="w">  </span>ErrorLog<span class="w"> </span>/var/log/apache2/error.log
+<span class="w">  </span>LogLevel<span class="w"> </span>warn
+
+<span class="w">  </span>CustomLog<span class="w"> </span>/var/log/apache2/access.log<span class="w"> </span>combined
+<span class="w">  </span>ServerSignature<span class="w"> </span>On
+<span class="nt">&lt;/VirtualHost&gt;</span>
+</code></pre></div>
+
+<p>Don&#8217;t forget to edit the default virtualhost with a <code>NameVirtualHost *</code> and <code>AllowOverride All</code>.</p>
+<p>Also, edit <code>php.ini</code> if&nbsp;needed.</p>
+<h2>9.&nbsp;Proftpd</h2>
+<p>Install&nbsp;Proftpd:</p>
+<div class="highlight"><pre><span></span><code>apt-get install proftpd ucf
+</code></pre></div>
+
+<p>Make sure to pick <code>standalone</code>.</p>
+<p>Edit <code>/etc/proftpd/proftpd.conf</code>:</p>
+<div class="highlight"><pre><span></span><code>DefaultRoot /
+UseIPv6 off
+</code></pre></div>
+
+<p>And:</p>
+<div class="highlight"><pre><span></span><code>service proftpd restart
+</code></pre></div>
+
+<p>We don&#8217;t install phpMyAdmin anymore. <code>apt-get install phpmyadmin</code> if you want&nbsp;to.</p>
+<h2>10. Set <code>/var/www</code> permissions</h2>
+<p>Making it easy for our&nbsp;&#8220;webmaster&#8221;:</p>
+<div class="highlight"><pre><span></span><code><span class="n">chown</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="n">webmaster</span><span class="p">:</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span>
+<span class="n">chmod</span><span class="w"> </span><span class="mi">775</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span>
+</code></pre></div>
+
+<h2>11. Install&nbsp;fail2ban</h2>
+<div class="highlight"><pre><span></span><code>apt-get install fail2ban
+</code></pre></div>
+
+<p>Don&#8217;t forget to configure a jail.local and add custom filters if&nbsp;needed.</p>
+<p>We do not install Slowloris protection any more. Attacks using this method seem to have&nbsp;stopped/weakened.</p>
+<h2>12. Final&nbsp;migration</h2>
+<ul>
+<li>Move user&nbsp;files</li>
+<li>Configure all&nbsp;virtualhosts</li>
+<li>Move <code>/var/www</code></li>
+<li>Move data&nbsp;bases</li>
+<li>Keep a copy of <code>/etc</code> around</li>
+<li>Move <span class="caps">SSL</span>&nbsp;keys</li>
+</ul>
+<p>Backup&nbsp;script:</p>
+<div class="highlight"><pre><span></span><code>tar cvpzf backup.tgz --exclude=/proc --exclude=/lost+found --exclude=/mnt --exclude=/sys --exclude=/dev --exclude=/usr --exclude=/bin --exclude=/sbin --exclude=/backup.tgz /
+</code></pre></div>
+
+<p>It&#8217;s a pity this last step can&#8217;t be automated. I guess it would be possible to create an image and move it over the another <span class="caps">VPS</span>, but this will bring along all the extra filler you maybe don&#8217;t want&nbsp;anymore.</p>
+<p>My experience with DigitalOcean was pleasant so far. The <span class="caps">SSD</span> drives make installing <code>apt</code> packages a real breeze. I&#8217;m not migrating completely from Linode yet (hosting too many sites at the moment with them), but I&#8217;ll definitely launch new projects over&nbsp;there.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

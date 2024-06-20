@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Note to Self: Using Tesseract to Extract Subtitles</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 13 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/note-to-self-using-tesseract-to-extract-subtitles.html" rel="bookmark"
+			title="Permalink to Note to Self: Using Tesseract to Extract Subtitles">Note to Self: Using Tesseract to Extract&nbsp;Subtitles</a></div>
+		</header>
+	
+	    <p>Say you have video such as <a href="https://www.facebook.com/NowThisPolitics/videos/1778169845547831/">this one</a> on Facebook. Most of these come with hardcoded subtitles, which we&#8217;d like to extract (for whatever&nbsp;reason).</p>
+<p>Opening the page in Chrome and inspecting the network requests quickly uncovers the media <span class="caps">URL</span>:</p>
+<div class="highlight"><pre><span></span><code>https://video-bru2-1.xx.fbcdn.net/v/t42.9040-2/10000000_703970666457205_4416008794480312320_n.mp4?efg=eyJ2ZW5jb2RlX3RhZyI6ImRhc2hfdjNfMTI4MF9jcmZfMjNfaGlnaF8zLjFfZnJhZ18yX3ZpZGVvIn0%3D&amp;oh=40bbd0e0dd5367ed3a2d5ff0e7cbe081&amp;oe=5A09D778&amp;bytestart=0&amp;byteend=953
+</code></pre></div>
+
+<p>By cutting off <code>&amp;bytestart=0&amp;byteend=953</code>, we can download the video file&nbsp;completely.</p>
+<p>Next, we can use <code>ffmpeg</code> to create frames every half&nbsp;second:</p>
+<div class="highlight"><pre><span></span><code>./ffmpeg -i .\23354483_145400712877976_2778300398300037120_n.mp4 -r 2 .\frames\image-%07d_original.png
+</code></pre></div>
+
+<p>And apply some cropping using&nbsp;Python:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">glob</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">png_file</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;./frames/*_original.png&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
+<span class="w">    </span><span class="n">cropped</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">image</span><span class="o">.</span><span class="n">crop</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">850</span><span class="p">,</span><span class="w"> </span><span class="mi">1080</span><span class="p">,</span><span class="w"> </span><span class="mi">1080</span><span class="p">))</span>
+<span class="w">    </span><span class="n">cropped</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">png_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_cropped.png&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>As well as some leveling to only retain white and yellow&nbsp;text:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">glob</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">level</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+<span class="w">    </span><span class="n">copy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">img</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+<span class="w">            </span><span class="n">pxl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">list</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)))</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">pxl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">220</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">pxl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">220</span><span class="p">:</span><span class="w"> </span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">            </span><span class="k">else</span><span class="p">:</span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">255</span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">255</span>
+<span class="w">                </span><span class="n">pxl</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">255</span>
+<span class="w">            </span><span class="n">copy</span><span class="o">.</span><span class="n">putpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">),</span><span class="w"> </span><span class="nb">tuple</span><span class="p">(</span><span class="n">pxl</span><span class="p">))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">copy</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">png_file</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;./frames/*_cropped.png&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
+<span class="w">    </span><span class="n">leveled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">level</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="w">    </span><span class="n">leveled</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">png_file</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_cropped.png&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;_leveled.png&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>Next, download <a href="https://github.com/UB-Mannheim/tesseract/wiki">Tesseract</a> (unzip the setup file using 7-Zip and just dump it somwhere, to prevent running the installer &#8212; it works fine in a portable&nbsp;setup).</p>
+<p>Extract the text for every&nbsp;file:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">glob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">subprocess</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">run</span><span class="p">,</span><span class="w"> </span><span class="n">PIPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">dump</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ocr</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<span class="w">    </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;./tesseract/tesseract.exe&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">file_name</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;stdout&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;-psm&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;11&quot;</span><span class="p">],</span><span class="w"> </span><span class="n">stdout</span><span class="o">=</span><span class="n">PIPE</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">out</span><span class="o">.</span><span class="n">stdout</span>
+
+<span class="n">lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="k">for</span><span class="w"> </span><span class="n">png_file</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;./frames/*_leveled.png&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_ocr</span><span class="p">(</span><span class="n">png_file</span><span class="p">)</span>
+<span class="w">    </span><span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
+<span class="n">dump</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span><span class="w"> </span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;lines.p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;wb&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>Perform a little cleaning using some regex and the Levenshtein distance to remove duplicate&nbsp;lines:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pickle</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">load</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">levenshteinDistance</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="n">s2</span><span class="p">):</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">):</span>
+<span class="w">        </span><span class="n">s1</span><span class="p">,</span><span class="w"> </span><span class="n">s2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s2</span><span class="p">,</span><span class="w"> </span><span class="n">s1</span>
+<span class="w">    </span><span class="n">dst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i2</span><span class="p">,</span><span class="w"> </span><span class="n">c2</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">enumerate</span><span class="p">(</span><span class="n">s2</span><span class="p">):</span>
+<span class="w">        </span><span class="n">dst_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">i2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i1</span><span class="p">,</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">enumerate</span><span class="p">(</span><span class="n">s1</span><span class="p">):</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">c1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">c2</span><span class="p">:</span>
+<span class="w">                </span><span class="n">dst_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dst</span><span class="p">[</span><span class="n">i1</span><span class="p">])</span>
+<span class="w">            </span><span class="k">else</span><span class="p">:</span>
+<span class="w">                </span><span class="n">dst_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">min</span><span class="p">((</span><span class="n">dst</span><span class="p">[</span><span class="n">i1</span><span class="p">],</span><span class="w"> </span><span class="n">dst</span><span class="p">[</span><span class="n">i1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">dst_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+<span class="w">        </span><span class="n">dst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dst_</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dst</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;lines.p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;rb&#39;</span><span class="p">))</span>
+
+<span class="n">cleaned</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">lines</span><span class="p">:</span>
+<span class="w">    </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clean</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s1">&#39;telus&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+<span class="w">    </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">clean</span><span class="p">)</span>
+<span class="w">    </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;\s\s+&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">clean</span><span class="p">)</span>
+<span class="w">    </span><span class="n">clean</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;[^‘,\.\?!</span><span class="si">%a</span><span class="s1">-zA-Z0-9\s]+&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">clean</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">cleaned</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">cleaned</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">clean</span><span class="p">:</span>
+<span class="w">        </span><span class="k">del</span><span class="w"> </span><span class="n">cleaned</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">cleaned</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">levenshteinDistance</span><span class="p">(</span><span class="n">clean</span><span class="p">,</span><span class="w"> </span><span class="n">cleaned</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mi">7</span><span class="p">:</span>
+<span class="w">        </span><span class="k">del</span><span class="w"> </span><span class="n">cleaned</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="w">    </span><span class="n">cleaned</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clean</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+<span class="k">for</span><span class="w"> </span><span class="n">clean</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">cleaned</span><span class="p">:</span>
+<span class="w">    </span><span class="nb">print</span><span class="p">(</span><span class="n">clean</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The resulting strings should now be easy to manually clean and&nbsp;finalize:</p>
+<div class="highlight"><pre><span></span><code>ENVIRONMENTAL ADVISER WAS A NATURAL DISASTER
+PRESSED HER ON CLIMATE SCIENCE
+It seems to me that you don‘t believe climate change is real.
+I  l am un
+I am uncertain.
+You‘re uncertain?
+No, I‘m not. I‘m sorry. I jumped ahead.
+Climate change is of course real.
+Human activity affect climate change?
+More than likely, but the extent to which,
+I think is very uncertain, and my  Would you rely on scientists
+to give you that answer, or not?
+[...]
+</code></pre></div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

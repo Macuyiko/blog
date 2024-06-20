@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony Optimization</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 22 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html" rel="bookmark"
+			title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony Optimization">Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony&nbsp;Optimization</a></div>
+		</header>
+	
+	    <p>(This is part 5 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>First, let&#8217;s go to <a href="http://en.wikipedia.org/wiki/Ant_colony_optimization">Wikipedia</a> for a&nbsp;definition:</p>
+<blockquote>
+<p>The ant colony optimization algorithm (<span class="caps">ACO</span>), is a probabilistic technique for solving computational problems which can be reduced to finding good paths through graphs.
+This algorithm is a member of Ant colony algorithms family, in Swarm intelligence methods, and it constitutes some metaheuristic optimizations. Initially proposed by Marco Dorigo in 1992 in his PhD thesis [1] [2] , the first algorithm was aiming to search for an optimal path in a graph; based on the behavior of ants seeking a path between their colony and a source of food. The original idea has since diversified to solve a wider class of Numerical problems, and as a result, several problems have emerged, drawing on various aspects of the behavior of&nbsp;ants.</p>
+</blockquote>
+<p><span class="dquo">&#8220;</span>Good paths through graphs&#8221;. I have not converted our sample problem from the previous posts to a graphing problem. So no Python sample this time,&nbsp;sorry.</p>
+<p>You do get to see some pseudocode&nbsp;though:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Given</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">nodes</span>
+<span class="n">Given</span><span class="w"> </span><span class="n">some</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="n">between</span><span class="w"> </span><span class="n">nodes</span><span class="w"> </span><span class="p">(</span><span class="n">paths</span><span class="p">)</span>
+<span class="n">Given</span><span class="w"> </span><span class="n">BT</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="p">{},</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">will</span><span class="w"> </span><span class="n">contain</span><span class="w"> </span><span class="n">our</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="n">tour</span>
+<span class="n">Randomly</span><span class="w"> </span><span class="n">construct</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="n">T</span>
+<span class="n">Create</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="s2">&quot;ants&quot;</span><span class="w"> </span><span class="p">(</span><span class="n">often</span><span class="w"> </span><span class="n">equal</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">nodes</span><span class="p">)</span>
+<span class="n">Associate</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">every</span><span class="w"> </span><span class="n">edge</span>
+<span class="n">Iterate</span><span class="w"> </span><span class="n">until</span><span class="w"> </span><span class="n">time</span><span class="w"> </span><span class="n">limit</span><span class="w"> </span><span class="n">hit</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">satisfiable</span><span class="w"> </span><span class="n">solution</span><span class="w"> </span><span class="n">found</span><span class="p">:</span>
+<span class="w">  </span><span class="n">For</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="n">ant</span><span class="w"> </span><span class="n">do</span><span class="p">:</span>
+<span class="w">    </span><span class="n">Do</span><span class="w"> </span><span class="n">until</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="n">constructed</span><span class="p">:</span>
+<span class="w">    </span><span class="n">Next</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">chosen</span><span class="w"> </span><span class="n">depending</span><span class="w"> </span><span class="n">on</span><span class="w"> </span><span class="n">visibility</span><span class="w"> </span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="n">distance</span><span class="p">)</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">trail</span>
+<span class="w">    </span><span class="n">E</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="w"> </span><span class="n">choose</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="n">with</span><span class="w"> </span><span class="n">probability</span><span class="w"> </span><span class="p">(</span><span class="n">visibility</span><span class="o">^</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">pheromone</span><span class="w"> </span><span class="n">trail</span><span class="o">^</span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="n">Calculate</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">tour</span>
+<span class="w">    </span><span class="n">Copy</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="n">tour</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">fitness</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">better</span>
+<span class="w">    </span><span class="n">Update</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">trail</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="n">edge</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">ant</span><span class="s1">&#39;s tour:</span>
+<span class="w">    </span><span class="n">E</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">edge</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">tour</span><span class="w"> </span><span class="n">cost</span><span class="p">)</span>
+<span class="w">  </span><span class="n">For</span><span class="w"> </span><span class="n">each</span><span class="w"> </span><span class="n">edge</span><span class="p">:</span>
+<span class="w">    </span><span class="n">Lower</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">factor</span>
+<span class="w">    </span><span class="n">Add</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="n">value</span>
+<span class="w">    </span><span class="n">Set</span><span class="w"> </span><span class="n">delta</span><span class="w"> </span><span class="n">pheromone</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+
+<p><span class="caps">ACO</span> is an interesting method, again, we see certain aspects already used in the previous posts, like using pheromone trails to avoid local maxima. Since the algorithm is closely tied to graphs, nodes and paths, it&#8217;s no wonder it&#8217;s often used to find shortest paths, or to solve the traveling salesman&nbsp;problem.</p>
+<p>There are some interesting links on the Wikipedia page, one of them is this&nbsp;application:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SWPli1U789I/AAAAAAAAPIA/NNpjK0IHnKE/s400/a1.png"></p>
+<p>After a while, an ant finds a path to the food and places&nbsp;pheromones:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWPlkhL3QjI/AAAAAAAAPII/YdulhWMn9vs/s400/a2.png"></p>
+<p>Those who are interested can read more about <a href="http://en.wikipedia.org/wiki/Swarm_intelligence">Swarm intelligence</a> or <a href="http://en.wikipedia.org/wiki/Particle_swarm_optimization">Particle swarm optimization</a>.</p>
+<hr>
+<p>Table Of Contents (click a link to jump to that&nbsp;post)</p>
+<p>1- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">Introduction</a>
+2- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html">Genetic Algorithms</a>
+3- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html"><span class="caps">CHC</span> Eshelman</a>
+4- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html">Simulated Annealing</a>
+5- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html">Ant Colony Optimization</a>
+6- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html">Tabu Search</a>
+7- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html">Conclusion</a></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Oneiric / Linode Server Migration</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 18 December 2011, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html" rel="bookmark"
+			title="Permalink to Oneiric / Linode Server Migration">Oneiric / Linode Server&nbsp;Migration</a></div>
+		</header>
+	
+	    <p>Sigh&#8230; I&#8217;m sorry, Slicehost, but I&#8217;m leaving you. I&#8217;ve been a long (and very happy) Slicehost customer for the past few years. The service offered was perfect for anyone knowing their way around <span class="caps">SSH</span>, Linux administration and setting up a server &#8212; and all that for just 30 bucks a month. Nothing bad can be said about the Slicehost developers either: their support has been excellent, the uptime of their servers near-perfect, and their tutorials and guides well-written. I&#8217;ve ran MySQL and web servers, wiki&#8217;s, proxy&#8217;s, game hosts and much more on my little slice. I even used it as a <a href="http://blog.macuyiko.com/2011/03/running-ssh-honeypot-with-kippo-lets.html">honeypot</a>.</p>
+<p>But then, a sudden announcement changed everything. In 2008 (such a long time, already!) Slicehost told the world that they had been acquired by Rackspace. Since then, I&#8217;ve become more and more frustrated with Rackspace&#8217;s need to shove buzzwords, confusing plans and general overdone &#8220;enterprisiness&#8221; up my throat. Try to find out how much a <a href="http://www.rackspace.com/cloud/cloud_hosting_products/servers/pricing/">new slice</a> will cost you&#8230; exactly. Compare this new look with the <a href="http://web.archive.org/web/20080603231902/http://www.slicehost.com/">old Slicehost landing page</a>. The old page was simple, easy, beautiful. The new pricing gives the impression that you&#8217;re bringing 20 consultants on&nbsp;board.</p>
+<p>I don&#8217;t have anything against acquisitions in general, but the Rackspace takeover has been particularly confusing for end-users, with <span class="caps">DNS</span> service moving to Rackspace (free?), lower bandwidth allowances (huh?), servers moving data centers (why?), changes in Slice sizes, and a requirement to migrate to Rackspace in 2012 (what does this mean? Just leave me&nbsp;be!)</p>
+<p>Since I&#8217;m not charmed by Rackspace&#8217;s way of handling things (I&#8217;m sure they&#8217;re nice people though), I&#8217;m moving to <a href="http://www.linode.com/">Linode</a>. With easy to understand pricing, a clean dashboard (with all the same features as Slicehost) and not too much fluff to get in your way, it&#8217;s a perfect solution for the hobbyist hacker. Even better: Linode also <a href="http://journal.uggedal.com/vps-performance-comparison/">outperforms the competition</a> performance-wise, although the linked benchmark is a bit old, and I&#8217;ve never had complaints with Slicehost in this&nbsp;regard.</p>
+<p>The reason why I&#8217;ve been putting off the move is because it involves setting up a new server (easy), configuring it exactly as you want (difficult), and making sure everything is migrated correctly (ugh). There&#8217;s always one little configuration directive, file, or database table which is forgotten during the&nbsp;process.</p>
+<p>The steps below serve as a reminder, mainly aimed at my (future) self, for setting up an Ubuntu (Oneiric) server. I&#8217;m looking forward to seeing how Linode&nbsp;performs&#8230;</p>
+<h2>1. Install&nbsp;Ubuntu</h2>
+<h2>2. Edit /etc/apt/sources.list and&nbsp;update</h2>
+<div class="highlight"><pre><span></span><code>apt-get update
+apt-get upgrade`
+</code></pre></div>
+
+<h2>3. Enable the root&nbsp;account</h2>
+<div class="highlight"><pre><span></span><code>sudo passwd root
+</code></pre></div>
+
+<p>And give root a password. Afterwards we become root by running: <code>su</code></p>
+<h2>4. Synchronize the system&nbsp;clock</h2>
+<p>Synchronize the system clock with an <span class="caps">NTP</span> server over the internet. (You can also install this via the Time and Date Preferences <span class="caps">GUI</span>.</p>
+<div class="highlight"><pre><span></span><code>apt-get install ntp ntpdate
+</code></pre></div>
+
+<h2>5. Install the <span class="caps">SSH</span>&nbsp;server</h2>
+<p>Install OpenSSH by&nbsp;default.</p>
+<div class="highlight"><pre><span></span><code>apt-get install ssh openssh-server
+</code></pre></div>
+
+<h2>6. Configure the&nbsp;network</h2>
+<p>A server should have a static <span class="caps">IP</span> address; edit <code>/etc/network/interfaces</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="nx">This</span><span class="w"> </span><span class="nx">file</span><span class="w"> </span><span class="nx">describes</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">network</span><span class="w"> </span><span class="nx">interfaces</span><span class="w"> </span><span class="nx">available</span><span class="w"> </span><span class="nx">on</span><span class="w"> </span><span class="nx">your</span><span class="w"> </span><span class="nx">system</span>
+<span class="err">#</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="nx">how</span><span class="w"> </span><span class="nx">to</span><span class="w"> </span><span class="nx">activate</span><span class="w"> </span><span class="nx">them</span><span class="p">.</span><span class="w"> </span><span class="nx">For</span><span class="w"> </span><span class="nx">more</span><span class="w"> </span><span class="nx">information</span><span class="p">,</span><span class="w"> </span><span class="nx">see</span><span class="w"> </span><span class="nx">interfaces</span><span class="p">(</span><span class="mi">5</span><span class="p">).</span>
+
+<span class="err">#</span><span class="w"> </span><span class="nx">The</span><span class="w"> </span><span class="nx">loopback</span><span class="w"> </span><span class="nx">network</span><span class="w"> </span><span class="kd">interface</span>
+<span class="kt">auto</span><span class="w"> </span><span class="nx">lo</span>
+<span class="nx">iface</span><span class="w"> </span><span class="nx">lo</span><span class="w"> </span><span class="nx">inet</span><span class="w"> </span><span class="nx">loopback</span>
+
+<span class="err">#</span><span class="w"> </span><span class="nx">The</span><span class="w"> </span><span class="nx">primary</span><span class="w"> </span><span class="nx">network</span><span class="w"> </span><span class="kd">interface</span>
+<span class="kt">auto</span><span class="w"> </span><span class="nx">eth0</span>
+<span class="nx">iface</span><span class="w"> </span><span class="nx">eth0</span><span class="w"> </span><span class="nx">inet</span><span class="w"> </span><span class="nx">static</span>
+<span class="nx">address</span><span class="w"> </span><span class="m m-Double">192.168.0.100</span>
+<span class="nx">netmask</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">192.168.0.0</span>
+<span class="nx">broadcast</span><span class="w"> </span><span class="m m-Double">192.168.0.255</span>
+<span class="nx">gateway</span><span class="w"> </span><span class="m m-Double">192.168.0.1</span><span class="err">`</span>
+</code></pre></div>
+
+<p>Then restart your&nbsp;network:</p>
+<div class="highlight"><pre><span></span><code>/etc/init.d/networking restart
+</code></pre></div>
+
+<p>Then edit <code>/etc/hosts</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="mf">127.0.0.1</span><span class="w"> </span><span class="n">localhost</span><span class="mf">.</span><span class="n">localdomain</span><span class="w"> </span><span class="n">localhost</span>
+<span class="mf">192.168.0.100</span><span class="w"> </span><span class="n">server1</span><span class="mf">.</span><span class="n">example</span><span class="mf">.</span><span class="n">com</span><span class="w"> </span><span class="n">server1</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">following</span><span class="w"> </span><span class="n">lines</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">desirable</span><span class="w"> </span><span class="kr">for</span><span class="w"> </span><span class="n">IPv6</span><span class="w"> </span><span class="n">capable</span><span class="w"> </span><span class="n">hosts</span>
+
+<span class="p">::</span><span class="mf">1</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">localhost</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">loopback</span>
+<span class="n">fe00</span><span class="p">::</span><span class="mf">0</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">localnet</span>
+<span class="n">ff00</span><span class="p">::</span><span class="mf">0</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">mcastprefix</span>
+<span class="n">ff02</span><span class="p">::</span><span class="mf">1</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">allnodes</span>
+<span class="n">ff02</span><span class="p">::</span><span class="mf">2</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">allrouters</span>
+<span class="n">ff02</span><span class="p">::</span><span class="mf">3</span><span class="w"> </span><span class="n">ip6</span><span class="o">-</span><span class="n">allhosts</span><span class="err">`</span>
+</code></pre></div>
+
+<p>Now&nbsp;run:</p>
+<div class="highlight"><pre><span></span><code>echo server1.example.com &gt; /etc/hostname
+</code></pre></div>
+
+<p>Reboot the&nbsp;system:</p>
+<div class="highlight"><pre><span></span><code>reboot
+</code></pre></div>
+
+<p>Afterwards,&nbsp;run:</p>
+<div class="highlight"><pre><span></span><code>hostname
+hostname -f
+</code></pre></div>
+
+<p>Both should show your chosen&nbsp;hostname.</p>
+<h2>7. Add&nbsp;users</h2>
+<p>Add some users. Adding a &#8220;webmaster&#8221; is&nbsp;recommended:</p>
+<div class="highlight"><pre><span></span><code>sudo useradd -d /home/webmaster -m webmaster
+sudo passwd webmaster
+
+# Set /bin/bash as shell
+
+# Edit /etc/sudoers
+</code></pre></div>
+
+<h2>8.&nbsp;MySQL</h2>
+<p>Install MySQL. You will be asked for a root&nbsp;password.</p>
+<div class="highlight"><pre><span></span><code>apt-get install mysql-server mysql-client
+</code></pre></div>
+
+<p>We keep <code>bind-address = 127.0.0.1</code> in <code>/etc/mysql/my.cnf</code>.</p>
+<h2>9. Postfix for <span class="caps">SMTP</span>&nbsp;support</h2>
+<div class="highlight"><pre><span></span><code>apt-get install postfix procmail
+</code></pre></div>
+
+<p>You will be asked two questions. Answer as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">General</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">of</span><span class="w"> </span><span class="nx">configuration</span><span class="p">?</span>
+<span class="w">  </span><span class="nx">Internet</span><span class="w"> </span><span class="nx">Site</span>
+
+<span class="nx">Mail</span><span class="w"> </span><span class="nx">name</span><span class="p">?</span>
+<span class="w">  </span><span class="nx">server1</span><span class="p">.</span><span class="nx">example</span><span class="p">.</span><span class="nx">com</span>
+</code></pre></div>
+
+<p>Run:</p>
+<div class="highlight"><pre><span></span><code>dpkg-reconfigure postfix
+</code></pre></div>
+
+<p>Again, you&#8217;ll be asked some&nbsp;questions:</p>
+<div class="highlight"><pre><span></span><code><span class="k">General</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">configuration</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="n">Internet</span><span class="w"> </span><span class="n">Site</span>
+<span class="k">Where</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="k">go</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="o">[</span><span class="n">blank</span><span class="o">]</span>
+<span class="n">Mail</span><span class="w"> </span><span class="n">name</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="n">server1</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span>
+<span class="n">Other</span><span class="w"> </span><span class="n">destinations</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="k">for</span><span class="vm">?</span><span class="w"> </span><span class="p">(</span><span class="n">blank</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">none</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="n">server1</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="p">,</span><span class="w"> </span><span class="n">localhost</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span><span class="p">,</span><span class="w"> </span><span class="n">localhost</span><span class="p">.</span><span class="n">localdomain</span><span class="p">,</span><span class="w"> </span><span class="n">localhost</span>
+<span class="n">Force</span><span class="w"> </span><span class="n">synchronous</span><span class="w"> </span><span class="n">updates</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">mail</span><span class="w"> </span><span class="n">queue</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="k">No</span>
+<span class="k">Local</span><span class="w"> </span><span class="n">networks</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="mf">127.0.0.0</span><span class="o">/</span><span class="mi">8</span>
+<span class="k">Use</span><span class="w"> </span><span class="n">procmail</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">local</span><span class="w"> </span><span class="n">delivery</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="n">Yes</span>
+<span class="n">Mailbox</span><span class="w"> </span><span class="k">size</span><span class="w"> </span><span class="k">limit</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="mi">0</span>
+<span class="k">Local</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">extension</span><span class="w"> </span><span class="k">character</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;--</span><span class="w"> </span><span class="o">+</span>
+<span class="n">Internet</span><span class="w"> </span><span class="n">protocols</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">use</span><span class="vm">?</span><span class="w"> </span><span class="o">&lt;</span><span class="c1">-- ipv4</span>
+</code></pre></div>
+
+<p>Next:</p>
+<div class="highlight"><pre><span></span><code>postconf -e &#39;inet_interfaces = loopback-only&#39;
+</code></pre></div>
+
+<p>We do not create certificates any more. Only using postfix as a local-only <span class="caps">SMTP</span> handler. <span class="caps">IMAP</span> and others not handled with Google&nbsp;Apps.</p>
+<p>Restart&nbsp;Postfix:</p>
+<div class="highlight"><pre><span></span><code>/etc/init.d/postfix restart
+</code></pre></div>
+
+<h2>10. Apache/<span class="caps">PHP5</span></h2>
+<h3>10.1.&nbsp;Installation</h3>
+<div class="highlight"><pre><span></span><code>apt-get install apache2 apache2-mpm-prefork apache2-utils ssl-cert
+</code></pre></div>
+
+<p>Install <span class="caps">PHP5</span>:</p>
+<div class="highlight"><pre><span></span><code>apt-get install libapache2-mod-php5 php5 php5-common php5-curl php5-dev php5-gd php5-idn php-pear php5-imagick php5-imap php5-json php5-mcrypt php5-memcache php5-mhash php5-ming php5-mysql php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+</code></pre></div>
+
+<p>Edit <code>/etc/apache2/mods-available/dir.conf</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;IfModule</span><span class="w"> </span><span class="err">mod_dir.c</span><span class="nt">&gt;</span>
+<span class="w">  </span>#DirectoryIndex<span class="w"> </span>index.html<span class="w"> </span>index.cgi<span class="w"> </span>index.pl<span class="w"> </span>index.php<span class="w"> </span>index.xhtml
+<span class="w">  </span>DirectoryIndex<span class="w"> </span>index.html<span class="w"> </span>index.htm<span class="w"> </span>index.shtml<span class="w"> </span>index.cgi<span class="w"> </span>index.php<span class="w"> </span>index.xhtml
+<span class="nt">&lt;/IfModule&gt;</span>`
+</code></pre></div>
+
+<p>Now we have to enable some Apache&nbsp;modules:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">a2enmod</span><span class="w"> </span><span class="nv">ssl</span>
+<span class="nv">a2enmod</span><span class="w"> </span><span class="nv">rewrite</span>
+<span class="nv">a2enmod</span><span class="w"> </span><span class="nv">suexec</span>
+<span class="nv">a2enmod</span><span class="w"> </span><span class="nv">status</span>
+<span class="nv">a2enmod</span><span class="w"> </span><span class="k">include</span>
+</code></pre></div>
+
+<p>Reload the Apache&nbsp;configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">apache2</span><span class="w"> </span><span class="n">force</span><span class="o">-</span><span class="n">reload</span>
+</code></pre></div>
+
+<p>Don&#8217;t forget to edit&nbsp;php.ini.</p>
+<h3>10.2. Adding&nbsp;subdomains</h3>
+<p>You can add sites to <code>/etc/apache2/sites-enabled</code>, use the following example configuration&nbsp;file:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;VirtualHost</span><span class="w"> </span><span class="err">*</span><span class="nt">&gt;</span>
+<span class="w">  </span>ServerAdmin<span class="w"> </span>info@sitename.com
+<span class="w">  </span>ServerName<span class="w"> </span>sitename.com
+<span class="w">  </span>ServerAlias<span class="w"> </span>*.sitename.com
+<span class="w">  </span>DocumentRoot<span class="w"> </span>/var/www/sitename.com/
+
+<span class="w">  </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">    </span>Options<span class="w"> </span>FollowSymLinks
+<span class="w">    </span>AllowOverride<span class="w"> </span>All
+<span class="w">  </span><span class="nt">&lt;/Directory&gt;</span>
+
+<span class="w">  </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="err">/var/www/sitename.com</span><span class="nt">/&gt;</span>
+<span class="w">    </span>Options<span class="w"> </span>Indexes<span class="w"> </span>FollowSymLinks<span class="w"> </span>MultiViews
+<span class="w">    </span>DirectoryIndex<span class="w"> </span>index.html<span class="w"> </span>index.htm<span class="w"> </span>index.php<span class="w"> </span>index.php3
+<span class="w">    </span>AllowOverride<span class="w"> </span>All
+<span class="w">    </span>Order<span class="w"> </span>allow,deny
+<span class="w">    </span>allow<span class="w"> </span>from<span class="w"> </span>all
+<span class="w">  </span><span class="nt">&lt;/Directory&gt;</span>
+
+<span class="w">  </span>ScriptAlias<span class="w"> </span>/cgi-bin/<span class="w"> </span>/usr/lib/cgi-bin/
+
+<span class="w">  </span><span class="nt">&lt;Directory</span><span class="w"> </span><span class="err">&quot;/usr/lib/cgi-bin&quot;</span><span class="nt">&gt;</span>
+<span class="w">    </span>AllowOverride<span class="w"> </span>None
+<span class="w">    </span>Options<span class="w"> </span>ExecCGI<span class="w"> </span>-MultiViews<span class="w"> </span>+SymLinksIfOwnerMatch
+<span class="w">    </span>Order<span class="w"> </span>allow,deny
+<span class="w">    </span>Allow<span class="w"> </span>from<span class="w"> </span>all
+<span class="w">  </span><span class="nt">&lt;/Directory&gt;</span>
+
+<span class="w">  </span>ErrorLog<span class="w"> </span>/var/log/apache2/error.log
+
+<span class="w">  </span>#<span class="w"> </span>Possible<span class="w"> </span>values<span class="w"> </span>include:<span class="w"> </span>debug,<span class="w"> </span>info,<span class="w"> </span>notice,<span class="w"> </span>warn,<span class="w"> </span>error,<span class="w"> </span>crit,
+<span class="w">  </span>#<span class="w"> </span>alert,<span class="w"> </span>emerg.
+<span class="w">  </span>LogLevel<span class="w"> </span>warn
+
+<span class="w">  </span>CustomLog<span class="w"> </span>/var/log/apache2/access.log<span class="w"> </span>combined
+<span class="w">  </span>ServerSignature<span class="w"> </span>On
+
+<span class="w">  </span>#Alias<span class="w"> </span>/doc/<span class="w"> </span>&quot;/usr/share/doc/&quot;
+<span class="nt">&lt;/VirtualHost&gt;</span>`
+</code></pre></div>
+
+<p>Don&#8217;t forget to edit the default virtualhost with a <code>NameVirtualHost *</code> and <code>AllowOverride All</code>.</p>
+<h2>11.&nbsp;Proftpd</h2>
+<p>Install&nbsp;Proftpd:</p>
+<div class="highlight"><pre><span></span><code>apt-get install proftpd ucf
+</code></pre></div>
+
+<p>You will be asked a&nbsp;question:</p>
+<div class="highlight"><pre><span></span><code>Run proftpd from inetd or standalone? &lt;-- standalone`
+</code></pre></div>
+
+<p>Now edit <code>/etc/proftpd/proftpd.conf</code>:</p>
+<div class="highlight"><pre><span></span><code>DefaultRoot /
+UseIPv6 off
+</code></pre></div>
+
+<p>Then restart&nbsp;Proftpd:</p>
+<div class="highlight"><pre><span></span><code>/etc/init.d/proftpd restart
+</code></pre></div>
+
+<h2>12.&nbsp;PHPMyAdmin</h2>
+<p>Install&nbsp;PHPMyAdmin:</p>
+<div class="highlight"><pre><span></span><code>apt-get install phpmyadmin
+</code></pre></div>
+
+<p>Pick apache2 to&nbsp;configure.</p>
+<h2>13. Secure <span class="caps">SSH</span> a&nbsp;bit</h2>
+<p>Edit <code>/etc/ssh/sshd_config</code>:</p>
+<div class="highlight"><pre><span></span><code>Port 4444 #Other than 22
+PermitRootLogin no #Make sure other user can login/sudo`
+</code></pre></div>
+
+<h2>14. Set /var/www&nbsp;permissions</h2>
+<div class="highlight"><pre><span></span><code><span class="n">chown</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="n">webmaster</span><span class="p">:</span><span class="n">www</span><span class="o">-</span><span class="n">data</span><span class="w"> </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span>
+<span class="n">chmod</span><span class="w"> </span><span class="mi">775</span><span class="w"> </span><span class="o">-</span><span class="n">R</span><span class="w"> </span><span class="o">/</span><span class="k">var</span><span class="o">/</span><span class="n">www</span>
+</code></pre></div>
+
+<h2>15. Install slowloris&nbsp;protection</h2>
+<div class="highlight"><pre><span></span><code>apt-get install gcc apache2-threaded-dev
+wget https://gist.github.com/raw/773464/4e7250692c34f55725384525b513e71be7541f5a/mod_muantiloris.c
+apxs2 -a -i -c mod_muantiloris.c
+/etc/init.d/apache2 restart
+</code></pre></div>
+
+<p>Edit <code>/etc/apache2/httpd.conf</code>:</p>
+<div class="highlight"><pre><span></span><code>ExtendedStatus On
+IPReadLimit 5
+IPPostLimit 10
+</code></pre></div>
+
+<h2>16. Install&nbsp;fail2ban</h2>
+<div class="highlight"><pre><span></span><code>apt-get install fail2ban
+</code></pre></div>
+
+<p>Don&#8217;t forget to configure a jail.local and add custom filters if&nbsp;needed.</p>
+<h2>17. Final&nbsp;migration</h2>
+<p>Move user files, virtualhost configurations, /var/www. Backup mysql data&nbsp;bases.</p>
+<p>Install openjdk-6-jre, davmail if&nbsp;needed.</p>
+<p>Backup&nbsp;script:</p>
+<div class="highlight"><pre><span></span><code>tar cvpzf backup.tgz --exclude=/proc --exclude=/lost+found --exclude=/mnt --exclude=/sys --exclude=/dev --exclude=/usr --exclude=/bin --exclude=/sbin --exclude=/backup.tgz /
+</code></pre></div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

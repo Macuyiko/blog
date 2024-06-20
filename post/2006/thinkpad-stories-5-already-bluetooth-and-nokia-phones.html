@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Thinkpad Stories (5 already): “Bluetooth and Nokia phones.”</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 14 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-5-already-bluetooth-and-nokia-phones.html" rel="bookmark"
+			title="Permalink to Thinkpad Stories (5 already): “Bluetooth and Nokia phones.”">Thinkpad Stories (5 already): &#8220;Bluetooth and Nokia&nbsp;phones.&#8221;</a></div>
+		</header>
+	
+	    <p>Story number 5&nbsp;already.</p>
+<p>Here is the background talk: now that I finally have bluetooth support (I never had an <span class="caps">USB</span> dongle) I could finally copy my pictures over from my Nokia phone (since I don&#8217;t want to invest in an expensive non-standard <span class="caps">USB</span>&nbsp;cable).</p>
+<p>I followed some advice from the forums and other Internet resources&#8230; here is how I did&nbsp;it.</p>
+<p>Make sure the following packages are installed on your&nbsp;system:</p>
+<div class="highlight"><pre><span></span><code>sudo apt-get install gnome-bluetooth
+sudo apt-get install obexserver
+sudo apt-get install bluez-utils
+</code></pre></div>
+
+<p>Then load the following modules into the kernel (I could skip this&nbsp;step).</p>
+<div class="highlight"><pre><span></span><code>sudo modprobe l2cap
+sudo modprobe rfcomm
+</code></pre></div>
+
+<p>Also, start your <code>bluez-utils</code>:</p>
+<div class="highlight"><pre><span></span><code>sudo /etc/init.d/bluez-utils start
+</code></pre></div>
+
+<p>Since I am using my Thinkpad, I active the integrated bluetooth&nbsp;device:</p>
+<div class="highlight"><pre><span></span><code>sudo su
+echo enable &gt; /proc/acpi/ibm/bluetooth
+</code></pre></div>
+
+<p>Activate bluetooth in your phone. Make sure it is visible to other&nbsp;devices.</p>
+<p>Now&nbsp;do:</p>
+<div class="highlight"><pre><span></span><code><span class="n">hcitool</span><span class="w"> </span><span class="n">scan</span>
+</code></pre></div>
+
+<p>You should see something like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code>Scanning ...
+00:11:22:DD:EE:FF YOUR_PHONE_NAME
+</code></pre></div>
+
+<p>Copy the address to the clipboard, you&#8217;ll use it&nbsp;later.</p>
+<p>Now we edit a simple configuration&nbsp;file:</p>
+<div class="highlight"><pre><span></span><code>sudo gedit /etc/bluetooth/rfcomm.conf
+</code></pre></div>
+
+<p>And save this (use your own address, leave the channel to&nbsp;10):</p>
+<div class="highlight"><pre><span></span><code>rfcomm0 {
+device ADDRESS_OF_YOUR_PHONE;
+channel 10;
+comment &quot;Your description&quot;;
+}
+</code></pre></div>
+
+<p>You may wonder how we got this channel, you can find out by entering this&nbsp;command:</p>
+<div class="highlight"><pre><span></span><code><span class="n">sdptool</span><span class="w"> </span><span class="n">browse</span><span class="w"> </span><span class="n">ADDRESS_OF_YOUR_PHONE</span>
+</code></pre></div>
+
+<p>Somewhere in the output you find the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><code>Service Name: OBEX File Transfer
+Service RecHandle: 0x1000f
+Service Class ID List:
+&quot;OBEX File Transfer&quot; (0x1106)
+Protocol Descriptor List:
+&quot;L2CAP&quot; (0x0100)
+&quot;RFCOMM&quot; (0x0003)
+Channel: 10
+&quot;OBEX&quot; (0x0008)
+Language Base Attr List:
+code_ISO639: 0x656e
+encoding: 0x6a
+base_offset: 0x100
+Profile Descriptor List:
+&quot;OBEX File Transfer&quot; (0x1106)
+Version: 0x0100
+</code></pre></div>
+
+<p>See?</p>
+<p>Now add the Nokia channel to communicate with the&nbsp;phone:</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span><span class="w"> </span><span class="n">sdptool</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">--</span><span class="n">channel</span><span class="o">=</span><span class="mi">10</span><span class="w"> </span><span class="n">OPUSH</span>
+</code></pre></div>
+
+<p>And bind it with <code>rfcomm</code>:</p>
+<div class="highlight"><pre><span></span><code>sudo rfcomm bind /dev/rfcomm0 ADDRESS_OF_YOUR_PHONE 10
+</code></pre></div>
+
+<p>You&#8217;re all set up&#8230; now you&nbsp;can:</p>
+<p><strong>Send a file from your&nbsp;phone:</strong></p>
+<p>(1) Start the obexserver with (stores files in /tmp, you must enter this command after every file&nbsp;send):</p>
+<div class="highlight"><pre><span></span><code>obexserver
+</code></pre></div>
+
+<p>or (stays open, should store in your home dir, but didn&#8217;t work with&nbsp;me):</p>
+<div class="highlight"><pre><span></span><code>gnome-obex-server
+</code></pre></div>
+
+<p>(2) Use your phone, select a picture or video file, then Options -&gt; Send -&gt; Via Bluetooth, it should find your <span class="caps">PC</span>.</p>
+<p><strong>Send a file to your&nbsp;phone:</strong></p>
+<p>(1) <code>gnome-obex-send /path/to/file</code></p>
+<p>It should find your phone and prompt&nbsp;you.</p>
+<p>Don&#8217;t forget that you must use these commands every reboot again (or you could make a&nbsp;script):</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span><span class="w"> </span><span class="n">modprobe</span><span class="w"> </span><span class="n">l2cap</span>
+<span class="n">sudo</span><span class="w"> </span><span class="n">modprobe</span><span class="w"> </span><span class="n">rfcomm</span>
+<span class="c1"># (re)start (if necessary):</span>
+<span class="n">sudo</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">init</span><span class="o">.</span><span class="n">d</span><span class="o">/</span><span class="n">bluez</span><span class="o">-</span><span class="n">utils</span>
+<span class="n">echo</span><span class="w"> </span><span class="n">enable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span><span class="n">proc</span><span class="o">/</span><span class="n">acpi</span><span class="o">/</span><span class="n">ibm</span><span class="o">/</span><span class="n">bluetooth</span>
+<span class="n">sudo</span><span class="w"> </span><span class="n">mknod</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">rfcomm0</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="mi">216</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">sdptool</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">--</span><span class="n">channel</span><span class="o">=</span><span class="mi">10</span><span class="w"> </span><span class="n">OPUSH</span>
+<span class="n">sudo</span><span class="w"> </span><span class="n">rfcomm</span><span class="w"> </span><span class="n">bind</span><span class="w"> </span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">rfcomm0</span><span class="w"> </span><span class="n">YOUR_PHONE_ADDRESS</span><span class="w"> </span><span class="mi">10</span>
+</code></pre></div>
+
+<p>When you&#8217;re done, I find it neat the disable the integrated bluetooth device (let&#8217;s conserve power) this is easy as&nbsp;pie:</p>
+<div class="highlight"><pre><span></span><code>echo disable &gt; /proc/acpi/ibm/bluetooth
+</code></pre></div>
+
+<p>and you could also stop <code>bluez-utils</code>:</p>
+<div class="highlight"><pre><span></span><code>sudo /etc/init.d/bluez-utils stop
+</code></pre></div>
+
+<p>if you&nbsp;want.</p>
+<p>This was one of my reasons why I kept a Windows partition. Now that I have figured out how to do this in Ubuntu, one partition has a greater change of being wiped and&nbsp;merged.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

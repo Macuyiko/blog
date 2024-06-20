@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Rendering Minecraft Maps with R’s rayshader Package</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 06 April 2019, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2019/rendering-minecraft-maps-with-rs-rayshader-package.html" rel="bookmark"
+			title="Permalink to Rendering Minecraft Maps with R’s rayshader Package">Rendering Minecraft Maps with R&#8217;s rayshader&nbsp;Package</a></div>
+		</header>
+	
+	    <p>About two weeks ago, Hacker News <a href="https://news.ycombinator.com/item?id=19469142">was discussing</a> a new R package called <a href="https://github.com/ryantimpe/brickr"><code>brickr</code></a>, which relies on another relatively new and excellently crafted R package called <a href="https://github.com/tylermorganwall/rayshader"><code>rayshader</code></a> to enable its rendering goodness. The latter package was originally constructed as a means to generate good-looking &#8220;2D and 3D hillshaded maps of elevation matrices using a combination of raytracing, spherical texture mapping, overlays, and ambient&nbsp;occlusion&#8221;.</p>
+<p>Someone wondered whether this might be an appropriate tool to implement a Minecraft clone, to which I&nbsp;replied:</p>
+<blockquote>
+<p>Like, playable and all? Very unlikely. It&#8217;s not going to be fast enough and R is not typically the language you&#8217;d use for games. But to e.g. import a Minecraft world and render it with the rayshader package? That might actually be a fun&nbsp;idea!</p>
+</blockquote>
+<p>I decided to put my money where my mouth is an experiment with this for a couple of&nbsp;hours.</p>
+<p>First, we need to come up with a map to generate. I whipped up a new Spigot server and surveyed a piece of landscape to use in&nbsp;Minecraft:</p>
+<p><img alt="In-game screenshot of where we're at" src="/images/2019/minecraft1.png"></p>
+<p>The next question was how to extract map data from the game. There have been a number of tools constructed over the years on how to do so, with <a href="https://mapcrafter.org/index">Mapcrafter</a> and <a href="https://chunky.llbit.se/">Chunky</a> offering something very similar to what we want to do, albeit in&nbsp;R.</p>
+<p>I toyed around a bit with the source code of Mapcrafter before going for an easier route. I maintain a <a href="https://github.com/Macuyiko/minecraft-python">Jython interface to Minecraft</a> which offers full access to the Spigot <span class="caps">API</span> from Python, so I whipped up a quick Python script in order to extract a height&nbsp;map:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">mcapi</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">me</span> <span class="o">=</span> <span class="n">player</span><span class="p">(</span><span class="s1">&#39;Macuyiko&#39;</span><span class="p">)</span>
+<span class="n">loc</span> <span class="o">=</span> <span class="n">location</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">loc</span><span class="p">)</span>
+
+<span class="n">area_size</span> <span class="o">=</span> <span class="mi">128</span>
+
+<span class="n">x_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">area_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">area_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">z_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">area_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">loc</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="n">area_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">y_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ignore_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">AIR</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">GRASS</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">TALL_GRASS</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">CAVE_AIR</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">OAK_LEAVES</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">OAK_LOG</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">BIRCH_LEAVES</span><span class="p">,</span> 
+    <span class="n">Material</span><span class="o">.</span><span class="n">BIRCH_LOG</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">DANDELION</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">SEAGRASS</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">POPPY</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">OXEYE_DAISY</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">WATER</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">TALL_SEAGRASS</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">AZURE_BLUET</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">KELP</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">KELP_PLANT</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">OAK_PLANKS</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">SUNFLOWER</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">DARK_OAK_LEAVES</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">RED_MUSHROOM_BLOCK</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">DARK_OAK_LOG</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">MUSHROOM_STEM</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">PUMPKIN</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">BROWN_MUSHROOM_BLOCK</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">ROSE_BUSH</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">SUGAR_CANE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">BROWN_MUSHROOM</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">RED_MUSHROOM</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">RED_MUSHROOM_BLOCK</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">PEONY</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">LILAC</span><span class="p">]</span>
+
+<span class="n">include_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">GRASS_BLOCK</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">DIRT</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">CLAY</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">ANDESITE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">STONE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">SAND</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">COAL_ORE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">GRAVEL</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">GRANITE</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">SANDSTONE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">IRON_ORE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">DIORITE</span><span class="p">,</span>
+    <span class="n">Material</span><span class="o">.</span><span class="n">PACKED_ICE</span><span class="p">,</span> <span class="n">Material</span><span class="o">.</span><span class="n">ICE</span><span class="p">]</span>
+
+<span class="n">result_height</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">result_type</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">x_range</span><span class="p">:</span>
+    <span class="n">result_height</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="n">result_type</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Doing x-row </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">x</span><span class="p">,))</span>
+    <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">z_range</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_range</span><span class="p">:</span>
+            <span class="n">block</span> <span class="o">=</span> <span class="n">WORLD</span><span class="o">.</span><span class="n">getBlockAt</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">ignore_list</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">block</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">include_list</span><span class="p">:</span>
+                <span class="n">result_height</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                <span class="n">result_type</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Don&#39;t know what to do with </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">block</span><span class="p">,))</span>
+                <span class="n">exit</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;results_height.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+    <span class="n">csvwriter</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result_height</span><span class="p">:</span>
+        <span class="n">csvwriter</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;results_type.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+    <span class="n">csvwriter</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">csvfile</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result_type</span><span class="p">:</span>
+        <span class="n">csvwriter</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+</code></pre></div>
+
+<p>This script basically goes over a grid of (x,z) values (according to Minecraft&#8217;s <a href="https://minecraft.gamepedia.com/Coordinates">coordinate system</a>) and iterates over the y-values from top (sky) to bottom, until it finds a solid&nbsp;block.</p>
+<p>Note the usage of the <code>ignore_list</code> and <code>include_list</code>. I basically wanted to skip over some block types which I did not want to include in the landscape, such as tree blocks, flowers, and so one. I also skip over water blocks as I want to render these using <code>rayshader</code>.</p>
+<p>At the end, a <span class="caps">CSV</span> file is obtained which height values for each location. We can then render this in R as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">devtools</span><span class="o">::</span><span class="nf">install_github</span><span class="p">(</span><span class="s">&quot;tylermorganwall/rayshader&quot;</span><span class="p">)</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">rayshader</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+
+<span class="n">elmap</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&#39;c:/users/seppe/desktop/results_height.csv&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">as.matrix</span>
+
+<span class="n">shadow</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ray_shade</span><span class="p">(</span><span class="n">elmat</span><span class="p">,</span><span class="w"> </span><span class="n">zscale</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">lambert</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">ambient</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ambient_shade</span><span class="p">(</span><span class="n">elmat</span><span class="p">,</span><span class="w"> </span><span class="n">zscale</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+
+<span class="n">elmat</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">sphere_shade</span><span class="p">(</span><span class="n">texture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;imhof1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">zscale</span><span class="o">=</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">add_shadow</span><span class="p">(</span><span class="n">shadow</span><span class="p">,</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">add_shadow</span><span class="p">(</span><span class="n">ambient</span><span class="p">,</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">plot_3d</span><span class="p">(</span><span class="n">elmat</span><span class="p">,</span><span class="w"> </span><span class="n">zscale</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
+<span class="w">          </span><span class="n">windowsize</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">640</span><span class="p">,</span><span class="m">400</span><span class="p">),</span>
+<span class="w">          </span><span class="n">water</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">waterdepth</span><span class="o">=</span><span class="m">64</span><span class="p">,</span><span class="w"> </span><span class="n">wateralpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="n">watercolor</span><span class="o">=</span><span class="s">&quot;lightblue&quot;</span><span class="p">)</span>
+
+<span class="nf">render_snapshot</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Resulting in the following&nbsp;picture:</p>
+<p><img alt="Rendered map" src="/images/2019/minecraft2.png"></p>
+<p>Note that there are several possibilities for&nbsp;improving:</p>
+<ul>
+<li>Water is just set at the fixed level of 64 (the level Minecraft uses for water), though this ends up filling caves where there is no water in the Minecraft world. An alternative approach would consist of rendering everything including water blocks&nbsp;manually</li>
+<li>To do so, one would also have to construct their own color map to use as the shader, instead of relying on the built-in &#8220;imhof1&#8221; texture map (e.g. by mapping all block types to a color that matches&nbsp;well)</li>
+<li>Additionally, you could even construct a map consisting of all blocks in the area, instead of just the top-most one. This would effectively boil down to the same strategy that <a href="https://github.com/ryantimpe/brickr/blob/bb08271bd92dabb1d8182e40ad26cf0024bbb85d/R/bricks_to_3d.R"><code>brickr</code> uses</a> to render more complex models. It&#8217;s not really well documented in <code>rayshader</code>, but it seems to be possible to render multiple height levels on top of each other through multiple <code>plot_3d</code> calls</li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

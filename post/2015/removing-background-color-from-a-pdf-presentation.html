@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Removing Background Color from a PDF Presentation</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 08 February 2015, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2015/removing-background-color-from-a-pdf-presentation.html" rel="bookmark"
+			title="Permalink to Removing Background Color from a PDF Presentation">Removing Background Color from a <span class="caps">PDF</span>&nbsp;Presentation</a></div>
+		</header>
+	
+	    <p>Ever ran across a <span class="caps">PDF</span> export of a Powerpoint which looks like&nbsp;this?</p>
+<p><img alt="Get ready to buy a new toner" src="http://blog.macuyiko.com/images/2015/pdfcleaner/presentation.png"></p>
+<p>Turns out it is not so easy to convert this to printable design (at least not without having access to the original presentation file, that is). Adobe Reader already allows to do the&nbsp;following:</p>
+<ol>
+<li>Press <code>Ctrl+K</code> to go to <code>Edit -&gt; Preferences</code>.</li>
+<li>Select <code>Accessibility</code>.</li>
+<li>Check <code>Replace Document Colors</code> to set the page background to white and text colors to&nbsp;black.</li>
+</ol>
+<p>At first sight, this works&nbsp;fine:</p>
+<p><img alt="Problem solved?" src="http://blog.macuyiko.com/images/2015/pdfcleaner/presentation2.png"></p>
+<p>But when printing, Adobe Reader decides to just put the background back in, even although the white background shows up in the page preview&#8230; Call it the ultimate troll, but that exactly how we know Adobe by&nbsp;now.</p>
+<p>Perhaps some alternative <span class="caps">PDF</span> readers such as Foxit or Sumatra can do this right, but I&#8217;m using Evince, and &#8212; currently &#8212; not in the mood to start trying out&nbsp;others.</p>
+<p>Luckily, help is on the way. Step one: download <a href="http://pdfclown.org/">PDFClown</a> for Java. You&#8217;ll find a <span class="caps">JAR</span> file in the source code zip&nbsp;somewhere.</p>
+<p>Step two, whip up a small&nbsp;script:</p>
+<script src="https://gist.github.com/Macuyiko/a170686e59a919ef49e6.js"></script>
+
+<p>Step three, you might need to make some changes to the following classes. They are part of PDFClown, so grab them off their GitHub repository, place them in your project and&nbsp;modify:</p>
+<ul>
+<li><code>org.pdfclown.documents.contents.fonts.CMapParser</code>: uses <code>Integer.parseInt</code> to convert a hex string to an integer, but this fails for large numbers. Use BigInteger&nbsp;instead.</li>
+<li><code>org.pdfclown.documents.contents.fonts.OpenFontParser</code>: some fonts inside of <span class="caps">PDF</span>&#8217;s do totally not comply with standards. So sprinkle <code>if(tableOffset != null) { ... }</code> everywhere instead of throwing Exceptions to work around this&nbsp;issue.</li>
+<li><code>org.pdfclown.documents.contents.fonts.SimpleFont</code>: change a line so it reads <code>if(code != null &amp;&amp; glyphIndexes.get(code) != null)</code>.</li>
+</ul>
+<p>I&#8217;ve also made a quick <a href="http://blog.macuyiko.com/images/2015/pdfcleaner/pdfcleaner.jar">runnable <span class="caps">JAR</span> over here</a>.</p>
+<div class="highlight"><pre><span></span><code>java -jar pdfcleaner.jar &quot;input.pdf&quot; &quot;output.pdf&quot;
+</code></pre></div>
+
+<p><img alt="The result..." src="http://blog.macuyiko.com/images/2015/pdfcleaner/presentation3.png"></p>
+<p>Needless to say, I&#8217;m now an enormous PDFClown&nbsp;convert.</p>
+<p>Note that this is pretty hacky code, it basically takes a chainsaw to your <span class="caps">PDF</span> file and fills everything it can with either black or white. Left as an exercise for the&nbsp;reader:</p>
+<ul>
+<li>Better determine the actual background box based on size information so only necessary Path objects are&nbsp;recolored.</li>
+<li>Also change stroke&nbsp;color.</li>
+<li>Allow to set desired&nbsp;colors.</li>
+</ul>
+<p>Anyway, does the trick for me so&nbsp;far.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

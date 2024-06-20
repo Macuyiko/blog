@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Ubuntu Jauntu: Skype Worked Before, Now: “Problem with audio capture”</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 28 April 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/ubuntu-jauntu-skype-worked-before-now-problem-with-audio-capture.html" rel="bookmark"
+			title="Permalink to Ubuntu Jauntu: Skype Worked Before, Now: “Problem with audio capture”">Ubuntu Jauntu: Skype Worked Before, Now: &#8220;Problem with audio&nbsp;capture&#8221;</a></div>
+		</header>
+	
+	    <p>There are two things I currently not like about Ubuntu or Linux in general: the whole sound mess, and the whole graphics mess (but both are getting better). This problem is about the first&nbsp;mess.</p>
+<p>Skype was working perfectly in Interprid, now in Jaunty it was telling me that there was a &#8220;Problem with audio capture&#8221;. I tested Ubuntu&#8217;s sound-recorder as well, which was not working&nbsp;either.</p>
+<p>I&#8217;m using the default, normal Skype from the Medibuntu&nbsp;repo&#8217;s.</p>
+<p>Let&#8217;s take a look at all the different factors here. First of all, open <code>System -&gt; Preferences -&gt; Sound</code>. Mine looks like&nbsp;this:</p>
+<ul>
+<li>Sound Events - Sound playback:&nbsp;Autodetect</li>
+<li>Music and Movies - Sound playback:&nbsp;Autodetect</li>
+<li>Audio Conferencing<ul>
+<li>Sound playback:&nbsp;Autodetect</li>
+<li><strong>Sound capture</strong>: <span class="caps">ALSA</span> - Advanced Linux Sound Architecture, in your case, this may say PulseAudio Sound Server here. However, I have noticed that <span class="caps">ALSA</span> seems to record better sound (less garbled, especially with slower computers). Since we&#8217;re not doing anything unusual with recorded sound (client-server, multiple inputs), I suggest you also pick <span class="caps">ALSA</span>&nbsp;here.</li>
+</ul>
+</li>
+</ul>
+<p>Now right click the sound icon in the panel and pick &#8220;Open Volume Control&#8221;. My device says &#8220;<span class="caps">HDA</span> Intel (Alsa mixer)&#8221;. You&#8217;ll probably need the Alsa mixer as well. I have a few sliders I have to play&nbsp;with:</p>
+<ul>
+<li>In the Playback-tab (yes, here!): Mic&nbsp;Boost</li>
+<li>In the Recording-tab:&nbsp;Capture</li>
+<li>In the Switches-tab: make sure Microphone Capture is enabled! This was disabled after my Jaunty upgrade. If you&#8217;re not seeing any relevant sliders or checkboxes, click the Preferences-button and enable all relevant&nbsp;sliders/switches.</li>
+</ul>
+<p>Now open sound-recorder. You should be able to record sound now. Also, start <code>pavucontrol</code>, and click the Input Devices-tab, the level meter should respond to you clapping your hands for&nbsp;example.</p>
+<p>Hear yourself? No, then try fiddling again with the settings in the previously opened windows before you&nbsp;continue!</p>
+<p>Yes, good, onwards to Skype. Try making a test call. In my case, Skype was still complaining about the audio capture. Let&#8217;s open Skype&#8217;s options -&gt; Sound&nbsp;Devices.</p>
+<p>In my case, the options&nbsp;were:</p>
+<ul>
+<li>Sound In: <span class="caps">HDA</span> Intel&nbsp;(hw:Intel,0)</li>
+<li>Sound Out:&nbsp;pulse</li>
+<li>Ringing:&nbsp;pulse</li>
+</ul>
+<p>Which was working in Intrepid. If you suffer the same problem, read&nbsp;on&#8230;</p>
+<p>A sidenote, your Sound In device might be either pulse or default as well. There are a few cases when you should use&nbsp;these:</p>
+<ul>
+<li>default: if you&#8217;ve succesfully changed configuration files to make the correct devices the default ones. This will almost never be the&nbsp;case.</li>
+<li>pulse: if you&#8217;re using PulseAudio server for the Sound Capture. But even then, I don&#8217;t recommend it. Using pulse for Sound In often crashes Skype on my&nbsp;machine&#8230;</li>
+</ul>
+<p>Again, provided when you use a normal Skype (non static, non <span class="caps">OSS</span>).</p>
+<p>Your Sound Out/Ringing devices are already correct, they need to be pulse. Sound In will be set to an&nbsp;hw-device.</p>
+<p>Before reading further, try making a test call with every listed hw-device (I had four, you can have more or&nbsp;less).</p>
+<p>If none of them are working or if you&#8217;re sure which hw-device you need (and it isn&#8217;t working), try this: edit <code>/etc/pulse/daemon.conf</code> (don&#8217;t forget to sudo) and make sure the following lines are present and uncommented, with the following&nbsp;values:</p>
+<div class="highlight"><pre><span></span><code>default-fragments = 8
+default-fragment-size-msec = 5
+</code></pre></div>
+
+<p>This is an optional step however, but it seems to help with the Skype sound quality (an other option is setting <code>default-fragment-size-msec</code> to&nbsp;10).</p>
+<p><strong>(!)</strong> Now,  edit <code>~/.asoundrc</code> (no need to be root here, it&#8217;s a file in your home directory). And make sure the following lines are&nbsp;there:</p>
+<div class="highlight"><pre><span></span><code><span class="nx">pcm</span><span class="p">.</span><span class="nx">pulse</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">pulse</span><span class="w"> </span><span class="p">}</span>
+<span class="nx">ctl</span><span class="p">.</span><span class="nx">pulse</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="nx">pulse</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+
+<p>Which I totally did in Hardy as well! The update must&#8217;ve deleted them. This simple file seemed to do the&nbsp;trick!</p>
+<p>Then, just to be sure, I reinstalled  the <code>libasound2-plugins</code> package.</p>
+<p>Reboot, or restart pulseaudio (kill it, then start it in i.e. a Terminal window). Restart Skype. Skype was working fine now. If it is not, make sure you try every&nbsp;plughw-device.</p>
+<p>Still not working, no matter how much you try? You&#8217;re out of luck. If sound-recorder and sound playback is working, you can try an emergency solution. Install the static, <span class="caps">OSS</span> version of Skype (you can find it with Medibuntu or floating around in a tarball somewhere). and start it&nbsp;with:</p>
+<div class="highlight"><pre><span></span><code>padsp skype
+</code></pre></div>
+
+<p>To route the sounds through the PulseAudio sink. Sound devices in this Skype should all be set to default (or <span class="caps">OSS</span>). Calls should work now. Be warned though: always try this as a last resort, routing <span class="caps">OSS</span> sound through PulseAudio is slow and bloated, ugly and old. Your record voice will sound like&#8230; well,&nbsp;crap.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

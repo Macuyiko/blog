@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Virtualbox: Expanding A Disk Drive</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 07 September 2008, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2008/virtualbox-expanding-a-disk-drive.html" rel="bookmark"
+			title="Permalink to Virtualbox: Expanding A Disk Drive">Virtualbox: Expanding A Disk&nbsp;Drive</a></div>
+		</header>
+	
+	    <p>I love Virtualbox, it&#8217;s definitely my virtualization platform of choice for daily tasks [1] on a Linux-host, and it&#8217;s quickly replacing VMware on Windows hosts as&nbsp;well.</p>
+<p>However, recently I had to expand a virtual partition of a Windows guest. There are already lots of options and methods available to do&nbsp;this:</p>
+<ul>
+<li><a href="http://ubuntuforums.org/showthread.php?t=634880">http://ubuntuforums.org/showthread.php?t=634880</a>: uses gparted and&nbsp;ntfsresize.</li>
+<li><a href="http://forums.virtualbox.org/viewtopic.php?t=1966">http://forums.virtualbox.org/viewtopic.php?t=1966</a>: described lots of options to modify <span class="caps">VDI</span>&nbsp;files.</li>
+<li><a href="http://forums.virtualbox.org/viewtopic.php?t=364">http://forums.virtualbox.org/viewtopic.php?t=364</a>: gives some&nbsp;methods.</li>
+<li><a href="http://forums.virtualbox.org/viewtopic.php?t=1404">http://forums.virtualbox.org/viewtopic.php?t=1404</a>: importing a native install into a <span class="caps">VDI</span>.</li>
+</ul>
+<p>None of these actually offered a really good or quick solution, until I found this <a href="http://crookedspoke.wordpress.com/2008/03/15/resize-disk-image/">blog post</a>. Tom&#8217;s statement of hostility to copyright allows me to provide a summary&#8230; However, I&#8217;ve added some extra steps and tips for both Windows and Linux&nbsp;guests.</p>
+<p>You&#8217;ll&nbsp;need:</p>
+<ul>
+<li><a href="http://gparted.sourceforge.net/livecd.php">A Gparted LiveCD</a>.</li>
+<li>Two virtual disk images: the old one (the one you&#8217;re currently using, the small one), and a new one, which you can easily create in Virtualbox, make sure it&#8217;s &#8220;raw&#8221;&nbsp;(unpartitioned).</li>
+</ul>
+<p>Steps:</p>
+<ol>
+<li>Mount or burn the Gparted disk in Virtualbox so that it&#8217;ll boot from it (make sure the &#8220;virtual bios&#8221; boots from it&nbsp;first).</li>
+<li>Using VirtualBox, create a new <span class="caps">VDI</span> with a larger size that you want to expand the virtual machine to (see: &#8220;You&#8217;ll&nbsp;need&#8221;).</li>
+<li>Leave your existing <span class="caps">VDI</span> as the primary <span class="caps">IDE</span> master. Set the new <span class="caps">VDI</span> to be the Primary <span class="caps">IDE</span> slave for the&nbsp;machine.</li>
+<li>In Gparted: run <code>fdisk -l</code> or use Gparted <span class="caps">GUI</span> to view your partitions. You should get /dev/hda and /dev/hdb. /dev/hdb shouldn&#8217;t be partitioned at this point. /dev/hda should be your primary master (the original <span class="caps">VDI</span> that is too small for your needs), and /dev/hdb should be the new image (virtual primary <span class="caps">IDE</span>&nbsp;slave).</li>
+<li>Do not mount those (yet). Instead, use dd to copy the old image to the new one: <code>dd if=/dev/hda of=/dev/hdb</code></li>
+</ol>
+<p>Warning: don&#8217;t despair, this may take some time, and the hard drive status icon of Virtualbox should indicate that something&#8217;s&nbsp;happening.</p>
+<p>Steps for Linux&nbsp;guests:</p>
+<ol>
+<li>
+<p>Launch GParted, and resize the partition on <code>/dev/hdb</code> (the new image) to take up the entire disk. This may take awhile. If you cannot move your partition because the swap partition is in the way, first remove the swap, then add a new swap partition add the end of the hard drive (linux-swap), and then extend the non-swap partition. The following screenshot shows how it should look after recreating the swap partition, right before extending the&nbsp;data-partition:</p>
+<p><a href="http://3.bp.blogspot.com/_X4W-h82Vgjw/SYo4jrQIXKI/AAAAAAAAPIo/xLipRm7H704/s1600-h/right.png"> <img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SYo4jrQIXKI/AAAAAAAAPIo/xLipRm7H704/s400/right.png"></a></p>
+</li>
+<li>
+<p>Extra step (update - thanks to comments): modern Linux distributions use disk IDs to identify disks instead of sda, sdb,&#8230; This might give you the following message in a few steps: &#8220;Waiting for device /dev/disk/by-id/scsi-SATA_VBOX_HARDDISK_VB&#8230; to appear&#8221;, like the user in the comments of this post. So before you continue with the following steps, open a Terminal&nbsp;window.</p>
+<p>I&#8217;m going to create two mount points for the old and new partition and mount them. You can use GParted to find out the exact device location (the new partition should probably be <code>/dev/hdb1</code>):</p>
+<p>mkdir /mnt/old_disk
+mkdir /mnt/new_disk
+mount /dev/hda1 /mnt/old_disk
+mount /dev/hdb1&nbsp;/mnt/new_disk</p>
+<p>Screenshot:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SYpAl5UjIYI/AAAAAAAAPIw/BotclqOvt2M/s400/right2.png"></p>
+<p>I&#8217;m now going to take a peek at the fstab-file on my old&nbsp;partition:</p>
+<p>cat&nbsp;/mnt/old_disk/etc/fstab</p>
+<p>With an Ubuntu partition, you get something like&nbsp;this:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SYpBZG7LLII/AAAAAAAAPI4/gmkToO7FIrs/s400/right3.png"></p>
+<p>Ubuntu uses UUIDs to identify partitions. We&#8217;ll have to edit our new partition&#8217;s fstab file with the new UUIDs. Your distribution could&nbsp;use:</p>
+<ul>
+<li>Device locations, like <code>/dev/sda1</code> (yes, you see this in my fstab file as well, but everything after a pound (&#8216;#&#8217;) character is a comment, so it&#8217;s not really using that). You can find out your new locations using GParted. Make sure you only change the numbers if you have to! So don&#8217;t change <code>sda</code> to <code>sdb</code> or <code>hdb</code>! GParted might be showing you <code>/dev/hdb</code>, but when we&#8217;ll make our new partition the master <span class="caps">VDI</span>, your Linux installation will see this as&nbsp;/dev/sda!</li>
+<li>IDs, not common, you can find the new IDs by using <code>ls /dev/disk/by-id -lah</code>.</li>
+<li>Paths, not common, you can find them by using <code>ls /dev/disk/by-path -lah</code>.</li>
+<li>UUIDs (like me), more and more common. You can find your new UUIDs by using <code>ls /dev/disk/by-uuid -lah</code>. The new UUIDs will be listed next to <code>../../hdb</code>-lines (remember: <code>hda</code> is our old hard&nbsp;disk).</li>
+</ul>
+<p>Now let&#8217;s edit our new fstab. Open a new Terminal window (so you can still see the UUIDs) and&nbsp;enter:</p>
+<p>nano&nbsp;/mnt/new_disk/etc/fstab</p>
+<p>Nano is a Terminal text editor. Just use it like Notepad, use <span class="caps">CTRL</span>+O to save your changes, and <span class="caps">CTRL</span>+X to exit. You can use it to edit your&nbsp;UUIDs.</p>
+<p>Note: make sure you leave the proc-line intact! Also, note that the cdrom-line doesn&#8217;t use an <span class="caps">UUID</span> but&nbsp;/dev/scd0.</p>
+<p>Extra note: the data-partition will probably have the same <span class="caps">UUID</span> as before (we have only extended it). The swap partition has a new <span class="caps">UUID</span> (because I deleted and recreated&nbsp;it).</p>
+<p>Following screenshot shows my edited fstab, I have removed the&nbsp;comments.</p>
+<p><img alt="" src="http://2.bp.blogspot.com/_X4W-h82Vgjw/SYpFKVZA9mI/AAAAAAAAPJA/cqwieXimuFk/s400/right4.png"></p>
+</li>
+<li>
+<p>All done? Good. Poweroff with the GParted&nbsp;LiveCD.</p>
+</li>
+<li>
+<p>Finally, set the new image (resized) as the primary master for the virtual machine. Uncheck the primary slave. Boot into the machine to verify that it worked. If everything works you may delete the small disk <span class="caps">VDI</span>.</p>
+<p>Screwed? Then make the small image master and the large one slave again, and use GParted with nano to double check. Don&#8217;t be afraid making a mistake, if you only edit the large <span class="caps">VDI</span>, you can always rollback to your old small one and start&nbsp;over.</p>
+</li>
+</ol>
+<p>Steps for Windows&nbsp;guests:</p>
+<ol>
+<li>
+<p>Do not use gparted or ntfsresize to resize the partition. I know you can, but I found it a tad risky. Instead, set the new image as the primary master for the virtual machine, uncheck the primary slave. Boot back into&nbsp;Windows.</p>
+</li>
+<li>
+<p>You should be back into Windows, but still on a small partition. If you use Disk Management in Administrative Tools you should see that there is a lot of unallocated space now on the virtual hard disk, how can we expand our&nbsp;drive?</p>
+</li>
+<li>
+<p>Open a <code>cmd</code>. Type <code>diskpart.exe</code>, this is a tool that comes built in with most Windows&nbsp;distributions.</p>
+<p>Type <code>extend</code> and press enter. This will extend your partition. The full command is <code>extend [size=n] [disk=n] [noerr]</code>, but we can leave all options to their&nbsp;defaults.</p>
+</li>
+<li>
+<p>Once this is done, use <code>chkdsk</code> to make sure everything is&nbsp;okay.</p>
+</li>
+</ol>
+<p>[1]: For server-oriented platforms, Xen is the undisputable&nbsp;champion.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

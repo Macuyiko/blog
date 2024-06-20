@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - 2019 category</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 01 November 2019, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2019/my-coursefastai-notes.html" rel="bookmark"
+				title="Permalink to My course.fast.ai Notes">My course.fast.ai&nbsp;Notes</a></div>
+			</header>
+			<div class="article-summary">
+					<style>
+tag { background-color: #e8fbff; color: black;
+    border-radius: 4px; padding: 2px 4px; }
+tag::before { content: "#"; }
+</style>
+
+<p>Like many others, I&#8217;m a huge fan of <a href="https://course.fast.ai/">Jeremy Howard&#8217;s fast.ai courses</a>. Even when having worked in the machine learning field for years, I still find the material to be packed full with interesting …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2019/my-coursefastai-notes.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 18 May 2019, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2019/list-of-apps-2019.html" rel="bookmark"
+				title="Permalink to List of Apps (2019)">List of Apps&nbsp;(2019)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>It&#8217;s time to setup a new laptop, so <a href="////blog.macuyiko.com/post/2018/list-of-apps-2018.html">once again</a> I&#8217;m jotting down a list of apps I normally install right away, slightly updated&nbsp;again.</p>
+<h2>Web</h2>
+<ul>
+<li><a href="http://www.google.com/chrome/">Chrome</a></li>
+<li><a href="http://www.google.com/drive">Google&nbsp;Drive</a></li>
+<li><a href="https://filezilla-project.org/download.php?type=client">FileZilla</a></li>
+</ul>
+<p>Optional:</p>
+<ul>
+<li><a href="http://www.qbittorrent.org/">qBittorrent</a> install once&nbsp;required</li>
+<li><a href="http://www.dropbox.com/">Dropbox</a> to be replaced with Google Drive completely, after their 3 device&nbsp;limit …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2019/list-of-apps-2019.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 07 April 2019, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2019/a-tour-of-open-mongodb-instances.html" rel="bookmark"
+				title="Permalink to A Tour of Open MongoDB Instances">A Tour of Open MongoDB&nbsp;Instances</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Earlier last month, a security researcher called Victor Gevers sent out a <a href="https://twitter.com/0xDUDE/status/1101917885100945409">tweet</a> stating that he had stumbled upon a number of open MongoDB databases hosting what was apparantly logged chats from a number of Chinese applications such as Weixin (WeChat) and <span class="caps">QQ</span>:</p>
+<blockquote>
+<p>Around 364 million online profiles and their …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2019/a-tour-of-open-mongodb-instances.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 06 April 2019, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2019/rendering-minecraft-maps-with-rs-rayshader-package.html" rel="bookmark"
+				title="Permalink to Rendering Minecraft Maps with R’s rayshader Package">Rendering Minecraft Maps with R&#8217;s rayshader&nbsp;Package</a></div>
+			</header>
+			<div class="article-summary">
+					<p>About two weeks ago, Hacker News <a href="https://news.ycombinator.com/item?id=19469142">was discussing</a> a new R package called <a href="https://github.com/ryantimpe/brickr"><code>brickr</code></a>, which relies on another relatively new and excellently crafted R package called <a href="https://github.com/tylermorganwall/rayshader"><code>rayshader</code></a> to enable its rendering goodness. The latter package was originally constructed as a means to generate good-looking &#8220;2D and 3D hillshaded maps of …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2019/rendering-minecraft-maps-with-rs-rayshader-package.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 22 February 2019, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2019/discovering-interaction-effects-in-ensemble-models.html" rel="bookmark"
+				title="Permalink to Discovering Interaction Effects in Ensemble Models">Discovering Interaction Effects in Ensemble&nbsp;Models</a></div>
+<div class="article-subtitle">Using Friedman's H-statistic</div>			</header>
+			<div class="article-summary">
+					<p>Update: this post now has a <a href="////blog.macuyiko.com/post/2021/revisiting-discovery-of-interaction-effects.html">follow-up with some further details</a>.</p>
+<p>Throughout the past year or so, both R and Python focused data science practioners have picked up on a <a href="https://arxiv.org/pdf/0811.1679.pdf">paper by Friedman and Popescu</a> from 2008 entitled Predictive Learning Via Rule Ensembles. Interestingly enough, the &#8220;meat&#8221; of the paper …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2019/discovering-interaction-effects-in-ensemble-models.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+	&laquo; Prev
+	Page 1 of 1	
+	Next &raquo;
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Installing Heroes Of Might And Magic III (3) On Linux (Ubuntu)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 23 April 2010, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2010/installing-heroes-of-might-and-magic-iii-3-on-linux-ubuntu.html" rel="bookmark"
+			title="Permalink to Installing Heroes Of Might And Magic III (3) On Linux (Ubuntu)">Installing Heroes Of Might And Magic <span class="caps">III</span> (3) On Linux&nbsp;(Ubuntu)</a></div>
+		</header>
+	
+	    <p>&#8230;to remind myself because I always seem to forget how&nbsp;to.</p>
+<p><strong>1.</strong> Put the contents of the <span class="caps">CD</span> somewhere (e.g. <code>/tmp/heroes</code>).</p>
+<p><strong>2.</strong>&nbsp;Install:</p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ ./setup.sh
+</code></pre></div>
+
+<p><strong>3.</strong> Download and run patch with <code>--keep</code>:</p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ wget ftp://mirrors.dotsrc.org/lokigames/updates/heroes3/heroes3-1.3.1a-unified-x86.run
+/tmp/heroes$ _POSIX2_VERSION=199209 ./heroes3-1.3.1a-unified-x86.run --keep
+</code></pre></div>
+
+<p><strong>4.</strong> Download the patch for the&nbsp;patch:</p>
+<p>Dowload <code>http://downloads.sourceforge.net/goldenfiles/loki_patch-fix-0.1.tar.gz</code></p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ tar xvfz loki_patch-fix-0.1.tar.gz
+/tmp/heroes$ cp Loki_patch-fix/fixedpatch heroes3-1.3.1a-unified-x86/bin/Linux/x86/loki_patch
+</code></pre></div>
+
+<p><strong>5.</strong> Now&nbsp;update:</p>
+<div class="highlight"><pre><span></span><code>/tmp/heroes$ ./heroes3-1.3.1a-unified-x86/update.sh
+</code></pre></div>
+
+<p><strong>6.</strong> Get the compatibility&nbsp;libs:</p>
+<div class="highlight"><pre><span></span><code>wget http://www.swanson.ukfsn.org/loki/loki_compat_libs-1.3.tar.bz2
+</code></pre></div>
+
+<p>Extract them to a directory you can remember (e.g. <code>HEROES3_INSTALL_PATH/lib</code>).</p>
+<p><strong>7.</strong> Start the game with (assuming you used <code>HEROES3_INSTALL_PATH/lib</code>):</p>
+<div class="highlight"><pre><span></span><code>LD_PRELOAD=HEROES3_INSTALL_PATH/lib/libstdc++-3-libc6.2-2-2.10.0.so:HEROES3_INSTALL_PATH/lib/libsmpeg-0.4.so.0.1.3:HEROES3_INSTALL_PATH/lib/libsmjpeg-0.2.so.0 HEROES3_INSTALL_PATH/heroes3 -w
+</code></pre></div>
+
+<p>Now to get the sound&nbsp;working&#8230;</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

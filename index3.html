@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 09 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-1.html" rel="bookmark"
+				title="Permalink to An Exploration of Cellular Automata and Graph Based Game Systems: Part 1">An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;1</a></div>
+<div class="article-subtitle">Introduction to Cellular Automata</div>			</header>
+			<div class="article-summary">
+					<script>
+$(function() {
+    $('.toggle').each(function(index) {
+        var toggler = $('<div style="margin: 8px 0; background-color: #E3E0FF; cursor: pointer; padding: 8px;">Toggle iframe</div>');
+        toggler.insertBefore($(this));
+        toggler.click(function() {
+            var elt = $(this).next('.toggle');
+            var newElt = $("<iframe></iframe>")
+            Array.prototype.slice.call(elt.get(0).attributes).forEach(function(a) {
+                newElt.attr(a …</script>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-1.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 08 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/and-now-time-for-a-rant.html" rel="bookmark"
+				title="Permalink to And Now, Time for a Rant">And Now, Time for a&nbsp;Rant</a></div>
+<div class="article-subtitle">Everything about computing is horrible</div>			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve been interested in computing since I was a kid. The ability to tinker with the internals of a machine, the brutalism of <span class="caps">DOS</span>, Windows 3.1 and Windows 95&#8217;s interfaces (those big grey buttons)&#8230; It was a great time for young persons to get started with <span class="caps">IT …</span></p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/and-now-time-for-a-rant.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 14 August 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/cleaning-up-a-gmail-inbox.html" rel="bookmark"
+				title="Permalink to Cleaning Up a Gmail Inbox">Cleaning Up a Gmail&nbsp;Inbox</a></div>
+<div class="article-subtitle">Using Python and the Gmail API</div>			</header>
+			<div class="article-summary">
+					<p><strong>Update:</strong> code is available at <a href="https://github.com/Macuyiko/gmail-cleaner">https://github.com/Macuyiko/gmail-cleaner</a>.</p>
+<p>I&#8217;ve been getting increasingly frustrated by my overflowing Gmail inbox lately. I&#8217;ve been using Gmail as a primary e-mail service since 2005 and have collected tens of thousands emails over the&nbsp;years.</p>
+<p>Lately, I&#8217;ve been finding it …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/cleaning-up-a-gmail-inbox.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 10 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/word-spellchecking-in-python.html" rel="bookmark"
+				title="Permalink to Word Spellchecking in Python">Word Spellchecking in&nbsp;Python</a></div>
+			</header>
+			<div class="article-summary">
+					<p>In case you&#8217;d ever want to integrate Word&#8217;s spell checking capabilities on top of your Python app, here&#8217;s how you would do&nbsp;so:</p>
+<script src="https://gist.github.com/Macuyiko/a8a90554428064db98d73c65b30abb80.js"></script>
+
+<p>The only requirement is having Word installed (with the language packs installed for the languages you want to check), as well as the Python …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/word-spellchecking-in-python.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 09 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/some-games-to-look-forward-to-in-2017.html" rel="bookmark"
+				title="Permalink to Some Games to Look Forward to in 2017">Some Games to Look Forward to in&nbsp;2017</a></div>
+<div class="article-subtitle">Most of these are indie titles, again</div>			</header>
+			<div class="article-summary">
+					<p>2016 turned out to be a great year for gaming, with Dishonored 2, The Witness, Doom, Overwatch, Superhot, Thumper, Hyper Light Drifter, Cogmind, Devil Daggers, Furi, Brigador, Age of Empires 2 <span class="caps">HD</span> keeping me entertained throughout most of the&nbsp;year.</p>
+<p>Which games am I looking forward to in 2017? Below …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/some-games-to-look-forward-to-in-2017.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 08 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/smoothlife-in-processing.html" rel="bookmark"
+				title="Permalink to SmoothLife in Processing">SmoothLife in&nbsp;Processing</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Conway’s <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a> is one of the most popular examples of cellular automaton. However, did you know that <a href="http://arxiv.org/abs/1111.1567">Stephan Rafler</a> proposed a version of Game of Life in 2011 which works over a contious domain, called&nbsp;SmoothLife?</p>
+<iframe width="500" height="300" src="https://www.youtube.com/embed/KJe9H6qS82I" frameborder="0" allowfullscreen></iframe>
+
+<p>Cool, isn&#8217;t it? The basic idea is that the grid …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/smoothlife-in-processing.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 06 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2017/some-quick-spatial-kriging-fun-with-aqicnorg.html" rel="bookmark"
+				title="Permalink to Some Quick Spatial Kriging Fun With Aqicn.org">Some Quick Spatial Kriging Fun With&nbsp;Aqicn.org</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Our local Belgian media was just reporting on a study showing that air pollution has a negative impact on the cognitive abilities of children (<a href="http://www.demorgen.be/binnenland/wetenschappers-trekken-aan-alarmbel-vuile-lucht-maakt-kind-minder-aandachtig-bc60b3ac/">link in Dutch</a>).</p>
+<p>With that in mind, I was reminded of the <a href="http://aqicn.org/">World Air Quality Index team</a>, which keeps track of pollution values across the world …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2017/some-quick-spatial-kriging-fun-with-aqicnorg.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html" rel="bookmark"
+				title="Permalink to How-to: Send HTML Mails with OAuth2 and Gmail in Python">How-to: Send <span class="caps">HTML</span> Mails with OAuth2 and Gmail in&nbsp;Python</a></div>
+			</header>
+			<div class="article-summary">
+					<p>If you&#8217;ve been trying to send e-mails from a program using your Gmail account, you&#8217;ll probably have encountered the following error&nbsp;message:</p>
+<div class="highlight"><pre><span></span><code>SMTP Error: Could not authenticate. Error: SMTP Error: Could not authenticate.
+535 5.7.1 Username and Password not accepted. Learn more at
+535 5.7 …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/fun-with-audiosurf-2-and-mitmproxy.html" rel="bookmark"
+				title="Permalink to Fun with Audiosurf 2 and Mitmproxy">Fun with Audiosurf 2 and&nbsp;Mitmproxy</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I enjoy firing up <a href="http://audiosurf2.com/">Audiosurf 2</a> from time to time to have some rythmic musical fun. One of the things that has been bothering me, however, is the fact that Audiosurf 2 only integrates with Soundcloud for its music streaming. You can use local files, but since I stream all …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/fun-with-audiosurf-2-and-mitmproxy.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/converting-plain-text-references-to-bibtex-updated.html" rel="bookmark"
+				title="Permalink to Converting Plain Text References To BibTeX, Updated">Converting Plain Text References To BibTeX,&nbsp;Updated</a></div>
+			</header>
+			<div class="article-summary">
+					<p>This blog post is an update for <a href="////blog.macuyiko.com/post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html">this one</a>. I was recently contacted regarding the original post no longer working. Indeed, the <code>scholar.py</code> version used there is being blocked by Google&nbsp;Scholar.</p>
+<p>Looking at the <a href="https://github.com/ckreibich/scholar.py">scholar.py</a> GitHub page, we do find an updated version from about 8 months …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/converting-plain-text-references-to-bibtex-updated.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/index2.html">&laquo; Prev</a>
+	Page 3 of 12	
+	<a href="//blog.macuyiko.com/index4.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

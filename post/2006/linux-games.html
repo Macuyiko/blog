@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Linux Games</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 29 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/linux-games.html" rel="bookmark"
+			title="Permalink to Linux Games">Linux&nbsp;Games</a></div>
+		</header>
+	
+	    <p>I&#8217;ve been checking out some games for my Linux machine recently (that almost sounds like an oxymoron). I&#8217;m not going to go all whiny on you with a &#8220;Linux does have games!&#8221;-post, but will just review a few of them (the most popular&nbsp;ones).</p>
+<ul>
+<li><a href="http://projects.planetpenguin.de/racer/">Planet Penguin Racer</a> (a fork of Tux Racer): I never wanted this game, when all those Linux-sites/posts/magazines said: &#8220;hey look we have a racing game with a penguin&#8221; it just looked too kidish. However: it is quite entertainable, and making some maps is quite fun. This is a nice quickie-game for the people with direct 3d rendering enabled&nbsp;;).</li>
+<li><a href="http://www.icculus.org/neverball/">Neverball</a>: a game where you tilt the play field to make a ball roll and pick up coins. It&#8217;s fun and looks quite nice but I suck at&nbsp;it.</li>
+<li>Freecraft: it&#8217;s an <span class="caps">RTS</span>, with poor graphics (sorry), I didn&#8217;t like it that much and wish there was a good <span class="caps">RTS</span> game for Linux. I don&#8217;t have anything against sprites (I loved Age of Empires 1 and 2, Age of Wonders, Starcraft, Kohan, etc&#8230;), but this can look&nbsp;better.</li>
+<li><a href="http://globulation2.org/wiki/Main_Page">Globulation 2</a>: also an <span class="caps">RTS</span>. Also not bad but I don&#8217;t like it that&nbsp;much.</li>
+<li><a href="http://tuxkart.sourceforge.net/">Tuxkart</a>: fun for a while but not&nbsp;fantastic.</li>
+<li><a href="http://www.frozen-bubble.org/">Frozen Bubble</a>: the game everyone knows, and still great fun&nbsp;too!</li>
+<li><a href="http://pingus.seul.org/welcome.html">Pingus</a>: a Lemmings clone. Well done game, will keep the oldskool puzzlers really&nbsp;entertained!</li>
+<li><a href="http://www.artsoft.org/rocksndiamonds/">Rocks And Diamonds</a>: an all-in-one Boulderdash clone. Which I absolutely love because I can even play the Supaplex&nbsp;levels.</li>
+<li><a href="http://www.wesnoth.org/">Wesnoth</a>: another instant-classic, hexgrid fantasy strategy game, well done graphics and great tactical fun both online and&nbsp;offline.</li>
+<li><a href="http://crimson.seul.org/index2.php">Crimson Fields</a>: Battle Isle clone, not bad but the graphics aren&#8217;t that&nbsp;great.</li>
+<li><a href="http://www.asc-hq.org/">Advanced Strategic Command</a>: also a Battle Isle clone: better (traditional) graphics and <span class="caps">AI</span>, but the interface/polishing could be&nbsp;better.</li>
+<li><a href="http://www.scummvm.org/"><span class="caps">SCUMMVM</span></a>: absolute favorite. Grab this program together with some fat old-Lucasarts-adventures torrents and relive all those classics&#8230; A fantastic game for those long train-trips. Ah&#8230; the memories of playing Broken Sword 2 and really diggin&#8217; the characters and story. They don&#8217;t make such games anymore since Grim Fandago&nbsp;[1].</li>
+</ul>
+<p>That&#8217;s it. It&#8217;s not <span class="caps">F.E.A.</span>R., no Civilization 4, no <span class="caps">GTA</span> and no Age of Empires 3, but it is enough to kill a few minutes. After all, my Linux computer is my work machine, so the less I play, the more work I get&nbsp;done&#8230;</p>
+<p>[1]: Actually I&#8217;m lying: Dreamfall, Fahrenheit (a.k.a. Indigo Prophecy) and others are great recent adventure&nbsp;games.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

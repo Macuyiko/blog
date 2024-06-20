@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Oldie But Goodie: Privilege Escalation In Windows</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 17 August 2010, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2010/oldie-but-goodie-privilege-escalation-in-windows.html" rel="bookmark"
+			title="Permalink to Oldie But Goodie: Privilege Escalation In Windows">Oldie But Goodie: Privilege Escalation In&nbsp;Windows</a></div>
+		</header>
+	
+	    <h3>Number&nbsp;One:</h3>
+<p>Replace <code>C:\Windows\system32\sethc.exe</code> with <code>cmd.exe</code> (e.g. by renaming and/or using a repair <span class="caps">CD</span>: with the Vista repair <span class="caps">CD</span> you can open &#8220;<code>notepad</code>&#8221; in the command prompt and execute file manipulations from the Open&nbsp;Dialog).</p>
+<p>Restart. At the login screen press &#8220;Shift&#8221; five times (at this point, you can guess what <code>sethc.exe</code> originally did) and a command window with full system privileges will appear. Often used to replace forgotten administrator&nbsp;passwords:</p>
+<div class="highlight"><pre><span></span><code>net user administrator *
+</code></pre></div>
+
+<p>Of course, booting some sort of <a href="http://www.sysresccd.org/">live <span class="caps">CD</span></a> or <a href="http://pogostick.net/~pnh/ntpasswd/">tool</a> might be&nbsp;simpler.</p>
+<h3>Number&nbsp;Two:</h3>
+<p>The btwdins.exe method. On systems with the right Bluetooth service executable, you can execute any executable located at <code>C:\Program.exe</code> with LocalSystem rights. More info <a href="http://osix.net/modules/article/?id=679">here</a>.</p>
+<h3>Number&nbsp;Three:</h3>
+<p>A.k.a. the famous &#8220;at&#8221;-method, there was a lot of talk about this back in the day (about a year ago). Basically, the concept went like&nbsp;this:</p>
+<p>Open a command prompt as a normal user,&nbsp;type:</p>
+<div class="highlight"><pre><span></span><code>at
+</code></pre></div>
+
+<p>If it responds with an &#8220;<code>Access denied.</code>&#8221; error, you are out of luck. If it responds with &#8220;<code>There are no entries in the list.</code>&#8221; then you&#8217;re&nbsp;good.</p>
+<p>Now&nbsp;execute:</p>
+<div class="highlight"><pre><span></span><code>at 18:15 /interactive &quot;cmd.exe&quot;
+</code></pre></div>
+
+<p>And at a quarter past six a command prompt will appear, with <span class="caps">SYSTEM</span> privileges. Sounds sensible, right? Not really, since the only users able to schedule commands <a href="http://h0bbel.p0ggel.org/windows-xp-privilege-escalation-exploit-no-it-isnt">are already local administrators</a>.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

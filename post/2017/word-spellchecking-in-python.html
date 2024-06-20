@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Word Spellchecking in Python</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 10 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/word-spellchecking-in-python.html" rel="bookmark"
+			title="Permalink to Word Spellchecking in Python">Word Spellchecking in&nbsp;Python</a></div>
+		</header>
+	
+	    <p>In case you&#8217;d ever want to integrate Word&#8217;s spell checking capabilities on top of your Python app, here&#8217;s how you would do&nbsp;so:</p>
+<script src="https://gist.github.com/Macuyiko/a8a90554428064db98d73c65b30abb80.js"></script>
+
+<p>The only requirement is having Word installed (with the language packs installed for the languages you want to check), as well as the Python Windows extensions, which can be installed through <a href="https://pypi.python.org/pypi/pywin32">pip</a>, luckily. Flask is just being used here as an example how you&#8217;d wrap this up in an <span class="caps">API</span>.</p>
+<p>Here&#8217;s an example of how it&nbsp;works:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span><span class="w"> </span><span class="nn">workspellcheckerapi</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">get_corrections</span>
+<span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">get_corrections</span><span class="p">(</span><span class="s2">&quot;Let&#39;s see if it catchez the spell errrors in this text. Their is also the option to do grammer checking.&quot;</span><span class="p">)</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Let&#39;s see if it catchez the spell errrors in this text. Their is also the option to do grammer checking.&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="s1">&#39;grammarcount&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;grammar&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="s1">&#39;end&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">104</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Their is also the option to do grammer checking.&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;start&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">56</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;suggestions&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;There&#39;</span><span class="p">]}],</span>
+
+<span class="w">    </span><span class="s1">&#39;spellingcount&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;spelling&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="s1">&#39;end&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">23</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;catchez&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;start&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;suggestions&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;catches&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;catcher&#39;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;catches&#39;&quot;</span><span class="p">]},</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;end&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">41</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;errrors&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;start&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">34</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;suggestions&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;error&#39;s&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;errors&#39;&quot;</span><span class="p">]},</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;end&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;Their&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;start&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">56</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;suggestions&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;There&#39;</span><span class="p">]},</span><span class="w"> </span><span class="p">{</span><span class="s1">&#39;end&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">94</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;text&#39;</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;grammer&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;start&#39;</span><span class="p">:</span><span class="w"> </span><span class="mi">87</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;suggestions&#39;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;grammar&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;grimmer&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;grammars&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;gramper&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;rammer&#39;</span><span class="p">]}]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Before you go off implementing this on top of your web stack, keep in mind that you&#8217;re probably breaking all of Microsoft&#8217;s end user agreements. <a href="https://www.microsoft.com/cognitive-services/en-us/bing-spell-check-api">Bing&#8217;s spell checker <span class="caps">API</span></a> would be the official route, and allows for some free calls as&nbsp;well.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

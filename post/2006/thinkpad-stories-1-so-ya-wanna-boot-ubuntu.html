@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Thinkpad Stories 1: “So ya wanna boot Ubuntu?”</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-1-so-ya-wanna-boot-ubuntu.html" rel="bookmark"
+			title="Permalink to Thinkpad Stories 1: “So ya wanna boot Ubuntu?”">Thinkpad Stories 1: &#8220;So ya wanna boot&nbsp;Ubuntu?&#8221;</a></div>
+		</header>
+	
+	    <p>After quickly setting up Windows <span class="caps">XP</span> and removing all the unnecessary software (who wants Symantec for God&#8217;s sake?) it was time to think about booting the Ubuntu&nbsp;installer.</p>
+<p>This would be a non-trivial task for me, because my <span class="caps">CD</span>/<span class="caps">DVD</span>-burner/reader has not arrived yet and I could not wait (who could), I would have to do a <span class="caps">PXE</span> or&nbsp;network-install.</p>
+<p>Logically, you need a client (the <span class="caps">PC</span> you want to install Ubuntu on), and a server. In my case, the server would be my Windows <span class="caps">XP</span> x64&nbsp;machine.</p>
+<p>This <a href="https://help.ubuntu.com/community/Installation/WindowsServerNetboot">Ubuntu Wiki entry</a> gives a good starting point for setting up your server. But some things could be a bit clearer&#8230; let me drill down the&nbsp;steps:</p>
+<p>Is your client able to do a <span class="caps">PXE</span> boot? My Thinkpad is (most of them are). (When showing the splash screen, press F12 to show a boot device list, pick the network <span class="caps">PXE</span> one.) So no floppies needed&nbsp;here.</p>
+<p>On your server: create a folder like C:\cp or C:\ubuntu to store all the needed server&nbsp;stuff.</p>
+<p>Download <a href="http://perso.orange.fr/philippe.jounin/tftpd32.html">Tftpd32.exe</a> and place it in the folder you just&nbsp;created.</p>
+<p>The Wiki entry advices to download a netbootkit, but since I already had my Dapper ISOs, I did it myself: go to the Dapper <span class="caps">CD</span> you want to use (this actually doesn&#8217;t matter, but I picked the alternate-install <span class="caps">CD</span>). (You don&#8217;t need to burn it: WinRAR can open <span class="caps">ISO</span> images or you can mount them with&nbsp;DaemonTools.)</p>
+<p>Then go to the folder <span class="caps">CD</span>:\install\netboot\ubuntu-installer\i386\ (replace <span class="caps">CD</span> with your drive letter) and copy all the contents to <span class="caps">FOLDER</span>\netboot\ (replace <span class="caps">FOLDER</span> with the folder you created in step 2, and create the netboot folder). You may also use another location to put these files, but it&#8217;s neat to put them in one spot under our working&nbsp;directory.</p>
+<p>Note: don&#8217;t be stupid (as I first was). Do <span class="caps">NOT</span> copy <span class="caps">CD</span>:\install\netboot! Yes, there is a pxelinux.0 file in that folder, but it will not work (it is 0 bytes large), you must copy the files from the location&nbsp;above.</p>
+<p>Update: it seems you have to be extra careful. Apparently, you do not only have to copy the contents of <strong><span class="caps">CD</span>:\install\netboot\ubuntu-installer\i386**, but also the <em>directory itself</em> </strong><span class="caps">CD</span>:\install\netboot\ubuntu-installer\ <strong>(the directory itself, not the contents!) to </strong><span class="caps">FOLDER</span>\netboot**. This is probably not the best method, but&nbsp;works&#8230;</p>
+<p>That was easy, right? Now open Tftpd32.exe. Here is were it got a bit&nbsp;tricky&#8230;</p>
+<ul>
+<li>Click the <span class="caps">DHCP</span> server tab. Yes we will configure this. I was wondering if this was necessary because my router-slash-firewall already has a <span class="caps">DHCP</span> server built in. The answer is: yes you have to do&nbsp;it!</li>
+<li>Set up the following fields: <span class="caps">IP</span> pool starting address: I picked 192.168.111.5. (My gateway is at 192.168.111.1.) Figure out what your gateway is, you can do that by running ipconfig from a Windows Command Line. Size of pool: 5, more than large enough. Boot file: in this example, I picked \netboot\pxelinux.0, but you could have placed it at another location. <span class="caps">WINS</span>/<span class="caps">DNS</span> Server: your gateway, in my case: 192.168.111.1. Default router: also your gateway. Mask: probably 255.255.255.0. Domain Name and Additional Option: leave all as is&nbsp;(blank).</li>
+<li>Press Save to save. Then press the Settings button. Make sure <span class="caps">PXE</span> Compatabilty, Translate Unix file names and Allow &#8216;&#39; As Virtual Root are enabled. Also, I had to enable Use Tftpd32 only on this interface: 192.168.111.2 because I have two network adapters (just to be&nbsp;safe).</li>
+<li>Press <span class="caps">OK</span>.</li>
+</ul>
+<p>Done, restart Tftpd32.exe if that is necessary (it warns&nbsp;you).</p>
+<p>Now: I had to disable my second network adapter. I went to Network Connections, right clicked and choose disable. This might not be necessary but better be&nbsp;safe&#8230;</p>
+<p>Tutorials say you have to disable your router&#8217;s <span class="caps">DHCP</span> server. This might be true! I did not have to do it but I advice to do it anyway so the network boot will surely use your server for <span class="caps">DHCP</span>/<span class="caps">PXE</span> booting. I cannot explain this process here, as it differs from router to router and from firewall to firewall. Consult your manuals or Google if you need&nbsp;to.</p>
+<p>You&#8217;re all set: boot your client into network boot. If you&#8217;re lucky and did everything correctly, it gets assigned a <span class="caps">DHCP</span> address (you will see this in the Tftpd32 event list on your server). Then Tftpd32 will sent a few files over (you will see the process bars) and Ubuntu will splash. Press enter to begin&nbsp;install.</p>
+<p>Important: a few users have had problems on the Ubuntuforums with the following. After the Pick a mirror step Ubuntu will not be able to connect. Here&#8217;s how to solve it: when you are in the first installer steps (before setting up network with autodetect!) you must close Tftpd32 on the serverside. You must also again enable your router&#8217;s <span class="caps">DHCP</span> server. Then let Ubuntu discover the network settings. It will not get an address from your router and go out on the Internet: the mirrors will be resolved now, and you can continue&nbsp;installation.</p>
+<p>You don&#8217;t need Tftpd32 anymore unless you want to start over. Just start Tftpd32 again and disable the router&#8217;s <span class="caps">DHCP</span> server (again: I did not have to do&nbsp;this).</p>
+<p>Up next: partitioning&nbsp;woes.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

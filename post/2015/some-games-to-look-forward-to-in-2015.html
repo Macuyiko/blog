@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Some Games to Look Forward to in 2015</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 18 January 2015, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2015/some-games-to-look-forward-to-in-2015.html" rel="bookmark"
+			title="Permalink to Some Games to Look Forward to in 2015">Some Games to Look Forward to in&nbsp;2015</a></div>
+<div class="article-subtitle">Most of these are indie titles</div>		</header>
+	
+	    <p>I though it was just me, what with being busy and older and all, but it kind of <a href="http://www.reddit.com/r/Games/comments/2sq6bv/gametrailers_games_that_might_suck_in_2015/">looks</a> <a href="https://www.youtube.com/watch?v=EtBJCPI1b8w">like</a> <a href="https://www.youtube.com/watch?v=XxCdEKhowYI">everybody</a> agrees that 2014 has been a generally shitty year for gaming. Summarized, the arguments boil down to one of the&nbsp;following:</p>
+<ul>
+<li>Triple-A titles are released on-schedule, instead of on a &#8220;when it&#8217;s ready&#8221;-basis, leading to horrendously glitchy titles.<ul>
+<li>Cases in point: Tetris Ultimate, Assassin&#8217;s Creed: Unity, Halo: The Master Chief Collection, Watch_Dogs, San Andreas Xbox One&nbsp;release.</li>
+</ul>
+</li>
+<li>Big hyped titles fail to deliver. These usually get accompanied by huge advertising budgets but are just&#8230; well&#8230; boring and more of the same.  <a href="http://www.escapistmagazine.com/videos/view/zero-punctuation">Yahtzee&#8217;s Zero Punctuation series</a> reviewed many such titles this year (even although the review style generally aims to entertain rather than inform and loves to take a stab at any target, the general gist of the argument is shared by many).<ul>
+<li>Cases in point: Watch_Dogs, Dragon Age: Inquisition (depending on who you ask, admittedly), The Crew, The Sims 4, Call of Duty: Advanced Warfare,&nbsp;Destiny,</li>
+</ul>
+</li>
+<li><em>Steam is messing up its reputation</em> with Greenlight, Early Access, Curator gaming, all leading to sub-par games which try to extract as much money as possible as soon as possible without delivering.<ul>
+<li>Cases in point: Starforge, Windborne, Spacebase <span class="caps">DF</span>-9, <span class="caps">H1Z1</span>, and many&nbsp;others.</li>
+</ul>
+</li>
+<li>Controversies such as <a href="http://en.wikipedia.org/wiki/Gamergate_controversy">Gamergate</a> are polluting the community, involving all sides of the spectrum ranging from developers, publishers, gamers, journalists, <span class="caps">PR</span>, and everything in&nbsp;between.</li>
+</ul>
+<p>Despite the general complaining and worrying going on, thing&#8217;s weren&#8217;t all that bad, as there were quite a few titles which managed to make a solid impression this&nbsp;year:</p>
+<ul>
+<li>Divinity: Original Sin: an amazing old-school style, massive <span class="caps">RPG</span> which more people should play. And also proof that some Kickstarter projects are able to deliver It should have drawn all the eye balls Dragon Age: Inquisition&nbsp;got.</li>
+<li>Dark Souls <span class="caps">II</span>: not as good as the original, but more streamlined and still amazing hard fun&nbsp;overall.</li>
+<li>Age of Wonders <span class="caps">III</span>: again, an old-school title more people should have&nbsp;played.</li>
+<li>Hearthstone: making a card trading game approachable for everyone was a bold move for Blizzard, but they pulled it off splendidly and works fantastic on mobile as well. I head the last World of Warcraft expansion ain&#8217;t that bad either, and the Reaper of Souls expansion but Diablo <span class="caps">III</span> on the map&nbsp;again.</li>
+<li>Wasteland 2: despite a lot of bugs on release, Wasteland 2 turned out to be a great, solid&nbsp;title.</li>
+<li>Far Cry 4: yes, yes, it is basically a reskin of Far Cry 3, but still fun and arguably the only true successful big Ubisoft title this&nbsp;year.</li>
+<li>Middle-earth: Shadow of Mordor: the core gameplay is very by-the-books, but the Nemesis system introduced a living mechanic which more open-world games should adapt. Imagine a <span class="caps">GTA</span> <span class="caps">VI</span> uplifting the &#8220;turfs&#8221; mechanic from San Andreas to utilize a similar system, with small criminals trying to gain rank or discovering the fears and drives of big crime&nbsp;lords.</li>
+<li>Wolfenstein: The New Order: no one had much hope left for Wolfenstein, but the release proved that there is still a lot of fun to be had with traditional run-and-gun&nbsp;gameplay.</li>
+<li>Bayonetta 2: the release which put the WiiU on the map this year. Good on Nintendo for giving this one a&nbsp;chance.</li>
+<li>Shadowrun: Dragonfall: the original was unable to please all fans, but the developers marched on and released a stand-alone <span class="caps">DLC</span> package which did manage to capture the right atmosphere and&nbsp;gameplay.</li>
+<li>Shovel Knight: <span class="caps">SNES</span> nostalgia which is just a pleasure to look at, but also a pleasure to play. Unbelievable tight platforming and memorable characters make this one a must&nbsp;have.</li>
+<li>The Binding of Isaac: Rebirth: kind of ignored by most outlets and hence a cult-game just as its predecessor, but still wildly amazing and&nbsp;addicting.</li>
+<li>Monument Valley: proving that sometimes, a mobile game only needs to be shockingly beautiful to&nbsp;entice.</li>
+<li><span class="caps">GTA</span> V: the next-gen release was able to depict the game has it should have been in the first place. The writing is still shallow and the mechanics mostly rehashed, but the game still offers a package of chaotic&nbsp;fun.</li>
+<li>Valkyria Chronicles: technically also not a 2014 title, but the release on <span class="caps">PC</span> makes this one worth picking up&nbsp;(again).</li>
+</ul>
+<p>So, which games to look forward to in 2015? Below follows my very personalized&nbsp;list.</p>
+<ul>
+<li>I&#8217;ve yet to be disappointed by a <a href="http://www.devolverdigital.com/">Devolver Digital</a> game, and am immensely looking forward to <a href="http://www.devolverdigital.com/games/view/hotline-miami-2-wrong-number"><strong>Hotline Miami 2</strong></a>, <a href="http://www.devolverdigital.com/games/view/not-a-hero"><strong>Not a Hero</strong></a>, <a href="http://store.steampowered.com/app/229810"><strong>A Fistful of Gun</strong></a> and <a href="http://www.devolverdigital.com/games/view/titan-souls"><strong>Titan Souls</strong></a>, especially after playing these at Gamescom. <a href="http://www.devolverdigital.com/games/view/broforce"><strong>Broforce</strong></a> is good fun too, but I&#8217;m kind of over it already after playing the Early&nbsp;Access.</li>
+<li><a href="http://www.heart-machine.com/"><strong>Hyper Light Drifter</strong></a> applies a wonderful 16 bit graphical style to action <span class="caps">RPG</span>&nbsp;gameplay.</li>
+<li><a href="http://hellraid.com/"><strong>Hellraid</strong></a> appears to become a Skyrim-light, but looks interesting so&nbsp;far.</li>
+<li><a href="http://www.mirrorsedge.com/"><strong>Mirror&#8217;s Edge 2</strong></a> is another big release title I&#8217;d look forward to, just as Dishonored 2 &#8212; but I don&#8217;t have high&nbsp;hopes.</li>
+<li>I&#8217;ll probably end up getting <a href="http://www.darksoulsii.com/us/"><strong>Dark Souls <span class="caps">II</span>: Scholar of the First Sin</strong></a>.</li>
+<li><a href="http://www.no-mans-sky.com/"><strong>No Man&#8217;s Sky</strong></a> &#8212; of course I am including it in this list. Of course I&#8217;m worried about it like everyone&nbsp;else.</li>
+<li><a href="http://www.chaos-reborn.com/"><strong>Chaos Reborn</strong></a>. I ran into <a href="http://en.wikipedia.org/wiki/Chaos:_The_Battle_of_Wizards">the original</a> many, many years ago (it was outdated even by then), but had fun playing it in an emulator against others. The remake seems to go for a similar, general approach, but revamps a lot of aspects which make up for a fast-paced, strategy game. With wizards. It&#8217;s available in Early Access and already a lot of&nbsp;fun.</li>
+<li><a href="http://riotsimulator.org/"><strong>Riot</strong></a> is in early stages of development, but the interesting pixel graphics and theme look&nbsp;promising.</li>
+</ul>
+<p><img alt="Riot" src="http://blog.macuyiko.com/images/2015/games/riot.png"></p>
+<ul>
+<li><a href="http://arcengames.com/announcing-stars-beyond-reach-a-new-4x-coming-in-aprilmay-2015/"><strong>Stars Beyond Reach</strong></a> will be hardcore 4X title which is shaping up&nbsp;nicely.</li>
+<li><a href="https://torment.inxile-entertainment.com/"><strong>Torment: Tides of Numeria</strong></a> and <a href="http://eternity.obsidian.net/"><strong>Pillars of Eternity</strong></a>. As being the two most massively funded Kickstarter projects, the hype behind these two is large. Personally, I&#8217;m just happy to have another old-school 2D <span class="caps">RPG</span>.</li>
+<li>Racing games. <a href="http://survivethedistance.com/"><strong>Distance</strong></a>, <a href="http://www.roadredemption.com/"><strong>Road Redemption</strong></a>, and especially <a href="http://www.driftstagegame.com/"><strong>Drift Stage</strong></a> look&nbsp;neat.</li>
+<li><a href="http://www.petermoorhead.com/murder/"><strong>Murder</strong></a> will be a pixel-artsy murder mystery in neon-Japan which is looking very&nbsp;atmospheric.</li>
+<li><a href="http://dukope.com/"><strong>Obra Dinn</strong></a> already impressed with it&#8217;s dev build thanks to an interesting graphical style and premise. Oh, and it&#8217;s made by Lucas Pope, the Papers Please&nbsp;guy.</li>
+<li><a href="http://the-witness.net/"><strong>The Witness</strong></a> is another upcoming title from an indie star, and is as interesting as&nbsp;ever.</li>
+<li><a href="http://explore-frontiers.com/"><strong>Frontiers</strong></a>. Poor Lars Simkins has poured his heart and soul into this game, not skipping a beat when it comes to being open and honest with its backers. Now for the final stretch and iron out the bugs, and this game will be an exploratory treat to lose hours&nbsp;in.</li>
+<li>If your dream entails being stuck in an Escher painting then boy <a href="http://www.relativitygame.com/"><strong>Relativity</strong></a> is the game for you. It has an Antichamber vibe going on, and just looking at the screenshots already feels&nbsp;interesting.</li>
+</ul>
+<p><img alt="Relativity" src="http://blog.macuyiko.com/images/2015/games/relativity.jpg"></p>
+<ul>
+<li><a href="http://newproject.nigoro.jp/en/"><strong>La-Mulana 2</strong></a> is shaping up well. I also wonder how it is going with <a href="http://chasmgame.com/"><strong>Chasm</strong></a>, shouldn&#8217;t that have been released a while&nbsp;ago?</li>
+<li>Some starting small indie devs have been working hard on their games. I&#8217;m looking forward a lot to <a href="http://coldricegames.com/interstellar/"><strong>Interstellaria</strong></a>, <a href="http://www.gridsagegames.com/cogmind/"><strong>Cogmind</strong></a>, <a href="http://www.wingsofstnazaire.com/"><strong>Wings of Saint Nazaire</strong></a> and <a href="http://www.ultimaratioregum.co.uk/game/"><strong>Ultimate Ratio Regum</strong></a>.</li>
+</ul>
+<p><img alt="Interstellaria" src="http://blog.macuyiko.com/images/2015/games/interstellaria.gif"></p>
+<p><img alt="Cogmind" src="http://blog.macuyiko.com/images/2015/games/cogmind_mockup_v3.png"></p>
+<ul>
+<li>Some other interesting titles, such as <a href="http://www.crossofthedutchman.com/"><strong>Cross of the Dutchman</strong></a>, <a href="http://www.telltalegames.com/minecraftstorymode/"><strong>Minecraft: Story Mode</strong></a>, <a href="http://www.beforegame.net/"><strong>Before</strong></a>, <a href="https://www.kickstarter.com/projects/1314231455/super-roman-conquest-a-3d-side-scrolling-strategy/posts"><strong>Super Roman Conquest</strong></a>, <a href="http://www.irkallagame.com/mockups.html"><strong>Irkalla</strong></a>, <a href="http://eitrthegame.com/"><strong>Eitr</strong></a>, <a href="http://forums.tigsource.com/index.php?topic=39875.0"><strong>Tiny Wizard</strong></a>, <a href="http://joarportfolio.com/rainWorld.html"><strong>Rain World</strong></a>, <a href="http://hottinroofgame.com/"><strong>Hot Tin Roof</strong></a>, <a href="http://forums.tigsource.com/index.php?topic=44437.0"><strong>Hac</strong></a>, <a href="http://mightanddelight.com/index.php?page=shelter2"><strong>Shelter 2</strong></a>, <a href="http://www.icantescape.com/"><strong>I Can&#8217;t Escape Darkness</strong></a>,  <a href="http://lowpolyworld.tumblr.com/"><strong>Biome</strong></a>, <a href="http://serpentinthestaglands.com/"><strong>Serpent in the Staglands</strong></a>, <a href="http://www.stardrivegame.com/"><strong>StarDrive 2</strong></a>, <a href="http://beatdowncity.com/"><strong>Treachery in Beatdown City</strong></a>, <a href="http://dragonfinsoup.com/gameinfo.html"><strong>Dragon Fin Soup</strong></a>, <a href="http://superhotgame.com/"><strong>Super Hot Game</strong></a>, <a href="https://www.kickstarter.com/projects/1314231455/super-roman-conquest-a-3d-side-scrolling-strategy/posts"><strong>Super Roman Conquest</strong></a> and <a href="http://www.tetrapulse.com/"><strong>Tetrapulse</strong></a> also look&nbsp;promising.</li>
+</ul>
+<p><img alt="Cross of the Dutchman" src="http://blog.macuyiko.com/images/2015/games/cotd.png"></p>
+<p><img alt="Before" src="http://blog.macuyiko.com/images/2015/games/before.jpg"></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

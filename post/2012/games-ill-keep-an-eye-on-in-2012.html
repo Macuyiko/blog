@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Games I’ll Keep An Eye On In 2012</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 12 February 2012, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2012/games-ill-keep-an-eye-on-in-2012.html" rel="bookmark"
+			title="Permalink to Games I’ll Keep An Eye On In 2012">Games I&#8217;ll Keep An Eye On In&nbsp;2012</a></div>
+		</header>
+	
+	    <h3>Big-budget&nbsp;releases</h3>
+<p>In order of release date. Some release dates are an estimate. Unannounced games are not listed&nbsp;here.</p>
+<p><strong>January</strong></p>
+<p>- Star Wars: The Old&nbsp;Republic</p>
+<p><strong>February</strong></p>
+<ul>
+<li>Kingdoms of Amalur:&nbsp;Reckoning</li>
+<li>Binary&nbsp;Domain</li>
+<li><span class="caps">SSX</span></li>
+<li>Syndicate</li>
+<li>Jak and Daxter&nbsp;Collection</li>
+<li>The Darkness&nbsp;2</li>
+</ul>
+<p><strong>March</strong></p>
+<ul>
+<li>I am&nbsp;Alive</li>
+<li>Mass Effect&nbsp;3</li>
+<li>Diablo <span class="caps">III</span></li>
+</ul>
+<p><strong>April</strong></p>
+<ul>
+<li>Devil May Cry <span class="caps">HD</span>&nbsp;Collection</li>
+<li>Silent Hill <span class="caps">HD</span>&nbsp;Collection</li>
+</ul>
+<p><strong>May</strong></p>
+<ul>
+<li>Prey&nbsp;2</li>
+<li>Starhawk</li>
+<li>Far Cry&nbsp;3</li>
+</ul>
+<p><strong>June</strong></p>
+<ul>
+<li>Max Payne&nbsp;3</li>
+<li>Darksiders <span class="caps">II</span></li>
+</ul>
+<p><strong>July</strong></p>
+<ul>
+<li>Prototype&nbsp;2</li>
+</ul>
+<p><strong>August</strong></p>
+<ul>
+<li>Tomb&nbsp;Raider</li>
+<li>Guild Wars&nbsp;2</li>
+</ul>
+<p><strong>September</strong></p>
+<ul>
+<li>Borderlands&nbsp;2</li>
+</ul>
+<p><strong>October</strong></p>
+<ul>
+<li>The Last&nbsp;Guardian</li>
+</ul>
+<p><strong>November</strong></p>
+<ul>
+<li>Lollipop&nbsp;Chainsaw</li>
+</ul>
+<p><strong>December</strong></p>
+<ul>
+<li>Grand Theft Auto&nbsp;V</li>
+<li>BioShock&nbsp;Infinite</li>
+<li>Doom&nbsp;4</li>
+</ul>
+<h3>Indie games, small&nbsp;titles</h3>
+<ul>
+<li>Journey</li>
+<li><span class="caps">XCOM</span>: Enemy&nbsp;Unknown</li>
+<li>Monaco</li>
+<li>The&nbsp;Witness</li>
+<li>Firefall</li>
+<li>Cube&nbsp;World</li>
+<li>Overgrowth</li>
+<li>Path of&nbsp;Exile</li>
+<li>Grim&nbsp;Dawn</li>
+<li>Starfarer</li>
+<li>Legend of&nbsp;Grimrock</li>
+<li>Torchlight <span class="caps">II</span></li>
+<li>Survivors of&nbsp;Ragnarok</li>
+<li>Project&nbsp;Zomboid</li>
+<li>Masters of the Broken&nbsp;World</li>
+<li>Warlock: Master of the&nbsp;Arcane</li>
+<li>A Game of&nbsp;Dwarves</li>
+<li>Jagged&nbsp;Alliance</li>
+<li>Castle&nbsp;Story</li>
+<li>Retro City&nbsp;Rampage</li>
+</ul>
+<h3>2013&#8230;</h3>
+<ul>
+<li>The Last of&nbsp;Us</li>
+<li><span class="caps">XCOM</span></li>
+<li>StarCraft <span class="caps">II</span>: Heart of the&nbsp;Swarm</li>
+<li>Metro: Last&nbsp;Light</li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

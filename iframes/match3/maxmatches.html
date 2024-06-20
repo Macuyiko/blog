@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js?"></script>
+    <script src="match3a.js"></script>
+    <script>
+        const pixelsPerSquare = 40;
+        const gridSize = 8;
+        const gemTypes = 6;
+        const gemColors = [
+            '#B3CDE3', // blue
+            '#CCEBC5', // green
+            '#FED9A6', // orange
+            '#FDDAEC', // pink
+            '#FFFFCC', // yellow
+            '#FBB4AE', // red
+            '#DECBE4', // indigo
+            '#E5D8BD', // grey
+        ];
+
+        var board = new Board(gridSize, gridSize, gemTypes);
+        var game = new Game(board, pixelsPerSquare, undefined, new MatchMaxBoardFiller(board));
+
+        setup = () => game.setup();
+        draw = () => game.draw();
+        keyPressed = () => {
+            game.keyPressed();
+            return false;
+        }
+        mouseDragged = () => game.mouseDragged();
+        mousePressed = () => game.mousePressed();
+        mouseReleased = () => game.mouseReleased();
+    </script>
+
+</head>
+
+<body>
+</body>
+
+</html>

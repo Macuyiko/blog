@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>A Quick Look at Java Decompilers</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 11 May 2015, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2015/a-quick-look-at-java-decompilers.html" rel="bookmark"
+			title="Permalink to A Quick Look at Java Decompilers">A Quick Look at Java&nbsp;Decompilers</a></div>
+		</header>
+	
+	    <p>I&#8217;ve been looking at various Java decompilers recently for a project I&#8217;ve been working on in spare&nbsp;time.</p>
+<p>Java code obfuscation is something I have an interest in for no particular reason, mostly because you see a variety of cool approaches popping up in the wild to prevent people from reverse engineering your proprietary <span class="caps">JAR</span>&#8217;s (which are, by default, very easy to reverse engineer). Most approaches resort to obfuscation/packing (similar as to what is done with Javascript files), but there exist more thorough methods as well, e.g. implementing a custom classloader which will decrypt classes on the fly. <a href="http://www.excelsior-usa.com/articles/java-obfuscators.html">This article</a> contains a good general&nbsp;overview.</p>
+<h2>Old and Lacking&nbsp;Entries</h2>
+<h3><span class="caps">JAD</span></h3>
+<p>Some time ago, everyone&#8217;s decompiler of choice was jad. Currently, the project is dead (in addition, it wasn&#8217;t open source), but still you see a lot of people referring to&nbsp;it.</p>
+<h3>Java&nbsp;DeObfuscator</h3>
+<p>Also an older tool from <a href="http://www.fileoffset.com/">fileoffset.com</a>, but still works more or less. The interface is rather clunky to use for larger projects, but the tool is <a href="http://sourceforge.net/projects/jdo/">open source</a>:</p>
+<p><img alt="" src="/images/2015/javadecompilers/JavaDeObfuscator.png"></p>
+<h3><span class="caps">JODE</span></h3>
+<p><a href="http://jode.sourceforge.net/"><span class="caps">JODE</span></a> is a java package containing a decompiler and an optimizer for Java. This package is freely available under the <span class="caps">GNU</span> <span class="caps">GPL</span>. It hasn&#8217;t been updated for quite some&nbsp;time.</p>
+<h3>AndroChef</h3>
+<p>Proprietary tool to decompile Android programs and Java files, available <a href="http://www.neshkov.com/ac_decompiler.html">here</a>. Not worth the money given the alternatives, just as <a href="http://www.neshkov.com/dj.html"><span class="caps">DJ</span> Decompiler</a>.</p>
+<h3>Candle</h3>
+<p>An open source decompiler by Brad Davis. I&#8217;m mentioning it for completeness, but is far away from being feature&nbsp;complete.</p>
+<h2>Modern&nbsp;Tools</h2>
+<h3><span class="caps">JD</span>-Gui</h3>
+<p>Probably one of the most widely used tools for Java decompilation, as it is easy to use and provides a graphical user interface which allows to quickly open up and inspect a class file or <span class="caps">JAR</span>. You can find it <a href="http://jd.benow.ca/">over here</a>.</p>
+<p>Not open source, though, and borderline modern as it&#8217;s not able to decompile Java 8&nbsp;features.</p>
+<p>Below is a screenshot of <span class="caps">JD</span>-Gui with a Minecraft class file&nbsp;open[1]:</p>
+<p><img alt="" src="/images/2015/javadecompilers/jdgui.png"></p>
+<p>Note that the decompiler is being tricked by the obfuscation&nbsp;routine.</p>
+<h3>FernFlower</h3>
+<p>Very new and promising analytical Java decompiler (becoming an integral part of IntelliJ 14). Supports Java up to version 6 (annotations, generics, enum&nbsp;types).</p>
+<p><a href="https://github.com/fesh0r/fernflower">Download from&nbsp;here</a></p>
+<p>It&#8217;s a command line&nbsp;tool:</p>
+<div class="highlight"><pre><span></span><code>java -jar fernflower.jar .\jartodecompile.jar .\decompiled
+</code></pre></div>
+
+<p>But this one is able to show the Unicode parameters with their full&nbsp;name:</p>
+<div class="highlight"><pre><span></span><code>public float a(zy ˜ƒ, afi ˜ƒ1) {
+</code></pre></div>
+
+<h3><span class="caps">CFR</span></h3>
+<p><a href="http://www.benf.org/other/cfr/">Free, but not open source</a>. This one aims to decompile modern Java features, including Java 8 lambdas (pre and post Java beta 103 changes), Java 7 String switches etc., though is itself written in Java&nbsp;6.</p>
+<p>Also a command line&nbsp;tool:</p>
+<div class="highlight"><pre><span></span><code>java -jar cfr_0_100.jar .\jartodecompile.jar --outputdir .\decompiled
+</code></pre></div>
+
+<p>This one does an even better job and is slightly&nbsp;faster:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">@Override</span>
+<span class="k">public</span><span class="w"> </span><span class="nc">float</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">zy</span><span class="w"> </span><span class="n">zy</span><span class="p">,</span><span class="w"> </span><span class="n">afi</span><span class="w"> </span><span class="n">afi</span><span class="p">)</span><span class="w"> </span><span class="err">{</span>
+</code></pre></div>
+
+<h3>Procyon</h3>
+<p><a href="https://bitbucket.org/mstrobel/procyon/wiki/Java%20Decompiler">Open source</a>, and also aims to deal with Java 8 features (lambdas, <code>::</code> operator). Needs Java 7 to&nbsp;run.</p>
+<p>Run it as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code> java -jar procyon-decompiler-0.5.28.jar -o .\decompiled .\jartodecompile.jar
+</code></pre></div>
+
+<p>Outputs:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">@Override</span>
+<span class="k">public</span><span class="w"> </span><span class="nc">float</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">final</span><span class="w"> </span><span class="n">zy</span><span class="w"> </span><span class="err">\</span><span class="n">u2603</span><span class="p">,</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="n">afi</span><span class="w"> </span><span class="err">\</span><span class="n">u2603</span><span class="p">)</span><span class="w"> </span><span class="err">{</span>
+</code></pre></div>
+
+<p>This one is my favorite modern decompiler at the&nbsp;moment.</p>
+<h3>Krakatau</h3>
+<p><a href="https://github.com/Storyyeller/Krakatau">Krakatau</a> is interesting because it has been written in Python. It currently contains three tools: a decompiler and disassembler for
+Java class files and an assembler to create class&nbsp;files.</p>
+<p>Does not yet support Java 8&nbsp;features.</p>
+<h3>Soot</h3>
+<p>Soot is a framework for analyzing and transforming Java and Android applications, originally developed by the Sable Research Group of McGill University. It&#8217;s not very commonly used &#8220;just&#8221; as a decompiler, as it also defines an intermediate byte code&nbsp;language.</p>
+<p>Running it requires some fiddling, i.e. this is a minimal command to get things to&nbsp;run:</p>
+<div class="highlight"><pre><span></span><code>java -jar soot-trunk.jar -w -process-dir ./dir_with_class_files/ -pp -cp ./dir_with_libs/ -allow-phantom-refs -d ./decompiled/ -f d
+</code></pre></div>
+
+<h3>Konloch&#8217;s Bytecode&nbsp;Viewer</h3>
+<blockquote>
+<p>An Advanced Lightweight Java Bytecode Viewer, <span class="caps">GUI</span> Java Decompiler, <span class="caps">GUI</span> Bytecode Editor, <span class="caps">GUI</span> Smali, <span class="caps">GUI</span> Baksmali, <span class="caps">GUI</span> <span class="caps">APK</span> Editor, <span class="caps">GUI</span> Dex Editor, <span class="caps">GUI</span> <span class="caps">APK</span> Decompiler, <span class="caps">GUI</span> <span class="caps">DEX</span> Decompiler, <span class="caps">GUI</span> Procyon Java Decompiler, <span class="caps">GUI</span> Krakatau, <span class="caps">GUI</span> <span class="caps">CFR</span> Java Decompiler, <span class="caps">GUI</span> FernFlower Java Decompiler, <span class="caps">GUI</span> DEX2Jar, <span class="caps">GUI</span> Jar2DEX, <span class="caps">GUI</span> Jar-Jar, Hex Viewer, Code Searcher, Debugger and&nbsp;more.</p>
+</blockquote>
+<p>Written completely in Java, and it&#8217;s <a href="https://github.com/Konloch/bytecode-viewer">open source</a>.</p>
+<p>It uses FernFlower, Procyon and <span class="caps">CFR</span> for decompilation, makes this an awesome visual tool using state-of-art&nbsp;decompilers:</p>
+<p><img alt="" src="/images/2015/javadecompilers/bviewer.png"></p>
+<h3>Enigma</h3>
+<p><a href="http://www.cuchazinteractive.com/enigma/">A tool specifically geared for deobfuscation</a>:</p>
+<p><img alt="" src="/images/2015/javadecompilers/screenshot.1.png"></p>
+<p>Originally used to deobfuscate Minecraft versions. Uses Procyon&nbsp;internally.</p>
+<p>[1]: It&#8217;s fun to note that a lot of effort into decompilers and de-obfuscators for Java is the result of the modding scene around Minecraft, one of the most popular games implemented in&nbsp;Java.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

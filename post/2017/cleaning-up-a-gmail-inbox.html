@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Cleaning Up a Gmail Inbox</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 14 August 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/cleaning-up-a-gmail-inbox.html" rel="bookmark"
+			title="Permalink to Cleaning Up a Gmail Inbox">Cleaning Up a Gmail&nbsp;Inbox</a></div>
+<div class="article-subtitle">Using Python and the Gmail API</div>		</header>
+	
+	    <p><strong>Update:</strong> code is available at <a href="https://github.com/Macuyiko/gmail-cleaner">https://github.com/Macuyiko/gmail-cleaner</a>.</p>
+<p>I&#8217;ve been getting increasingly frustrated by my overflowing Gmail inbox lately. I&#8217;ve been using Gmail as a primary e-mail service since 2005 and have collected tens of thousands emails over the&nbsp;years.</p>
+<p>Lately, I&#8217;ve been finding it increasingly harder to quickly find an e-mail using Gmails otherwise solid search functionality. The problem is mostly due to me not using much labels on the one hand and archiving, rather than deleting junky e-mails on the other hand. The latter stems from Gmail&#8217;s &#8220;training&#8221;, inspiring users to archive e-mails rather than deleting them, since storage is never really an&nbsp;issue.</p>
+<p>Indeed, it never is, but over the years, several parties collect your e-mail address to send you weekly digests, newsletters, &#8220;what&#8217;s new&#8221; overviews, and updates regarding your social networks you never really bother to visit anymore (LinkedIn, Facebook, Twitter, ResearchGate are all annoying offenders). It&#8217;s appealing to just straight up archive these, but since there&#8217;s always some overlap in content between what you&#8217;re actually trying to search for and what ends up in those e-mails (e.g. &#8220;data science collaboration project&#8221;), it can become annoying to quickly glance over e-mails and find what you&#8217;re looking for. Starring e-mails and filtering them further helps, of course, but I felt it was about time to do something about this pile of archived e-mails I&#8217;d never bother to look at&nbsp;again.</p>
+<p>The issue, however, that &#8220;safely&#8221; cleaning up these e-mails is rather tricky. Just deleting all archived e-mails is out of the question&#8230; there might still be important or interesting mails there. Searching based on the &#8220;from&#8221; header and going from there is better, but Gmail forces to paginate over the list (showing hundred e-mails per page) and does not intelligently group e-mails to make ticking their checkboxes easy. To provide an example, I might wish to delete all those Amazon recommended products mails, but do not want to delete my latest shipping confirmations. Gmail&#8217;s interface can also feel sluggish at times when ticking of mails, deleting them, going back to the search field, ticking again, and so on. Finally, Gmail does not provide an easy way to show e-mails grouped by sender, to get an easy overview regarding the most frequent&nbsp;&#8220;spammers&#8221;.</p>
+<p>Probably a solid desktop client (Outlook, even) provides better functionality to do this sort of thing, but I wanted to quicky punch together a Python driven app instead to help clean up my&nbsp;inbox.</p>
+<p>First up was connecting with Gmail&#8217;s <span class="caps">API</span> to create a local database I could work with. You could use <span class="caps">IMAP</span> as well, though using Gmail&#8217;s incantation of <span class="caps">IMAP</span> is somewhat annoying, having to do the whole oauth2 dance, not really providing an easy way to access unique message ids, and trashing e-mails boils down to executing <span class="caps">IMAP</span> move commands. The <span class="caps">API</span> works much&nbsp;better.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">model</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">httplib2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apiclient</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">discovery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">oauth2client</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">oauth2client</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">oauth2client.file</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Storage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">tqdm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">joblib</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Parallel</span><span class="p">,</span><span class="w"> </span><span class="n">delayed</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">defaultdict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">multiprocessing</span>
+
+<span class="c1"># We need to modify scope here to trash e-mails later on</span>
+<span class="n">SCOPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://www.googleapis.com/auth/gmail.modify&#39;</span>
+<span class="n">CLIENT_SECRET_FILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;client_secret.json&#39;</span>
+<span class="n">APPLICATION_NAME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Gmail API Python Quickstart&#39;</span>
+<span class="n">DATABASE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EmailDB</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">ParallelExecutor</span><span class="p">(</span><span class="n">use_bar</span><span class="o">=</span><span class="s1">&#39;tqdm&#39;</span><span class="p">,</span><span class="w"> </span><span class="o">**</span><span class="n">joblib_args</span><span class="p">):</span>
+<span class="w">    </span><span class="k">def</span><span class="w"> </span><span class="nf">aprun</span><span class="p">(</span><span class="n">bar</span><span class="o">=</span><span class="n">use_bar</span><span class="p">,</span><span class="w"> </span><span class="o">**</span><span class="n">tq_args</span><span class="p">):</span>
+<span class="w">        </span><span class="n">bar_func</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">lambda</span><span class="w"> </span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="n">tqdm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">**</span><span class="n">tq_args</span><span class="p">)</span>
+<span class="w">        </span><span class="k">def</span><span class="w"> </span><span class="nf">tmp</span><span class="p">(</span><span class="n">op_iter</span><span class="p">):</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Parallel</span><span class="p">(</span><span class="o">**</span><span class="n">joblib_args</span><span class="p">)(</span><span class="n">bar_func</span><span class="p">(</span><span class="n">op_iter</span><span class="p">))</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">tmp</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">aprun</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_credentials</span><span class="p">():</span>
+<span class="w">    </span><span class="n">home_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">credential_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">home_dir</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;.credentials&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">credential_dir</span><span class="p">):</span>
+<span class="w">        </span><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">credential_dir</span><span class="p">)</span>
+<span class="w">    </span><span class="n">credential_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">credential_dir</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;gmail-python-quickstart.json&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">store</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Storage</span><span class="p">(</span><span class="n">credential_path</span><span class="p">)</span>
+<span class="w">    </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">store</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">credentials</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">credentials</span><span class="o">.</span><span class="n">invalid</span><span class="p">:</span>
+<span class="w">        </span><span class="n">flow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client</span><span class="o">.</span><span class="n">flow_from_clientsecrets</span><span class="p">(</span><span class="n">CLIENT_SECRET_FILE</span><span class="p">,</span><span class="w"> </span><span class="n">SCOPES</span><span class="p">)</span>
+<span class="w">        </span><span class="n">flow</span><span class="o">.</span><span class="n">user_agent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">APPLICATION_NAME</span>
+<span class="w">        </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tools</span><span class="o">.</span><span class="n">run_flow</span><span class="p">(</span><span class="n">flow</span><span class="p">,</span><span class="w"> </span><span class="n">store</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Storing credentials to &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">credential_path</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">credentials</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_service</span><span class="p">():</span>
+<span class="w">    </span><span class="n">credentials</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_credentials</span><span class="p">()</span>
+<span class="w">    </span><span class="n">http</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">credentials</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="n">httplib2</span><span class="o">.</span><span class="n">Http</span><span class="p">())</span>
+<span class="w">    </span><span class="n">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discovery</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="s1">&#39;gmail&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;v1&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">http</span><span class="o">=</span><span class="n">http</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">service</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fill_db</span><span class="p">():</span>
+<span class="w">    </span><span class="n">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_service</span><span class="p">()</span>
+<span class="w">    </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">None</span>
+<span class="w">    </span><span class="n">DATABASE</span><span class="o">.</span><span class="n">clear_emails</span><span class="p">()</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="kc">True</span><span class="p">:</span>
+<span class="w">        </span><span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="o">.</span><span class="n">users</span><span class="p">()</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="s1">&#39;me&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">pageToken</span><span class="o">=</span><span class="n">token</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="w">        </span><span class="n">messages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;messages&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span>
+<span class="w">        </span><span class="n">DATABASE</span><span class="o">.</span><span class="n">insert_emails</span><span class="p">([(</span><span class="n">message</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">message</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">messages</span><span class="p">])</span>
+<span class="w">        </span><span class="n">token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nextPageToken&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">token</span><span class="p">:</span>
+<span class="w">            </span><span class="k">break</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_headers</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="n">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_service</span><span class="p">()</span>
+<span class="w">    </span><span class="n">get_header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">lambda</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="n">y</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">y</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">name</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+<span class="w">    </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">service</span><span class="o">.</span><span class="n">users</span><span class="p">()</span><span class="o">.</span><span class="n">messages</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">userId</span><span class="o">=</span><span class="s1">&#39;me&#39;</span><span class="p">,</span><span class="w"> </span><span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+<span class="w">    </span><span class="k">try</span><span class="p">:</span>
+<span class="w">        </span><span class="n">fromf</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">get_header</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">][</span><span class="s1">&#39;headers&#39;</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;From&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_header</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;payload&#39;</span><span class="p">][</span><span class="s1">&#39;headers&#39;</span><span class="p">],</span><span class="w"> </span><span class="s1">&#39;Subject&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="w"> </span><span class="n">fromf</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="p">)</span>
+<span class="w">    </span><span class="k">except</span><span class="p">:</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_headers</span><span class="p">(</span><span class="n">chunks</span><span class="p">):</span>
+<span class="w">    </span><span class="n">num_cores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">    </span><span class="n">aprun</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ParallelExecutor</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">num_cores</span><span class="p">)</span>
+<span class="w">    </span><span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">aprun</span><span class="p">(</span><span class="n">bar</span><span class="o">=</span><span class="s1">&#39;tqdm&#39;</span><span class="p">)(</span><span class="n">delayed</span><span class="p">(</span><span class="n">fetch_headers</span><span class="p">)(</span><span class="nb">id</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nb">id</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">chunks</span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nb">id</span><span class="p">,</span><span class="w"> </span><span class="n">fromf</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">tqdm</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">subject</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">fromf</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="n">DATABASE</span><span class="o">.</span><span class="n">trash_email</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+<span class="w">        </span><span class="k">else</span><span class="p">:</span>
+<span class="w">            </span><span class="n">DATABASE</span><span class="o">.</span><span class="n">update_email</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="w"> </span><span class="n">fromf</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_db</span><span class="p">():</span>
+<span class="w">    </span><span class="n">chunk_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">300</span>
+<span class="w">    </span><span class="n">chunks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">tqdm</span><span class="p">(</span><span class="n">DATABASE</span><span class="o">.</span><span class="n">select_updateable_emails</span><span class="p">()):</span>
+<span class="w">        </span><span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">email</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">chunk_size</span><span class="p">:</span>
+<span class="w">            </span><span class="n">update_headers</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+<span class="w">            </span><span class="n">chunks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="n">update_headers</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+
+<span class="k">if</span><span class="w"> </span><span class="vm">__name__</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">DATABASE</span><span class="o">.</span><span class="n">has_emails</span><span class="p">():</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Database is empty, performing first-time setup&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">fill_db</span><span class="p">()</span>
+
+<span class="w">    </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Updating messages&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">update_db</span><span class="p">()</span>
+</code></pre></div>
+
+<p>I&#8217;m only fetching the unique id here, together with the from and subject headers. Quite annoyingly, even though the Gmail <span class="caps">API</span> provides batch calls to delete and modify a list of e-mails, it does not expose similar functionality to get a list of e-mails. Instead, <code>service.users().messages().list(...)</code> provides a paginated result list of e-mail ids and thread ids, without detailed information. Afterwards, you need to loop through all e-mail ids to <code>service.users().messages().get(...)</code> their details. I&#8217;m using joblib here to speed up this&nbsp;process:</p>
+<p><img alt="" src="/images/2017/gmail1.png"></p>
+<p>A few hours later, the database is filled up and ready for use. A simple <span class="caps">SQL</span> statement can immediately provide a grouped overview of e-mails per&nbsp;sender:</p>
+<div class="highlight"><pre><span></span><code>SELECT header_from, count(*) AS &quot;amount&quot; FROM &quot;email&quot;
+WHERE &quot;trashed&quot; = 0
+GROUP BY &quot;header_from&quot;
+ORDER BY &quot;amount&quot; DESC
+</code></pre></div>
+
+<p>Next up is making trying to group e-mails (for a particular sender) based on their subjects to make it easier to spot repeating e-mails. Doing so using a string identity based aggregation is easy, though the issue is that subjects will be slightly different over time for many senders, e.g. compary &#8220;your weekly digest for 11/2017&#8221; verus &#8220;your weekly digest for 12/2017&#8221; or &#8220;12 friends have liked your profile&#8221; versus &#8220;1 friend has liked your&nbsp;profile&#8221;.</p>
+<p>It turns out that this problem is heavily related to the field of <a href="https://en.wikipedia.org/wiki/Sequence_alignment">sequence alignment</a>, a common task in bioinformatics were sequences are grouped based on regional similarity as well as visualized in such a manner that the similar fragments are easy to&nbsp;identify:</p>
+<p><img alt="Source: Wikipedia" src="/images/2017/alignment.png"></p>
+<p>Several toolkits exist for sequence (or string) alignment. In Python, there&#8217;s <a href="https://github.com/mbreese/swalign/">swalign</a> which implements a Smith-Waterman local aligner. <a href="http://biopython.org/DIST/docs/tutorial/Tutorial.html#htoc69">BioPython</a> also contains several ways for sequence alignment. There&#8217;s also <a href="https://pypi.python.org/pypi/alignment/1.0.9">alignment</a>. There&#8217;s also <a href="http://mafft.cbrc.jp/alignment/software/"><span class="caps">MAFFT</span></a> in case you want a fast non-Python&nbsp;implementation.</p>
+<p>However, Python also comes with the <code>difflib</code> module, which implements Ratcliff and Obershelp&#8217;s “gestalt pattern matching” algorithm, used to provide <a href="https://en.wikipedia.org/wiki/Diff_utility">diff&#8217;s</a> between two inputs. It basically boils down to finding the smallest set of deletions and insertions to create one input from the other. Normally, diff tools work line-oriented, though difflib&#8217;s <code>SequenceMatcher</code> class can also work&nbsp;character-oriented:</p>
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; a = &quot;You have a message from Name Lastname waiting for 3 days&quot;
+&gt;&gt;&gt; b = &quot;You have a message from Jon Snow waiting for 393 days&quot;
+&gt;&gt;&gt; s = SequenceMatcher()
+&gt;&gt;&gt; s.set_seq1(a)
+&gt;&gt;&gt; s.set_seq2(b)
+
+&gt;&gt;&gt; s.ratio()
+0.8256880733944955
+
+&gt;&gt;&gt; s.get_matching_blocks()
+[Match(a=0, b=0, size=24), Match(a=28, b=27, size=1), Match(a=33, b=29, size=1), Match(a=37, b=32, size=14), Match(a=51, b=48, size=5), Match(a=56, b=53, size=0)]
+</code></pre></div>
+
+<p>This provides us with a &#8220;good enough&#8221; mechanism to find a distance (ratio) between to strings, as well as their matching pieces. The challenge is now to use this building block to group a list of subjects&nbsp;together.</p>
+<p>Whenever you&#8217;re faced with a clustering task such as this, and you have a method to establish a &#8220;distance&#8221; between to elements, it turns out to be easy to turn this into a complete clustering solution. One way to do so is by implementing <a href="https://en.wikipedia.org/wiki/Hierarchical_clustering">Agglomerative Hierarchical Clustering</a>. This algorithm works in a series of steps where in every step a new level in the &#8220;hierarchy&#8221; is&nbsp;constructed.</p>
+<ul>
+<li>At the &#8220;first, lowest&#8221; level, every element forms a cluster on its&nbsp;own</li>
+<li>Find two clusters A and B with the best linkage&nbsp;criterion</li>
+<li>Merge these two together and add to the next&nbsp;level</li>
+<li>All other clusters remain as is and are added to the next&nbsp;level</li>
+<li>Repeat until every element is in one single cluster (or until the best linkage value drops below a threshold and you&#8217;ve reached the desired number of&nbsp;clusters)</li>
+</ul>
+<p>For the first iteration, finding the best linkage criterion is easy. We can just use the <code>.ratio()</code> method from <code>SequenceMatcher</code> between two clusters A and B since they both contain one sequence each. How do we apply the same mechanism once clusters start to contain more than one&nbsp;sequence?</p>
+<p>A first approach was to use a centroid based criterion. This requires us to define a &#8220;centroid&#8221; between sequences with their distance then simply being the distance between the centroids. In this case, we can just use a very naive approach where <code>.get_matching_blocks()</code> is used to keep the similar pieces of two strings, and replace the non matching parts with a replacement character, like&nbsp;so:</p>
+<div class="highlight"><pre><span></span><code>def combine_strings(blocks, a, b, char=&#39;-&#39;, min_thres=3):
+    combined = &#39;&#39;
+    last_a, last_b = 0, 0
+    for block in blocks:
+        # Add maximum suffix
+        combined += char <span class="gs">* max(block.a - last_a, block.b - last_b)</span>
+<span class="gs">        last_a = block.a + block.size</span>
+<span class="gs">        last_b = block.b + block.size</span>
+<span class="gs">        piece_to_add = a[block.a:block.a+block.size] # Guaranteed to be == b[j:j+n]</span>
+<span class="gs">        combined += piece_to_add if len(piece_to_add) &gt; min_thres else char *</span> len(piece_to_add)
+    combined += char * (len(combined) - max(len(a), len(b)))
+    return combined
+
+&gt;&gt;&gt; combine_strings(s.get_matching_blocks(), a, b)
+You have a message from ------------- waiting for 3-- days--
+</code></pre></div>
+
+<p>The latter is a good aggregated representation of our two subjects and can be easily represented to the&nbsp;user.</p>
+<p>The full Agglomerative Hierarchical Clustering setup then looks like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">def</span><span class="w"> </span><span class="n">find_best_match</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="p">)</span><span class="err">:</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SequenceMatcher</span><span class="p">()</span>
+<span class="w">    </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">None</span><span class="p">,</span><span class="w"> </span><span class="k">None</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="k">None</span><span class="p">)</span>
+<span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">Find</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="k">using</span><span class="w"> </span><span class="n">centroid</span><span class="w"> </span><span class="k">method</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="k">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="err">:</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="k">range</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nf">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">))</span><span class="err">:</span>
+<span class="w">            </span><span class="n">s</span><span class="p">.</span><span class="n">set_seq1</span><span class="p">(</span><span class="n">clusters</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class="n">centroid</span><span class="p">)</span>
+<span class="w">            </span><span class="n">s</span><span class="p">.</span><span class="n">set_seq2</span><span class="p">(</span><span class="n">clusters</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">.</span><span class="n">centroid</span><span class="p">)</span>
+<span class="w">            </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">ratio</span><span class="p">()</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">best_abval</span><span class="o">[</span><span class="n">2</span><span class="o">]</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="nl">ratio_threshold</span><span class="p">:</span>
+<span class="w">                </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">get_matching_blocks</span><span class="p">())</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">best_abval</span>
+
+
+<span class="n">def</span><span class="w"> </span><span class="n">cluster_strings</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="w"> </span><span class="n">combiner</span><span class="o">=</span><span class="n">combine_strings</span><span class="p">,</span><span class="w"> </span><span class="n">matcher</span><span class="o">=</span><span class="n">find_best_match</span><span class="p">)</span><span class="err">:</span>
+<span class="w">    </span><span class="n">Cluster</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Cluster&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;centroid members parents&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">dendrogram</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+<span class="n">        # First level of clusters:</span>
+<span class="n">        [Cluster(centroid=x, members=[x</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">parents</span><span class="o">=</span><span class="k">None</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">strings</span><span class="err">]</span>
+<span class="w">    </span><span class="err">]</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="nf">len</span><span class="p">(</span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="err">:</span>
+<span class="w">        </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">matcher</span><span class="p">(</span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">best_abval</span><span class="o">[</span><span class="n">3</span><span class="o">]</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">None</span><span class="err">:</span>
+<span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="n">Threshold</span><span class="w"> </span><span class="n">could</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">adhered</span><span class="w"> </span><span class="k">to</span><span class="p">,</span><span class="w"> </span><span class="n">stop</span><span class="w"> </span><span class="n">clustering</span><span class="w"> </span><span class="n">here</span>
+<span class="w">            </span><span class="k">break</span>
+<span class="w">        </span><span class="n">new_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">[]</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="k">range</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">]</span><span class="p">))</span><span class="err">:</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">best_abval</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">best_abval</span><span class="o">[</span><span class="n">1</span><span class="o">]</span><span class="err">:</span>
+<span class="w">                </span><span class="k">continue</span>
+<span class="w">            </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">][</span><span class="n">i</span><span class="o">]</span>
+<span class="w">            </span><span class="n">new_level</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">Cluster</span><span class="p">(</span><span class="n">centroid</span><span class="o">=</span><span class="n">m</span><span class="p">.</span><span class="n">centroid</span><span class="p">,</span><span class="w"> </span><span class="n">members</span><span class="o">=</span><span class="n">m</span><span class="p">.</span><span class="n">members</span><span class="p">,</span><span class="w"> </span><span class="n">parents</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="p">,)))</span>
+<span class="w">        </span><span class="n">first_centroid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">][</span><span class="n">best_abval[0</span><span class="o">]</span><span class="err">]</span><span class="p">.</span><span class="n">centroid</span>
+<span class="w">        </span><span class="n">second_centroid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">][</span><span class="n">best_abval[1</span><span class="o">]</span><span class="err">]</span><span class="p">.</span><span class="n">centroid</span>
+<span class="w">        </span><span class="n">merged_centroid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">combiner</span><span class="p">(</span><span class="n">best_abval</span><span class="o">[</span><span class="n">3</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">first_centroid</span><span class="p">,</span><span class="w"> </span><span class="n">second_centroid</span><span class="p">)</span>
+<span class="w">        </span><span class="n">new_level</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">Cluster</span><span class="p">(</span><span class="n">centroid</span><span class="o">=</span><span class="n">merged_centroid</span><span class="p">,</span>
+<span class="w">            </span><span class="n">members</span><span class="o">=</span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">][</span><span class="n">best_abval[0</span><span class="o">]</span><span class="err">]</span><span class="p">.</span><span class="n">members</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">dendrogram</span><span class="o">[</span><span class="n">-1</span><span class="o">][</span><span class="n">best_abval[1</span><span class="o">]</span><span class="err">]</span><span class="p">.</span><span class="n">members</span><span class="p">,</span>
+<span class="w">            </span><span class="n">parents</span><span class="o">=</span><span class="p">(</span><span class="n">best_abval</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">best_abval</span><span class="o">[</span><span class="n">1</span><span class="o">]</span><span class="p">)))</span>
+<span class="w">        </span><span class="n">dendrogram</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_level</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">dendrogram</span>
+</code></pre></div>
+
+<p>And&nbsp;then:</p>
+<div class="highlight"><pre><span></span><code>&gt;&gt;&gt; strings = [&quot;You have a message from Name Lastname waiting for 3 days&quot;,
+           &quot;You have a message from Jon Snow waiting for 393 days&quot;,
+           &quot;You have a message from Bob Bobbert waiting for 4 days&quot;,
+           &quot;You have a message from Marc Marcussen waiting for 1 day&quot;,
+           &quot;Jon Snow liked a photo of you&quot;,
+           &quot;Laurence Marcus liked a photo of you&quot;,
+           &quot;Aurelie liked a photo of you&quot;,
+           &quot;Jon Snow is waiting for your reply&quot;]
+
+
+&gt;&gt;&gt; cluster_tree = cluster_strings(strings)
+&gt;&gt;&gt; for cluster in cluster_tree[-1]: print(cluster.centroid)
+Jon Snow is waiting for your reply
+You have a message from ---------------------- waiting for --- day--------------
+--------------- liked a photo of you
+</code></pre></div>
+
+<p>Looks good. One issue is, however, that <code>SequenceMatcher</code> is quite slow. The two nested for loops in <code>cluster_strings</code> also don&#8217;t help here. What if we could calculate the ratios between all pairs of subjects just once, and go from there? I.e. we&#8217;re going to change the linkage criterion to a single (or minumum) one, so that the distance between clusters A and B is now min(d(a,b) where a is in A and b is in&nbsp;B).</p>
+<p>We&#8217;ll also refactor the code to do away with keeping track of the different levels in the hierarchy, since we only want the final outcome&nbsp;anyway:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">difflib</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">SequenceMatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">lru_cache</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_strings</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">char</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">min_thres</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SequenceMatcher</span><span class="p">()</span>
+<span class="w">    </span><span class="n">s</span><span class="o">.</span><span class="n">set_seq1</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="n">s</span><span class="o">.</span><span class="n">set_seq2</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="n">blocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">get_matching_blocks</span><span class="p">()</span>
+<span class="w">    </span><span class="n">combined</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span>
+<span class="w">    </span><span class="n">last_a</span><span class="p">,</span><span class="w"> </span><span class="n">last_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">blocks</span><span class="p">:</span>
+<span class="w">        </span><span class="n">combined</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_a</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="o">.</span><span class="n">b</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">last_b</span><span class="p">)</span>
+<span class="w">        </span><span class="n">last_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">block</span><span class="o">.</span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block</span><span class="o">.</span><span class="n">size</span>
+<span class="w">        </span><span class="n">last_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">block</span><span class="o">.</span><span class="n">b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">block</span><span class="o">.</span><span class="n">size</span>
+<span class="w">        </span><span class="n">piece_to_add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">block</span><span class="o">.</span><span class="n">a</span><span class="p">:</span><span class="n">block</span><span class="o">.</span><span class="n">a</span><span class="o">+</span><span class="n">block</span><span class="o">.</span><span class="n">size</span><span class="p">]</span>
+<span class="w">        </span><span class="n">combined</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">piece_to_add</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">piece_to_add</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">min_thres</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="n">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">piece_to_add</span><span class="p">)</span>
+<span class="w">    </span><span class="n">combined</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">combined</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">):</span>
+<span class="w">    </span><span class="n">representations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">cluster</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">clusters</span><span class="p">:</span>
+<span class="w">        </span><span class="n">representation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cluster</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">representation</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span>
+<span class="w">            </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">representation</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="w">            </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">representation</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+<span class="w">            </span><span class="n">representation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">combine_strings</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">))</span>
+<span class="w">        </span><span class="n">representations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">representation</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">representations</span>
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ratio</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SequenceMatcher</span><span class="p">()</span>
+<span class="w">    </span><span class="n">s</span><span class="o">.</span><span class="n">set_seq1</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="w">    </span><span class="n">s</span><span class="o">.</span><span class="n">set_seq2</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_best_match</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="p">):</span>
+<span class="w">    </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SequenceMatcher</span><span class="p">()</span>
+<span class="w">    </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+<span class="w">            </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">min</span><span class="p">([</span><span class="n">get_ratio</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">clusters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">clusters</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">best_abval</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="p">:</span>
+<span class="w">                </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">best_abval</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_strings</span><span class="p">(</span><span class="n">strings</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span><span class="w"> </span><span class="n">combiner</span><span class="o">=</span><span class="n">combine_clusters</span><span class="p">,</span><span class="w"> </span><span class="n">matcher</span><span class="o">=</span><span class="n">find_best_match</span><span class="p">):</span>
+<span class="w">    </span><span class="n">clusters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">strings</span><span class="p">]</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span>
+<span class="w">        </span><span class="n">best_abval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">matcher</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span><span class="w"> </span><span class="n">ratio_threshold</span><span class="p">)</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">best_abval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="p">:</span>
+<span class="w">            </span><span class="k">break</span>
+<span class="w">        </span><span class="n">new_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">best_abval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">best_abval</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+<span class="w">                </span><span class="k">continue</span>
+<span class="w">            </span><span class="n">new_level</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clusters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="w">        </span><span class="n">new_level</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">clusters</span><span class="p">[</span><span class="n">best_abval</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">clusters</span><span class="p">[</span><span class="n">best_abval</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="w">        </span><span class="n">clusters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_level</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">combiner</span><span class="p">(</span><span class="n">clusters</span><span class="p">),</span><span class="w"> </span><span class="n">clusters</span>
+</code></pre></div>
+
+<p>Note that we still combine the clusters together to get a final representation. We&#8217;re also using <code>lru_cache</code> here to solve the pairwise ratio computation issue without adding in additional&nbsp;code.</p>
+<p>Now what remained is to hook this up to a simple Flask application. Note that trashing e-mails using Gmails <span class="caps">API</span> can be done in batch&nbsp;using:</p>
+<div class="highlight"><pre><span></span><code>service.users().messages().batchModify(userId=&#39;me&#39;, body={
+        &#39;removeLabelIds&#39;: [],
+        &#39;addLabelIds&#39;: [&#39;TRASH&#39;],
+        &#39;ids&#39;: email_ids
+    }).execute()
+</code></pre></div>
+
+<p>This is how the result looks&nbsp;like:</p>
+<p><img alt="" src="/images/2017/gmail2.png"></p>
+<p>E-mails that are trashed will get a flag in the local database in order to prevent them showing up in the overall&nbsp;list.</p>
+<p>Using this overview, I was able to delete about twenty thousand e-mails in half an hour or&nbsp;so.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

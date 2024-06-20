@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>How-to: Send HTML Mails with OAuth2 and Gmail in Python</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html" rel="bookmark"
+			title="Permalink to How-to: Send HTML Mails with OAuth2 and Gmail in Python">How-to: Send <span class="caps">HTML</span> Mails with OAuth2 and Gmail in&nbsp;Python</a></div>
+		</header>
+	
+	    <p>If you&#8217;ve been trying to send e-mails from a program using your Gmail account, you&#8217;ll probably have encountered the following error&nbsp;message:</p>
+<div class="highlight"><pre><span></span><code>SMTP Error: Could not authenticate. Error: SMTP Error: Could not authenticate.
+535 5.7.1 Username and Password not accepted. Learn more at
+535 5.7.1 http://mail.google.com/support/bin/answer.py?answer=14257 p38sm2467302ybk.16
+</code></pre></div>
+
+<p>In fact, the internet is flooded with people searching to figure out how to get their Wordpress mailer plugin working with Gmail&#8217;s <span class="caps">SMTP</span>. The answer most people give is to just enable the &#8220;Allow less secure apps&#8221;-option in your Google account&nbsp;settings:</p>
+<p><img alt="This doesn't feel right" src="http://blog.macuyiko.com/images/2016/secure_apps.png"></p>
+<p>Fair enough, though a more secure way is to use OAuth2 in combination with Google&#8217;s <span class="caps">API</span> console. <a href="https://developers.google.com/gmail/xoauth2_protocol">This page</a> describes the protocol, whereas <a href="https://github.com/google/gmail-oauth2-tools">this GitHub repo</a> provides sample code, including for&nbsp;Python.</p>
+<p>Since the code has been written for Python 2 and I wanted to use 3, I&#8217;ve performed a quick conversion and outline of the&nbsp;steps&#8230;</p>
+<p>Step 1: navigate to your <a href="https://console.developers.google.com/">Google <span class="caps">API</span> console</a>. You might want to create a new project (or make sure you have the right project&nbsp;selected):</p>
+<p><img alt="Create a new project if you want" src="http://blog.macuyiko.com/images/2016/step_1.png"></p>
+<p>Step 2: under &#8220;Credentials&#8221;, select &#8220;Create credentials&#8221; and create a new &#8220;OAuth client <span class="caps">ID</span>&#8221;. If you would already have such an <span class="caps">ID</span>, you can skip this step and just re-use the one you&nbsp;have.</p>
+<p><img alt="Create a new OAuth client ID" src="http://blog.macuyiko.com/images/2016/step_2.png"></p>
+<p>You will be asked which type of app will use this <span class="caps">ID</span>, choose &#8220;Other&#8221; and give your app an easy-to-remember&nbsp;name:</p>
+<p><img alt="Select &quot;Other&quot;" src="http://blog.macuyiko.com/images/2016/step_3.png"></p>
+<p>Next up comes the most important screen, giving you your client <span class="caps">ID</span> and secret key. Write both of these down and do not give these out to&nbsp;others!</p>
+<p><img alt="Keep it secret, keep it safe" src="http://blog.macuyiko.com/images/2016/step_4.png"></p>
+<p>Step 3: the Python code we&#8217;ll be using is adapted from (https://github.com/google/gmail-oauth2-tools/blob/master/python/oauth2.py) but works in Python 3 and has been made&nbsp;simpler:</p>
+<div class="highlight"><pre><span></span><code><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Adapted from:</span>
+<span class="sd">https://github.com/google/gmail-oauth2-tools/blob/master/python/oauth2.py</span>
+<span class="sd">https://developers.google.com/identity/protocols/OAuth2</span>
+
+<span class="sd">1. Generate and authorize an OAuth2 (generate_oauth2_token)</span>
+<span class="sd">2. Generate a new access tokens using a refresh token(refresh_token)</span>
+<span class="sd">3. Generate an OAuth2 string to use for login (access_token)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">base64</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">imaplib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">smtplib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.parse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">email.mime.multipart</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">MIMEMultipart</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">email.mime.text</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">MIMEText</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">lxml.html</span>
+
+<span class="n">GOOGLE_ACCOUNTS_BASE_URL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;https://accounts.google.com&#39;</span>
+<span class="n">REDIRECT_URI</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;urn:ietf:wg:oauth:2.0:oob&#39;</span>
+
+<span class="n">GOOGLE_CLIENT_ID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;FILL ME IN&gt;&#39;</span>
+<span class="n">GOOGLE_CLIENT_SECRET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&lt;FILL ME IN&gt;&#39;</span>
+<span class="n">GOOGLE_REFRESH_TOKEN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">command_to_url</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">GOOGLE_ACCOUNTS_BASE_URL</span><span class="p">,</span><span class="w"> </span><span class="n">command</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">url_escape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">quote</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">safe</span><span class="o">=</span><span class="s1">&#39;~-._&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">url_unescape</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">unquote</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">url_format_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="n">param_fragments</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">param</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nb">sorted</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span><span class="w"> </span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span><span class="w"> </span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+<span class="w">        </span><span class="n">param_fragments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">url_escape</span><span class="p">(</span><span class="n">param</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;&amp;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">param_fragments</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_permission_url</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="o">=</span><span class="s1">&#39;https://mail.google.com/&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;client_id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client_id</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;redirect_uri&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">REDIRECT_URI</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;scope&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scope</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;response_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;code&#39;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">?</span><span class="si">%s</span><span class="s1">&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">command_to_url</span><span class="p">(</span><span class="s1">&#39;o/oauth2/auth&#39;</span><span class="p">),</span><span class="w"> </span><span class="n">url_format_params</span><span class="p">(</span><span class="n">params</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">call_authorize_tokens</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span><span class="w"> </span><span class="n">client_secret</span><span class="p">,</span><span class="w"> </span><span class="n">authorization_code</span><span class="p">):</span>
+<span class="w">    </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;client_id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client_id</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;client_secret&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client_secret</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">authorization_code</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;redirect_uri&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">REDIRECT_URI</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;grant_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;authorization_code&#39;</span>
+<span class="w">    </span><span class="n">request_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">command_to_url</span><span class="p">(</span><span class="s1">&#39;o/oauth2/token&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request_url</span><span class="p">,</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">call_refresh_token</span><span class="p">(</span><span class="n">client_id</span><span class="p">,</span><span class="w"> </span><span class="n">client_secret</span><span class="p">,</span><span class="w"> </span><span class="n">refresh_token</span><span class="p">):</span>
+<span class="w">    </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;client_id&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client_id</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;client_secret&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">client_secret</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">refresh_token</span>
+<span class="w">    </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;grant_type&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;refresh_token&#39;</span>
+<span class="w">    </span><span class="n">request_url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">command_to_url</span><span class="p">(</span><span class="s1">&#39;o/oauth2/token&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request_url</span><span class="p">,</span><span class="w"> </span><span class="n">urllib</span><span class="o">.</span><span class="n">parse</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_oauth2_string</span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">access_token</span><span class="p">,</span><span class="w"> </span><span class="n">as_base64</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="n">auth_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;user=</span><span class="si">%s</span><span class="se">\1</span><span class="s1">auth=Bearer </span><span class="si">%s</span><span class="se">\1\1</span><span class="s1">&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">username</span><span class="p">,</span><span class="w"> </span><span class="n">access_token</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">as_base64</span><span class="p">:</span>
+<span class="w">        </span><span class="n">auth_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">auth_string</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">auth_string</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_imap</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">auth_string</span><span class="p">):</span>
+<span class="w">    </span><span class="n">imap_conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">imaplib</span><span class="o">.</span><span class="n">IMAP4_SSL</span><span class="p">(</span><span class="s1">&#39;imap.gmail.com&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">imap_conn</span><span class="o">.</span><span class="n">debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span>
+<span class="w">    </span><span class="n">imap_conn</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="s1">&#39;XOAUTH2&#39;</span><span class="p">,</span><span class="w"> </span><span class="k">lambda</span><span class="w"> </span><span class="n">x</span><span class="p">:</span><span class="w"> </span><span class="n">auth_string</span><span class="p">)</span>
+<span class="w">    </span><span class="n">imap_conn</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;INBOX&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">test_smpt</span><span class="p">(</span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">base64_auth_string</span><span class="p">):</span>
+<span class="w">    </span><span class="n">smtp_conn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="s1">&#39;smtp.gmail.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">587</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smtp_conn</span><span class="o">.</span><span class="n">set_debuglevel</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smtp_conn</span><span class="o">.</span><span class="n">ehlo</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">smtp_conn</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+<span class="w">    </span><span class="n">smtp_conn</span><span class="o">.</span><span class="n">docmd</span><span class="p">(</span><span class="s1">&#39;AUTH&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;XOAUTH2 &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">base64_auth_string</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_authorization</span><span class="p">(</span><span class="n">google_client_id</span><span class="p">,</span><span class="w"> </span><span class="n">google_client_secret</span><span class="p">):</span>
+<span class="w">    </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;https://mail.google.com/&quot;</span>
+<span class="w">    </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Navigate to the following URL to auth:&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">generate_permission_url</span><span class="p">(</span><span class="n">google_client_id</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="p">))</span>
+<span class="w">    </span><span class="n">authorization_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">input</span><span class="p">(</span><span class="s1">&#39;Enter verification code: &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">call_authorize_tokens</span><span class="p">(</span><span class="n">google_client_id</span><span class="p">,</span><span class="w"> </span><span class="n">google_client_secret</span><span class="p">,</span><span class="w"> </span><span class="n">authorization_code</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;refresh_token&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;expires_in&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">refresh_authorization</span><span class="p">(</span><span class="n">google_client_id</span><span class="p">,</span><span class="w"> </span><span class="n">google_client_secret</span><span class="p">,</span><span class="w"> </span><span class="n">refresh_token</span><span class="p">):</span>
+<span class="w">    </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">call_refresh_token</span><span class="p">(</span><span class="n">google_client_id</span><span class="p">,</span><span class="w"> </span><span class="n">google_client_secret</span><span class="p">,</span><span class="w"> </span><span class="n">refresh_token</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;expires_in&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">send_mail</span><span class="p">(</span><span class="n">fromaddr</span><span class="p">,</span><span class="w"> </span><span class="n">toaddr</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="n">access_token</span><span class="p">,</span><span class="w"> </span><span class="n">expires_in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">refresh_authorization</span><span class="p">(</span><span class="n">GOOGLE_CLIENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">GOOGLE_CLIENT_SECRET</span><span class="p">,</span><span class="w"> </span><span class="n">GOOGLE_REFRESH_TOKEN</span><span class="p">)</span>
+<span class="w">    </span><span class="n">auth_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">generate_oauth2_string</span><span class="p">(</span><span class="n">fromaddr</span><span class="p">,</span><span class="w"> </span><span class="n">access_token</span><span class="p">,</span><span class="w"> </span><span class="n">as_base64</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;related&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;Subject&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subject</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;From&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fromaddr</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">[</span><span class="s1">&#39;To&#39;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">toaddr</span>
+<span class="w">    </span><span class="n">msg</span><span class="o">.</span><span class="n">preamble</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;This is a multi-part message in MIME format.&#39;</span>
+<span class="w">    </span><span class="n">msg_alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MIMEMultipart</span><span class="p">(</span><span class="s1">&#39;alternative&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">msg</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">msg_alternative</span><span class="p">)</span>
+<span class="w">    </span><span class="n">part_text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MIMEText</span><span class="p">(</span><span class="n">lxml</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="o">.</span><span class="n">text_content</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;plain&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">part_html</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MIMEText</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">),</span><span class="w"> </span><span class="s1">&#39;html&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">_charset</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">msg_alternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part_text</span><span class="p">)</span>
+<span class="w">    </span><span class="n">msg_alternative</span><span class="o">.</span><span class="n">attach</span><span class="p">(</span><span class="n">part_html</span><span class="p">)</span>
+<span class="w">    </span><span class="n">server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smtplib</span><span class="o">.</span><span class="n">SMTP</span><span class="p">(</span><span class="s1">&#39;smtp.gmail.com:587&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">server</span><span class="o">.</span><span class="n">ehlo</span><span class="p">(</span><span class="n">GOOGLE_CLIENT_ID</span><span class="p">)</span>
+<span class="w">    </span><span class="n">server</span><span class="o">.</span><span class="n">starttls</span><span class="p">()</span>
+<span class="w">    </span><span class="n">server</span><span class="o">.</span><span class="n">docmd</span><span class="p">(</span><span class="s1">&#39;AUTH&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;XOAUTH2 &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">auth_string</span><span class="p">)</span>
+<span class="w">    </span><span class="n">server</span><span class="o">.</span><span class="n">sendmail</span><span class="p">(</span><span class="n">fromaddr</span><span class="p">,</span><span class="w"> </span><span class="n">toaddr</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="o">.</span><span class="n">as_string</span><span class="p">())</span>
+<span class="w">    </span><span class="n">server</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+
+
+
+<span class="k">if</span><span class="w"> </span><span class="vm">__name__</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">GOOGLE_REFRESH_TOKEN</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;No refresh token found, obtaining one&#39;</span><span class="p">)</span>
+<span class="w">        </span><span class="n">refresh_token</span><span class="p">,</span><span class="w"> </span><span class="n">access_token</span><span class="p">,</span><span class="w"> </span><span class="n">expires_in</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">get_authorization</span><span class="p">(</span><span class="n">GOOGLE_CLIENT_ID</span><span class="p">,</span><span class="w"> </span><span class="n">GOOGLE_CLIENT_SECRET</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Set the following as your GOOGLE_REFRESH_TOKEN:&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">refresh_token</span><span class="p">)</span>
+<span class="w">        </span><span class="n">exit</span><span class="p">()</span>
+
+<span class="w">    </span><span class="n">send_mail</span><span class="p">(</span><span class="s1">&#39;--------@gmail.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;--------@gmail.com&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="s1">&#39;A mail from you from Python&#39;</span><span class="p">,</span>
+<span class="w">              </span><span class="s1">&#39;&lt;b&gt;A mail from you from Python&lt;/b&gt;&lt;br&gt;&lt;br&gt;&#39;</span><span class="w"> </span><span class="o">+</span>
+<span class="w">              </span><span class="s1">&#39;So happy to hear from you!&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Don&#8217;t forget to&nbsp;change:</p>
+<div class="highlight"><pre><span></span><code>GOOGLE_CLIENT_ID = &#39;&lt;FILL ME IN&gt;&#39;
+GOOGLE_CLIENT_SECRET = &#39;&lt;FILL ME IN&gt;&#39;
+</code></pre></div>
+
+<p>Next, just simply run the code. Since we don&#8217;t have a <code>GOOGLE_REFRESH_TOKEN</code> yet, the following will appear on the&nbsp;screen:</p>
+<div class="highlight"><pre><span></span><code>No refresh token found, obtaining one
+Navigate to the following URL to auth: https://accounts.google.com/o/oauth2/auth?client_id= [...]
+Enter verification code:
+</code></pre></div>
+
+<p>Open the <span class="caps">URL</span> in your browser, you will be greeted with&nbsp;this:</p>
+<p><img alt="Press accept to accept" src="http://blog.macuyiko.com/images/2016/step_5.png"></p>
+<p>After pressing &#8220;Accept&#8221;, Google will present you with a verification&nbsp;code:</p>
+<p><img alt="Press accept to accept" src="http://blog.macuyiko.com/images/2016/step_6.png"></p>
+<p>Enter this in the running&nbsp;prompt:</p>
+<div class="highlight"><pre><span></span><code>Enter verification code: &lt;ENTER YOUR VERIFICATION CODE&gt;
+Set the following as your GOOGLE_REFRESH_TOKEN: [...] 1bA [...]
+</code></pre></div>
+
+<p>Now modify the Python script to fill in the refresh token with the value you got&nbsp;back:</p>
+<div class="highlight"><pre><span></span><code>GOOGLE_REFRESH_TOKEN = &#39;[...] 1bA [...]&#39;
+</code></pre></div>
+
+<p>Step 4: start sending mail. Change the following line with your Gmail&nbsp;address:</p>
+<div class="highlight"><pre><span></span><code><span class="n">send_mail</span><span class="p">(</span><span class="s1">&#39;--------@gmail.com&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;--------@gmail.com&#39;</span><span class="p">,</span>
+</code></pre></div>
+
+<p>And run the script again. If all goes well, it should just terminate and you should see an e-mail popping up in your inbox, formatted with <span class="caps">HTML</span>,&nbsp;too:</p>
+<p><img alt="Done!" src="http://blog.macuyiko.com/images/2016/step_7.png"></p>
+<p>You don&#8217;t need to perform a manual reverification as the same refresh token can be used multiple times. If you do start to get exceptions, the timeout for the refresh token has been reached and you manually need to get a new refresh token, though normally refresh tokens are valid for a long time span as long as you wouldn&#8217;t create additional ones (older ones will stop working) or do not use a refresh token for a long amount of&nbsp;time.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

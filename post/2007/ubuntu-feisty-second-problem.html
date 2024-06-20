@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Ubuntu Feisty - Second Problem</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 30 April 2007, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2007/ubuntu-feisty-second-problem.html" rel="bookmark"
+			title="Permalink to Ubuntu Feisty - Second Problem">Ubuntu Feisty - Second&nbsp;Problem</a></div>
+		</header>
+	
+	    <p>Another problem (on another machine) was that it refused booting the new&nbsp;kernel.</p>
+<p>Also: the live cd didn&#8217;t work either, with the same error. A lot of people have problems of this kind, and most of the times they get the following&nbsp;errors:</p>
+<div class="highlight"><pre><span></span><code>ata2 is slow to respond, please be patient
+ata2 failed to respond (30 secs)
+ata2: command 0xa0 timeout, stat 0xd0 host_stat 0x20
+</code></pre></div>
+
+<p>And finally it quits to an initramfs&nbsp;shell:</p>
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nt">bin</span><span class="o">/</span><span class="nt">sh</span><span class="o">:</span><span class="w"> </span><span class="nt">can</span><span class="err">&#39;</span><span class="nt">t</span><span class="w"> </span><span class="nt">access</span><span class="w"> </span><span class="nt">tty</span><span class="o">;</span><span class="w"> </span><span class="nt">job</span><span class="w"> </span><span class="nt">control</span><span class="w"> </span><span class="nt">turned</span><span class="w"> </span><span class="nt">off</span>
+</code></pre></div>
+
+<p>Note that this last message is normal and has nothing to do with the actual problem. This caused some confusion with some&nbsp;people.</p>
+<p>So people have tried various things, here are a few suggestions, most of them came from users and&nbsp;developers:</p>
+<ul>
+<li>Is there a floppy in the drive? Remove it, otherwise, insert a floppy and see if that makes any difference. I didn&#8217;t care much for this solution. However, it did work for some&nbsp;people&#8230;</li>
+<li>Check your <span class="caps">IDE</span> configuration in the <span class="caps">BIOS</span>, put it on Standard <span class="caps">IDE</span>.</li>
+<li>Boot with libata.ignore_hpa=0 added to boot options. (Press e to edit a menu item in the <span class="caps">GRUB</span> list, then go to the line which contains the kernel. Always remove quiet and splash and add the above command.) This didn&#8217;t work with&nbsp;me.</li>
+</ul>
+<p>The solution which worked for me was the following one: add break=top to the boot parameters (see above), don&#8217;t forget to delete splash and quiet. Once you boot, you will immediately break to an initramfs shell. Try the following&nbsp;commands.</p>
+<div class="highlight"><pre><span></span><code>modprobe piix
+modprobe libata
+modprobe pata_jmicron
+modprobe ata_piix
+modprobe ahci
+modprobe ata_generic
+modprobe ide-disk
+modprobe ide-generic
+</code></pre></div>
+
+<p>Then type exit to continue booting. You don&#8217;t have to try them all at once. I first tried <code>ide-disk</code> and <code>ide-generic</code> but those didn&#8217;t work, then I tried only <code>piix</code>, which worked! If that doesn&#8217;t work, I would suggest trying <code>piix</code>, <code>libata</code>, <code>pata_jmicron</code>, <code>ata_piix</code>, <code>ahci</code> and <code>ata_generic</code>.</p>
+<p>Once you get it running, we must make sure these modules get loaded automatically (instead of always adding break=top). Edit the following file: <code>/etc/initramfs-tools/modules/</code>. E.g.,&nbsp;type:</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span><span class="w"> </span><span class="n">gedit</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">initramfs</span><span class="o">-</span><span class="n">tools</span><span class="o">/</span><span class="n">modules</span>
+</code></pre></div>
+
+<p>And add the modules which worked for you (without <code>modprobe</code>). In my case, I only had to add <code>piix</code>. Save and exit the editor, then execute the following&nbsp;command:</p>
+<div class="highlight"><pre><span></span><code>sudo update-initramfs -u
+</code></pre></div>
+
+<p>Done. Try to restart normally. It should work now. If it doesn&#8217;t, continue checking the forums and&nbsp;Launchpad.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 18 January 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/motioninjoy-appcrash-when-loading-driver.html" rel="bookmark"
+				title="Permalink to MotionInJoy Appcrash When Loading Driver">MotionInJoy Appcrash When Loading&nbsp;Driver</a></div>
+			</header>
+			<div class="article-summary">
+					<p>When trying to install the MotioninJoy driver using the <span class="caps">GUI</span>, the program&nbsp;crashes.</p>
+<p>Manually running the driver installation works. To do this, open a <code>cmd</code> window with administrative privileges. Make sure you have followed the other MotioninJoy steps and the controller is plugged&nbsp;in.</p>
+<p>cd to the &#8220;ds3&#8221; directory, located …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/motioninjoy-appcrash-when-loading-driver.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 12 January 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/slowloris-and-mitigations-for-apache.html" rel="bookmark"
+				title="Permalink to Slowloris And Mitigations For Apache">Slowloris And Mitigations For&nbsp;Apache</a></div>
+			</header>
+			<div class="article-summary">
+					<h1>Introduction</h1>
+<p>If you are the least bit interested in network security, you&#8217;ll undoubtedly have heard about Slowloris by&nbsp;now.</p>
+<blockquote>
+<p>Slowloris is a piece of software written by Robert &#8220;RSnake&#8221; Hansen which allows a single machine to take down another machine&#8217;s web server with minimal bandwidth and side effects …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/slowloris-and-mitigations-for-apache.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 19 November 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/compiling-firesheep-on-linux.html" rel="bookmark"
+				title="Permalink to Compiling Firesheep on Linux">Compiling Firesheep on&nbsp;Linux</a></div>
+			</header>
+			<div class="article-summary">
+					<p>If you follow the (security) news a bit, you&#8217;ve undoubtedly heart about Firesheep. This tool makes it very easy to listen in on public WiFi connections and intercept <span class="caps">HTTP</span> Cookies from a plethora of social networking sites and mail&nbsp;services.</p>
+<p>This has been possible for a long time (some …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/compiling-firesheep-on-linux.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 03 November 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/aircrack-quick-tutorial-wireless-wep-cracking.html" rel="bookmark"
+				title="Permalink to Aircrack Quick Tutorial (Wireless WEP Cracking)">Aircrack Quick Tutorial (Wireless <span class="caps">WEP</span>&nbsp;Cracking)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Speaking of <a href="////blog.macuyiko.com/post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html">wireless</a>&#8230;</p>
+<p>The following is just a quick note-to-self, because I always forget the exact commands and end up crawling around the <a href="http://www.aircrack-ng.org/doku.php">Aircrack wiki</a> for a bit. I though I&#8217;d posted this before, but I can&#8217;t seem to find&nbsp;it.</p>
+<h3><span class="caps">TTY1</span></h3>
+<div class="highlight"><pre><span></span><code>sudo airmon-ng start eth1
+# Assume monitor …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/aircrack-quick-tutorial-wireless-wep-cracking.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 03 November 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html" rel="bookmark"
+				title="Permalink to Ubuntu 10.10: “fixed channel mon0: -1” Aircrack Problem With iwl3945">Ubuntu 10.10: &#8220;fixed channel mon0: -1&#8221; Aircrack Problem With&nbsp;iwl3945</a></div>
+			</header>
+			<div class="article-summary">
+					<p><strong>Update for Ubuntu 12.04 users:</strong> <a href="////blog.macuyiko.com/post/2012/ubuntu-1204-fixed-channel-mon0-1.html">see this post</a>.</p>
+<p>After upgrading to Ubuntu Maverick recently, the Aircrack suite stopped working for&nbsp;me.</p>
+<p>After setting <code>airodump</code> to a channel (like&nbsp;usual):</p>
+<div class="highlight"><pre><span></span><code>airodump --channel **X**
+</code></pre></div>
+
+<p>It still displayed its status&nbsp;as:</p>
+<div class="highlight"><pre><span></span><code>fixed channel mon0: -1
+</code></pre></div>
+
+<p>Some forum users advised to&nbsp;use:</p>
+<div class="highlight"><pre><span></span><code>airodump …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 07 September 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/solving-color-problem-in-directdraw-games-update.html" rel="bookmark"
+				title="Permalink to Solving Color Problem In DirectDraw Games Update">Solving Color Problem In DirectDraw Games&nbsp;Update</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve received a few more e-mails and blog comments containing input and information about the famous DirectDraw palette problem which messes up colors in older&nbsp;games.</p>
+<p>In particular, Windows contains <a href="http://go.hopx.net/2010/05/256-color-issues-with-directdraw-and.html">compatibility entries in the registry</a>, and <a href="http://sol.gfxile.net/ddhack/">Jari Komppa</a> has written a ddraw.dll which wraps&nbsp;DirectDraw.</p>
+<p>I&#8217;ve updated …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/solving-color-problem-in-directdraw-games-update.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 18 August 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/missing-icons-in-notification-area-tray-bar.html" rel="bookmark"
+				title="Permalink to Missing Icons In Notification Area (Tray Bar)">Missing Icons In Notification Area (Tray&nbsp;Bar)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>A few days ago some of my programs stopped showing their icons in the Windows (7) notification area. A quick peek at the Task Manager revealed that they were, in fact,&nbsp;running.</p>
+<p>Changing the notification settings and peeking around in the task bar configuration revealed&nbsp;nothing.</p>
+<p>It turns out that …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/missing-icons-in-notification-area-tray-bar.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 17 August 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/oldie-but-goodie-privilege-escalation-in-windows.html" rel="bookmark"
+				title="Permalink to Oldie But Goodie: Privilege Escalation In Windows">Oldie But Goodie: Privilege Escalation In&nbsp;Windows</a></div>
+			</header>
+			<div class="article-summary">
+					<h3>Number&nbsp;One:</h3>
+<p>Replace <code>C:\Windows\system32\sethc.exe</code> with <code>cmd.exe</code> (e.g. by renaming and/or using a repair <span class="caps">CD</span>: with the Vista repair <span class="caps">CD</span> you can open &#8220;<code>notepad</code>&#8221; in the command prompt and execute file manipulations from the Open&nbsp;Dialog).</p>
+<p>Restart. At the login screen press &#8220;Shift&#8221; five …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/oldie-but-goodie-privilege-escalation-in-windows.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 02 July 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/note-to-self-remote-vnc-listen-connection.html" rel="bookmark"
+				title="Permalink to Note To Self: Remote VNC (Listen) Connection">Note To Self: Remote <span class="caps">VNC</span> (Listen)&nbsp;Connection</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Because I always forget these commands and end up double checking&nbsp;them&#8230;</p>
+<h4>Client (Me) -&nbsp;Listening:</h4>
+<div class="highlight"><pre><span></span><code>vncviewer -listen PORT
+</code></pre></div>
+
+<p>(Using UltraVNC on&nbsp;Windows.)</p>
+<h4>Server -&nbsp;Initiating:</h4>
+<div class="highlight"><pre><span></span><code><span class="nv">x11vnc</span><span class="w"> </span><span class="o">-</span><span class="k">connect</span><span class="w"> </span><span class="nv">IP</span>:<span class="nv">PORT</span>
+</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/note-to-self-remote-vnc-listen-connection.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 16 May 2010, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2010/get-a-list-of-steam-games-as-of-may-2010.html" rel="bookmark"
+				title="Permalink to Get A List Of Steam Games (As Of May 2010)">Get A List Of Steam Games (As Of May&nbsp;2010)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Using Python and Beautiful Soup. This updates the previous script posted on this&nbsp;blog.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">BeautifulSoup</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">BeautifulSoup</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">urllib</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">urlopen</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+<span class="n">CATEGORY_GAMES</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;998&#39;</span>
+<span class="n">CATEGORY_VIDEOS</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;999&#39;</span>
+<span class="n">CATEGORY_DEMOS</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;10&#39;</span>
+<span class="n">CATEGORY_MODS</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;997&#39;</span>
+<span class="n">CATEGORY_PACKS</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;996&#39;</span>
+<span class="n">CATEGORY_DLC</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;21&#39;</span>
+
+<span class="n">html_text</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">urlopen</span><span class="p">(</span><span class="s1">&#39;http://store.steampowered.com/search/?sort_by=&amp;sort_order=ASC&amp;category1=&#39;</span><span class="o">+</span><span class="n">CATEGORY_GAMES</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode …</span></code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2010/get-a-list-of-steam-games-as-of-may-2010.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/index6.html">&laquo; Prev</a>
+	Page 7 of 12	
+	<a href="//blog.macuyiko.com/index8.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

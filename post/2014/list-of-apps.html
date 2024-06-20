@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>List of Apps</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 30 November 2014, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2014/list-of-apps.html" rel="bookmark"
+			title="Permalink to List of Apps">List of&nbsp;Apps</a></div>
+		</header>
+	
+	    <p>I&#8217;ve been reinstalling a lot of Windows machines lately (cleaning house and such), and just wanted to jot down a list of apps I&#8217;ll install before doing anything else. To get the base system running, so to speak, mostly as a reminder to my future&nbsp;self.</p>
+<h2>Web</h2>
+<h3>Chrome</h3>
+<ul>
+<li>What: awesome browser from&nbsp;Google.</li>
+<li>Where: <a href="http://www.google.com/chrome/">http://www.google.com/chrome/</a></li>
+<li>Don&#8217;t forget the Chrome Remote Desktop&nbsp;extension.</li>
+</ul>
+<h3>Dropbox</h3>
+<ul>
+<li>What: easy file sync and&nbsp;sharing.</li>
+<li>Where: <a href="http://www.dropbox.com/">http://www.dropbox.com/</a></li>
+</ul>
+<h3>Google&nbsp;Drive</h3>
+<ul>
+<li>What: easy file sync and&nbsp;sharing.</li>
+<li>Where: <a href="http://www.google.com/drive">http://www.google.com/drive</a></li>
+</ul>
+<h3>Putty</h3>
+<ul>
+<li>What: <span class="caps">SSH</span>&nbsp;client.</li>
+<li>Where: <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html</a></li>
+</ul>
+<h3>FileZilla</h3>
+<ul>
+<li>What: <span class="caps">FTP</span>&nbsp;client.</li>
+<li>Where: <a href="https://filezilla-project.org/download.php?type=client">https://filezilla-project.org/download.php?type=client</a></li>
+</ul>
+<h3>Skype</h3>
+<ul>
+<li>What: instant messenger and voice&nbsp;caller.</li>
+<li>Where: <a href="http://www.skype.com/en/">http://www.skype.com/en/</a></li>
+</ul>
+<h3><span class="caps">QQ</span></h3>
+<ul>
+<li>What: instant&nbsp;messenger.</li>
+<li>Where: <a href="http://www.imqq.com/">http://www.imqq.com/</a></li>
+</ul>
+<h3>Miniget</h3>
+<ul>
+<li>What: lightweight&nbsp;downloader.</li>
+<li>Where: <a href="http://www.miniget001.com/">http://www.miniget001.com/</a></li>
+</ul>
+<h2>General</h2>
+<h3>Microsoft&nbsp;Office</h3>
+<ul>
+<li>What: general purpose office&nbsp;suite.</li>
+</ul>
+<h3>Source Code&nbsp;Pro</h3>
+<ul>
+<li>What: great fonts for&nbsp;programming.</li>
+<li>Where: <a href="https://github.com/adobe-fonts/source-code-pro">https://github.com/adobe-fonts/source-code-pro</a></li>
+</ul>
+<h3>7-Zip</h3>
+<ul>
+<li>What: extract&nbsp;everything.</li>
+<li>Where: <a href="http://www.7-zip.org/">http://www.7-zip.org/</a></li>
+</ul>
+<h3>Clink</h3>
+<ul>
+<li>What: makes the Windows command line ten times&nbsp;better.</li>
+<li>Where: <a href="http://mridgers.github.io/clink/">http://mridgers.github.io/clink/</a></li>
+</ul>
+<h3>CamStudio</h3>
+<ul>
+<li>What: easy free screen&nbsp;recording.</li>
+<li>Where: <a href="http://camstudio.org/">http://camstudio.org/</a></li>
+</ul>
+<h3>Everything</h3>
+<ul>
+<li>What: locate files and folders by name&nbsp;instantly.</li>
+<li>Where: <a href="http://www.voidtools.com/">http://www.voidtools.com/</a></li>
+</ul>
+<h3>Evince</h3>
+<ul>
+<li>What: lightweight <span class="caps">PDF</span>&nbsp;reader.</li>
+<li>Where: <a href="https://wiki.gnome.org/Apps/Evince">https://wiki.gnome.org/Apps/Evince</a></li>
+</ul>
+<h3>f.lux</h3>
+<ul>
+<li>What: screen dimmer based on time of day to save your&nbsp;eyes.</li>
+<li>Where: <a href="https://justgetflux.com/">https://justgetflux.com/</a></li>
+</ul>
+<h3>Paint.<span class="caps">NET</span></h3>
+<ul>
+<li>What: easy to use image&nbsp;editing.</li>
+<li>Where: <a href="http://www.getpaint.net/">http://www.getpaint.net/</a></li>
+</ul>
+<h3>Start8</h3>
+<ul>
+<li>What: bring back the start menu in Windows&nbsp;8.</li>
+<li>Where: <a href="http://www.stardock.com/products/start8/">http://www.stardock.com/products/start8/</a></li>
+</ul>
+<h3>VirtualBox</h3>
+<ul>
+<li>What: virtualization&nbsp;tool.</li>
+<li>Where: <a href="https://www.virtualbox.org/">https://www.virtualbox.org/</a></li>
+</ul>
+<h3>Spotify</h3>
+<ul>
+<li>What: listen to&nbsp;music.</li>
+<li>Where: <a href="https://www.spotify.com">https://www.spotify.com</a></li>
+</ul>
+<h3><span class="caps">VLC</span></h3>
+<ul>
+<li>What: watch all movie&nbsp;formats.</li>
+<li>Where: <a href="http://www.videolan.org/vlc/index.html">http://www.videolan.org/vlc/index.html</a></li>
+</ul>
+<h3>Steam</h3>
+<ul>
+<li>What: play&nbsp;games.</li>
+<li>Where: <a href="http://store.steampowered.com/">http://store.steampowered.com/</a></li>
+</ul>
+<h2>Data&nbsp;Science</h2>
+<h3>Anaconda Python&nbsp;Distribution</h3>
+<ul>
+<li>What: ready to use Python for data&nbsp;science.</li>
+<li>Where: <a href="https://store.continuum.io/cshop/anaconda/">https://store.continuum.io/cshop/anaconda/</a></li>
+</ul>
+<h3>Disco</h3>
+<ul>
+<li>What: process mining&nbsp;toolkit.</li>
+<li>Where: <a href="http://fluxicon.com/disco/">http://fluxicon.com/disco/</a></li>
+</ul>
+<h3>GraphViz</h3>
+<ul>
+<li>What: graph drawing&nbsp;toolkit.</li>
+<li>Where: <a href="http://www.graphviz.org/">http://www.graphviz.org/</a></li>
+</ul>
+<h3>R</h3>
+<ul>
+<li>What: programming language for statistics and data&nbsp;mining.</li>
+<li>Where: <a href="http://cran.r-project.org/">http://cran.r-project.org/</a></li>
+</ul>
+<h3>RStudio</h3>
+<ul>
+<li>What: great <span class="caps">IDE</span> for&nbsp;R.</li>
+<li>Where: <a href="http://www.rstudio.com/">http://www.rstudio.com/</a></li>
+</ul>
+<h2>Coding</h2>
+<h3>IntelliJ <span class="caps">IDEA</span></h3>
+<ul>
+<li>What: Java <span class="caps">IDE</span>, replacing Eclipse rapidly for me&nbsp;recently&#8230;</li>
+<li>Where: <a href="https://www.jetbrains.com/idea/">https://www.jetbrains.com/idea/</a></li>
+</ul>
+<h3>JetBrains&nbsp;PyCharm</h3>
+<ul>
+<li>What: Python <span class="caps">IDE</span></li>
+<li>Where: <a href="https://www.jetbrains.com/pycharm/">https://www.jetbrains.com/pycharm/</a></li>
+</ul>
+<h2>Editing</h2>
+<h3>LyX</h3>
+<ul>
+<li>What: LaTeX based document&nbsp;processor.</li>
+<li>Where: <a href="http://www.lyx.org/">http://www.lyx.org/</a></li>
+<li>Includes MikTeX&nbsp;distro.</li>
+</ul>
+<h3>MarkdownPad&nbsp;2</h3>
+<ul>
+<li>What: Markdown editor for&nbsp;Windows.</li>
+<li>Where: <a href="http://markdownpad.com/">http://markdownpad.com/</a></li>
+</ul>
+<h3>Sublime&nbsp;Text</h3>
+<ul>
+<li>What: beautiful text editor great for general&nbsp;coding.</li>
+<li>Where to find: <a href="http://www.sublimetext.com/3">http://www.sublimetext.com/3</a></li>
+<li>Get a color theme from here: <a href="https://github.com/chriskempson/base16">https://github.com/chriskempson/base16</a></li>
+</ul>
+<h3>WinEdt</h3>
+<ul>
+<li>What: fast LaTeX&nbsp;editor.</li>
+<li>Where: <a href="http://www.winedt.com/">http://www.winedt.com/</a></li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

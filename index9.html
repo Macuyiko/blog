@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 28 April 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/vice-city-and-perhaps-other-games-in-wine-cd-error-with-iso.html" rel="bookmark"
+				title="Permalink to Vice City (And Perhaps Other Games) In Wine - CD Error With ISO">Vice City (And Perhaps Other Games) In Wine - <span class="caps">CD</span> Error With <span class="caps">ISO</span></a></div>
+			</header>
+			<div class="article-summary">
+					<p>So, you&#8217;ve just gotten yourself two .iso&#8217;s for Grand Theft Auto: Vice City (your backups, of course), which you want to play in Wine. What do you&nbsp;do?</p>
+<p>That&#8217;s easy, you&nbsp;say:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">sudo</span><span class="w"> </span><span class="nv">mkdir</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimag</span>
+<span class="nv">sudo</span><span class="w"> </span><span class="nv">mount</span><span class="w"> </span><span class="o">-</span><span class="nv">o</span><span class="w"> </span><span class="k">loop</span><span class="w"> </span>.<span class="o">/</span><span class="nv">cd1</span>.<span class="nv">iso</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimage</span>
+</code></pre></div>
+
+<p>And start the …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/vice-city-and-perhaps-other-games-in-wine-cd-error-with-iso.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 05 February 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 7 - Conclusion">Modern Genetic (And Other) Algorithms Explained: Part 7 -&nbsp;Conclusion</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is the final part in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>In the past series, we have looked at genetic algorithms, simulated annealing, ant …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 29 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu Search">Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu&nbsp;Search</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is part 6 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p><a href="http://en.wikipedia.org/wiki/Tabu_search">Tabu search</a> is not really &#8220;modern&#8221; anymore, but still widely used&nbsp;nonetheless.</p>
+<p>The pseudocode …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 22 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony Optimization">Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony&nbsp;Optimization</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is part 5 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>First, let&#8217;s go to <a href="http://en.wikipedia.org/wiki/Ant_colony_optimization">Wikipedia</a> for a&nbsp;definition:</p>
+<blockquote>
+<p>The ant colony optimization algorithm …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 19 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 4 - Simulated Annealing">Modern Genetic (And Other) Algorithms Explained: Part 4 - Simulated&nbsp;Annealing</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is part 4 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>First of all: Simulated Annealing is not a genetic algorithm, but it is a …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 16 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/nokia-n95-3g-bluetooth-and-ubuntu-intrepid-3g-tethering-howto.html" rel="bookmark"
+				title="Permalink to Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering Howto">Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering&nbsp;Howto</a></div>
+			</header>
+			<div class="article-summary">
+					<p>The following steps are instructions to surf the web using a Nokia N95 with 3G, connected to your Intrepid laptop via&nbsp;Bluetooth.</p>
+<h4>1. Make sure you have the required packages&nbsp;installed:</h4>
+<div class="highlight"><pre><span></span><code>sudo apt-get install bluez-utils bluez-pin ppp
+</code></pre></div>
+
+<h4>2. Find out the phone&#8217;s <span class="caps">MAC</span> address. Enable Bluetooth on phone and …</h4>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/nokia-n95-3g-bluetooth-and-ubuntu-intrepid-3g-tethering-howto.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 13 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 3 - CHC Eshelman">Modern Genetic (And Other) Algorithms Explained: Part 3 - <span class="caps">CHC</span>&nbsp;Eshelman</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is part 3 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>In this part, we will look at a &#8220;special&#8221; genetic algorithm, <span class="caps">CHC</span> by Eshelman …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 10 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic Algorithms">Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic&nbsp;Algorithms</a></div>
+			</header>
+			<div class="article-summary">
+					<p>(This is part 2 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>Let&#8217;s take another look at <a href="http://lethain.com/entry/2009/jan/02/genetic-algorithms-cool-name-damn-simple/">the blog post</a> on which we will base …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 07 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html" rel="bookmark"
+				title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 1 - Introduction">Modern Genetic (And Other) Algorithms Explained: Part 1 -&nbsp;Introduction</a></div>
+			</header>
+			<div class="article-summary">
+					<p>A few days ago I saw <a href="http://www.reddit.com/r/programming/comments/7n1zl/genetic_algorithms_cool_name_amp_damn_simple_best/">this on reddit</a>, linking to a <a href="http://lethain.com/entry/2009/jan/02/genetic-algorithms-cool-name-damn-simple/">well-written article</a> about genetic algorithms (<span class="caps">GA</span>):</p>
+<blockquote>
+<p>Genetic algorithms are a mysterious sounding technique in mysterious sounding field&#8212;artificial intelligence. This is the problem with naming things appropriately. When the field was labeled artificial intelligence, it meant using mathematics …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 09 December 2008, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2008/trying-googles-native-client.html" rel="bookmark"
+				title="Permalink to Trying Google’s Native Client">Trying Google&#8217;s Native&nbsp;Client</a></div>
+			</header>
+			<div class="article-summary">
+					<p>From <a href="http://blogoscoped.com/archive/2008-12-09-n82.html">Google Blogoscoped</a>:</p>
+<blockquote>
+<p>Google has released something to the open source world they call the <a href="http://code.google.com/p/nativeclient/">Native Client</a>. It is meant as a way for website developers to execute rich code faster within the browser&#8230; by having it run &#8220;natively&#8221; on the computer. This could help any program needing fast graphics …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2008/trying-googles-native-client.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/index8.html">&laquo; Prev</a>
+	Page 9 of 12	
+	<a href="//blog.macuyiko.com/index10.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

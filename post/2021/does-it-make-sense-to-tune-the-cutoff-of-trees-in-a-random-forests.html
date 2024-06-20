@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Does It Make Sense to Tune the Cutoff of Trees in a Random Forests?</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 05 January 2021, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2021/does-it-make-sense-to-tune-the-cutoff-of-trees-in-a-random-forests.html" rel="bookmark"
+			title="Permalink to Does It Make Sense to Tune the Cutoff of Trees in a Random Forests?">Does It Make Sense to Tune the Cutoff of Trees in a Random&nbsp;Forests?</a></div>
+		</header>
+	
+	    <p><span class="caps">TL</span>;<span class="caps">DR</span>: very likely&nbsp;not.</p>
+<p>A student once asked me whether it would make sense to tune the probability cutoff (a.k.a. threshold) for trees in a random forests. Let&#8217;s explain first what we mean by that exactly. Assume a binary classification setting. Say we&#8217;ve trained a single decision tree. We know that the prediction is given by the leaf node, and that a probability P(y=1|x) can be assigned by the number of training examples in leaf node with positive outcome divided by the number of all training examples in leaf node (note that this is a fixed ratio for each leaf node and does not change once the tree is trained). This is not a well-calibrated probability, but does allow to rank&nbsp;predictions.</p>
+<p>Given such a probability P(y=1|x), it is then possible to specify a threshold T so that if P(y=1|x) &gt;= T, we assume the outcome to be 1, and 0 otherwise. We can then tune T (e.g. through cross-validation) to get an optimal cutoff point given a metric we desire to optimise (accuracy, F1, or something else&#8230;) <sup id="fnref:fn1"><a class="footnote-ref" href="#fn:fn1">1</a></sup>.</p>
+<p>Let us now consider the case of a random forest: N trees are constructed which all provide their prediction for a given instance, after which the majority vote determines the final outcome. Again, a probability P(y=1|x) can be assigned as the number of trees which predicted y=1 divided by&nbsp;N.</p>
+<p>However, we&#8217;ve kind of forgotten about the fact that every tree member itself can output a probability as well. What if we would tune the individual trees with a threshold Tn, with n = 1..N? Would this lead to a better result? The answer is that it might, but only in very specific circumstances, and is hence probably not worth&nbsp;doing.</p>
+<p>First, most implementations of random forest construct non-pruned trees. E.g. each leaf node relates to one training example. This doesn&#8217;t lead to overfit thanks to bootstrapping and random feature subset selection. As such, the probability that P(y=1|x) is either 1 or 0 for each tree, and threshold tuning would not make sense&nbsp;here.</p>
+<p>Second, many implementations (most notably scikit-learn) in fact deviate from the behavior of random forests as originally described. Instead of letting each tree vote and having the final probability of the ensemble equal P(y=1|x) = number of trees which predicted y=1 / N, they instead <a href="https://scikit-learn.org/stable/modules/ensemble.html#random-forests">average the probabilistic predictions of all members</a>, i.e. P(y=1|x) = Σ(for n = 1..N)[ Pn(y=1|x) ] / N. This also avoids the problem of individual tree tuning&nbsp;altogether.</p>
+<p>If you&#8217;re curious, see <a href="https://statistics.berkeley.edu/sites/default/files/tech-reports/421.pdf">this tech report</a> by Leo Breiman. Using averaging gives smoother probabilities. Again, note that this doesn&#8217;t matter under the default assumption where we build trees all the way&nbsp;down.</p>
+<p>But what happens if we <em>do</em> limit the depth of&nbsp;trees?</p>
+<p>This is easily tested, e.g. by means of the following example churn data&nbsp;set:</p>
+<div class="highlight"><pre><span></span><code><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;https://raw.githubusercontent.com/yhat/demo-churn-pred/master/model/churn.csv&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Phone&#39;</span><span class="p">,</span> <span class="s1">&#39;State&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Int</span><span class="se">\&#39;</span><span class="s1">l Plan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s1">&#39;no&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;VMail Plan&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s1">&#39;no&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;yes&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;Churn?&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">({</span><span class="s1">&#39;False.&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;True.&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;Churn?&#39;</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># (array([0, 1], dtype=int64), array([2850,  483], dtype=int64))</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Churn?&#39;</span><span class="p">]),</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;Churn?&#39;</span><span class="p">]</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Training a standard random forest with limited&nbsp;depth:</p>
+<div class="highlight"><pre><span></span><code><span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">max_depth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+<span class="n">base_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span>
+    <span class="n">y_test</span><span class="p">,</span>
+    <span class="n">rf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC:&quot;</span><span class="p">,</span> <span class="n">base_score</span><span class="p">)</span>
+<span class="c1"># RF AUC: 0.8785843604842545</span>
+</code></pre></div>
+
+<p>We can then implement our own predict function which accepts a&nbsp;threshold:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">rf_predict_thresholded</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tree_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="c1"># tree_threshold is ignored if average=True</span>
+    <span class="n">preds</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">estimator</span> <span class="ow">in</span> <span class="n">rf</span><span class="o">.</span><span class="n">estimators_</span><span class="p">:</span>
+        <span class="n">preds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">estimator</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">preds</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">if</span> <span class="n">average</span><span class="p">:</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">P</span><span class="p">[</span><span class="n">P</span> <span class="o">&gt;=</span> <span class="n">tree_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">P</span><span class="p">[</span><span class="n">P</span> <span class="o">&lt;</span> <span class="n">tree_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">estimators_</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">V</span>
+</code></pre></div>
+
+<p>And comparing it with the original&nbsp;score:</p>
+<div class="highlight"><pre><span></span><code><span class="n">auc_avg</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rf_predict_thresholded</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X_test</span><span class="p">))</span>
+<span class="n">auc_thr</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">rf_predict_thresholded</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (scikit-learn):&quot;</span><span class="p">,</span> <span class="n">base_score</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (manual implementation):&quot;</span><span class="p">,</span> <span class="n">auc_avg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (0.5 threshold):&quot;</span><span class="p">,</span> <span class="n">auc_thr</span><span class="p">)</span>
+
+<span class="c1"># RF AUC (scikit-learn):          0.8785843604842545</span>
+<span class="c1"># RF AUC (manual implementation): 0.8785843604842545</span>
+<span class="c1"># RF AUC (0.5 threshold):         0.8740978140277726</span>
+</code></pre></div>
+
+<p>We get the same result, and see that the majority voting approach even does slightly worse with a threshold of 0.5. We can in fact see that the average probabilities differ somewhat from the majority voted ones in this&nbsp;case:</p>
+<p><img alt="Two ways of calculating prediction probabilities of a random forest" src="/images/2021/trees1.png"></p>
+<p>We can then tune the threshold (on the training set, to play it safe, but you&#8217;d normally cross-validate&nbsp;this):</p>
+<div class="highlight"><pre><span></span><code><span class="n">thresholds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="n">aucs</span> <span class="o">=</span> <span class="p">[</span><span class="n">roc_auc_score</span><span class="p">(</span>
+    <span class="n">y_train</span><span class="p">,</span> 
+    <span class="n">rf_predict_thresholded</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X_train</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tree_threshold</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+<span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">thresholds</span><span class="p">]</span>
+
+<span class="n">best_thres</span> <span class="o">=</span> <span class="n">thresholds</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">aucs</span><span class="p">)]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best threshold:&quot;</span><span class="p">,</span> <span class="n">best_thres</span><span class="p">)</span>
+<span class="c1"># Best threshold: 0.10344827586206896</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">aucs</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Interestingly enough, the best threshold appears to be around&nbsp;0.10:</p>
+<p><img alt="AUROC by threshold" src="/images/2021/trees2.png"></p>
+<p>With these final test set&nbsp;results:</p>
+<div class="highlight"><pre><span></span><code><span class="n">best_auc</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span>
+    <span class="n">y_test</span><span class="p">,</span>
+    <span class="n">rf_predict_thresholded</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">average</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">tree_threshold</span><span class="o">=</span><span class="n">best_thres</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (scikit-learn):&quot;</span><span class="p">,</span> <span class="n">base_score</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (manual implementation):&quot;</span><span class="p">,</span> <span class="n">auc_avg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;RF AUC (0.5 threshold):&quot;</span><span class="p">,</span> <span class="n">auc_thr</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RF AUC (best threshold = </span><span class="si">{</span><span class="n">best_thres</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span> <span class="n">best_auc</span><span class="p">)</span>
+
+<span class="c1"># RF AUC (scikit-learn):                         0.8951299611518283</span>
+<span class="c1"># RF AUC (manual implementation):                0.8951299611518283</span>
+<span class="c1"># RF AUC (0.5 threshold):                        0.8782447377605374</span>
+<span class="c1"># RF AUC (best threshold = 0.10344827586206896): 0.8906157921536992</span>
+</code></pre></div>
+
+<p>As can be seen, this best threshold comes close to our averaged value. When repeating the run with a different random seed, we can find cases where the best threshold does slightly better. So what to take from&nbsp;this?</p>
+<ul>
+<li>Tuning the threshold of individual trees is most likely not worth&nbsp;it</li>
+<li>Except when (for some reason) you&#8217;re using depth-limited trees and can not use an averaged ensemble prediction probability (but in which case it would be easier and better to implement that&nbsp;instead)</li>
+<li>It might play a more important role when incorporating less trees in the ensemble (in which case it&#8217;s better to use more&nbsp;trees)</li>
+<li>We&#8217;ve used the same threshold for every tree in the ensemble, but tuning this on a per-tree basis would lead even further down the rabbit hole&nbsp;(metalearning-like)</li>
+</ul>
+<p>So in short: stick instead to the&nbsp;basics.</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:fn1">
+<p>Of course, it doesn&#8217;t matter that much when evaluating on e.g. <span class="caps">AUROC</span>, as this metric is threshold-independent (or rather, it incorporates all thresholds in a single metric).&#160;<a class="footnote-backref" href="#fnref:fn1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

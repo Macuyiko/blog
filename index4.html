@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 13 June 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/programming-languages-to-try.html" rel="bookmark"
+				title="Permalink to Programming Languages to Try">Programming Languages to&nbsp;Try</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I routinely use Python, R and Java during my day-to-day tasks, but have been itching recently to get up to speed or try out some of the following&nbsp;languages.</p>
+<p>This list basically serves as a note to myself to start experimenting with some of&nbsp;them:</p>
+<ul>
+<li><a href="http://haxe.org/">Haxe</a> &#8212; basically in combination with …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/programming-languages-to-try.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 22 April 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/fixing-flask-url_for-when-behind-mod_proxy.html" rel="bookmark"
+				title="Permalink to Fixing Flask url_for when Behind mod_proxy">Fixing Flask url_for when Behind&nbsp;mod_proxy</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Imagine you have an Apache server set up with a virtualhost configuration listening to some domain,&nbsp;e.g.</p>
+<div class="highlight"><pre><span></span><code>my.domain:8080
+</code></pre></div>
+
+<p>You have a Flask app running&nbsp;at:</p>
+<div class="highlight"><pre><span></span><code><span class="n">localhost</span><span class="o">:</span><span class="mi">5000</span>
+</code></pre></div>
+
+<p>You want to add a mod_proxy directive so&nbsp;that:</p>
+<div class="highlight"><pre><span></span><code><span class="n">http</span><span class="o">://</span><span class="n">my</span><span class="p">.</span><span class="n">domain</span><span class="o">:</span><span class="mi">8080</span><span class="o">/</span><span class="n">app_location</span><span class="o">/</span><span class="w">  </span><span class="o">---&gt;</span><span class="w">  </span><span class="n">http</span><span class="o">://</span><span class="n">localhost</span><span class="o">:</span><span class="mi">5000</span>
+</code></pre></div>
+
+<p>Most resources will …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/fixing-flask-url_for-when-behind-mod_proxy.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 27 September 2015, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2015/list-of-apps-updated.html" rel="bookmark"
+				title="Permalink to List of Apps (Updated)">List of Apps&nbsp;(Updated)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Again that time of the year where Windows&#8217;s being reinstalled, so <a href="////blog.macuyiko.com/post/2014/list-of-apps.html">once again</a> I&#8217;m jotting down a list of apps I normally install right away, slightly updated versus last&nbsp;year.</p>
+<p>(This list last updated in May&nbsp;2016.)</p>
+<h2>Web</h2>
+<ul>
+<li><a href="https://www.skype.com/en/">Skype</a> is back. The web version was not robust&nbsp;enough …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2015/list-of-apps-updated.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 11 May 2015, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2015/a-quick-look-at-java-decompilers.html" rel="bookmark"
+				title="Permalink to A Quick Look at Java Decompilers">A Quick Look at Java&nbsp;Decompilers</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve been looking at various Java decompilers recently for a project I&#8217;ve been working on in spare&nbsp;time.</p>
+<p>Java code obfuscation is something I have an interest in for no particular reason, mostly because you see a variety of cool approaches popping up in the wild to prevent …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2015/a-quick-look-at-java-decompilers.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 08 February 2015, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2015/removing-background-color-from-a-pdf-presentation.html" rel="bookmark"
+				title="Permalink to Removing Background Color from a PDF Presentation">Removing Background Color from a <span class="caps">PDF</span>&nbsp;Presentation</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Ever ran across a <span class="caps">PDF</span> export of a Powerpoint which looks like&nbsp;this?</p>
+<p><img alt="Get ready to buy a new toner" src="http://blog.macuyiko.com/images/2015/pdfcleaner/presentation.png"></p>
+<p>Turns out it is not so easy to convert this to printable design (at least not without having access to the original presentation file, that is). Adobe Reader already allows to do the&nbsp;following:</p>
+<ol>
+<li>Press <code>Ctrl+K …</code></li></ol>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2015/removing-background-color-from-a-pdf-presentation.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 21 January 2015, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2015/rebuilding-our-jython-console-plugin-for-minecraft.html" rel="bookmark"
+				title="Permalink to Rebuilding our Jython Console Plugin for Minecraft">Rebuilding our Jython Console Plugin for&nbsp;Minecraft</a></div>
+<div class="article-subtitle">A Python interpreter for a CanaryMod Minecraft server</div>			</header>
+			<div class="article-summary">
+					<h3>Summary and&nbsp;Changes</h3>
+<p>This post describes how you can create a Python interpreter for a CanaryMod Minecraft server, providing access to the full internal Canary <span class="caps">API</span> (CanaryLib). Commands are issued on a separate console window and do not require players or server administrators to be running the game&nbsp;itself.</p>
+<p>Following …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2015/rebuilding-our-jython-console-plugin-for-minecraft.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 18 January 2015, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2015/some-games-to-look-forward-to-in-2015.html" rel="bookmark"
+				title="Permalink to Some Games to Look Forward to in 2015">Some Games to Look Forward to in&nbsp;2015</a></div>
+<div class="article-subtitle">Most of these are indie titles</div>			</header>
+			<div class="article-summary">
+					<p>I though it was just me, what with being busy and older and all, but it kind of <a href="http://www.reddit.com/r/Games/comments/2sq6bv/gametrailers_games_that_might_suck_in_2015/">looks</a> <a href="https://www.youtube.com/watch?v=EtBJCPI1b8w">like</a> <a href="https://www.youtube.com/watch?v=XxCdEKhowYI">everybody</a> agrees that 2014 has been a generally shitty year for gaming. Summarized, the arguments boil down to one of the&nbsp;following:</p>
+<ul>
+<li>Triple-A titles are released on-schedule, instead of on …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2015/some-games-to-look-forward-to-in-2015.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 29 December 2014, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2014/this-is-what-the-chinese-cloud-looks-like.html" rel="bookmark"
+				title="Permalink to This is What the Chinese Cloud Looks Like">This is What the Chinese Cloud Looks&nbsp;Like</a></div>
+<div class="article-subtitle">A relaxed reverse-engineering trip into Weiyun</div>			</header>
+			<div class="article-summary">
+					<h3>Introduction</h3>
+<p>It should not come to a surprise that the Chinese technology giants are &#8212; just as their western counterparts, rolling out their respective versions of cloud storage services such as Google Drive, Dropbox, or&nbsp;OneDrive.</p>
+<p>They are approaching it like most of their&nbsp;offerings:</p>
+<ol>
+<li>Explore and learn from foreign&nbsp;competitors …</li></ol>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2014/this-is-what-the-chinese-cloud-looks-like.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 30 November 2014, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2014/list-of-apps.html" rel="bookmark"
+				title="Permalink to List of Apps">List of&nbsp;Apps</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve been reinstalling a lot of Windows machines lately (cleaning house and such), and just wanted to jot down a list of apps I&#8217;ll install before doing anything else. To get the base system running, so to speak, mostly as a reminder to my future&nbsp;self.</p>
+<h2>Web</h2>
+<h3>Chrome …</h3>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2014/list-of-apps.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 10 September 2014, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2014/joomla-15-security-fixes.html" rel="bookmark"
+				title="Permalink to Joomla 1.5 Security Fixes">Joomla 1.5 Security&nbsp;Fixes</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Although I now have moved on &#8212; for most part &#8212; from <span class="caps">PHP</span>, I am still maintaining a number of websites build on top of Joomla. Ever since Joomla 3.0 was released, Joomla 1.5 has reached end-of-life status, meaning that there will be no more updates nor security fixes for …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2014/joomla-15-security-fixes.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/index3.html">&laquo; Prev</a>
+	Page 4 of 12	
+	<a href="//blog.macuyiko.com/index5.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

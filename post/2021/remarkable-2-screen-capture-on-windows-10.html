@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>reMarkable 2 Screen Capture on Windows 10</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 14 January 2021, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2021/remarkable-2-screen-capture-on-windows-10.html" rel="bookmark"
+			title="Permalink to reMarkable 2 Screen Capture on Windows 10">reMarkable 2 Screen Capture on Windows&nbsp;10</a></div>
+		</header>
+	
+	    <p>I&#8217;ve recently bought a <a href="https://remarkable.com/store/remarkable-2">reMarkable 2</a> and am happy with it. Since teaching is still happening online for the most part at the moment, I was curious whether I could use it as a drawing tablet, share the screen with my machine, and then pick that up in e.g. <span class="caps">OBS</span> Studio to share it to&nbsp;viewers.</p>
+<p>Luckily, the reMarkable 2, like its predecessor, is hacker-friendly, and someone has already made a <a href="https://github.com/rien/reStream">tool</a> to do exactly&nbsp;this.</p>
+<p>I&#8217;m working with Windows on my teaching machine, however, and wanted to avoid having to install Git <span class="caps">BASH</span> or <span class="caps">MSYS2</span>. Luckily, you can get the setup to work in a very portable&nbsp;fashion.</p>
+<p>We&#8217;re going to follow more or less the installation instructions over at <a href="https://github.com/rien/reStream">https://github.com/rien/reStream</a>. First, we need to generate a <span class="caps">SSH</span> key pair on our&nbsp;machine:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; ssh-keygen -t rsa -C
+
+Your public key has been saved in C:\Users\Seppe/.ssh/id_rsa.pub.
+</code></pre></div>
+
+<p>This will save a public key in <code>C:\Users\Seppe/.ssh/id_rsa.pub</code> (replace my username with yours). For the reMarkable 2, we need to use <code>rsa</code>.</p>
+<p>Next, we need to add the identity using the&nbsp;ssh-agent:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; ssh-agent -s
+
+unable to start ssh-agent service, error :1058
+</code></pre></div>
+
+<p>If you get this error, head to services and enable/start the OpenSSH Authentication&nbsp;Agent:</p>
+<p><img alt="" src="/images/2021/restream1.png"></p>
+<p>And&nbsp;then:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; ssh-agent -s
+C:\Users\Seppe&gt; ssh-add C:\Users\Seppe/.ssh/id_rsa
+
+Identity added: C:\Users\Seppe/.ssh/id_rsa (C:\Users\Seppe/.ssh/id_rsa)
+</code></pre></div>
+
+<p>Next, find the root password and <span class="caps">IP</span> address of your reMarkable (go to Settings, Help, Copyrights and licenses and scroll down). Then connect to&nbsp;it:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; ssh root@10.11.99.1
+
+# If it doesn&#39;t exist already
+reMarkable: ~/ mkdir .ssh
+</code></pre></div>
+
+<p>And then, in another Windows terminal, copy over the public&nbsp;key:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; type %HOMEPATH%\.ssh\id_rsa.pub | ssh root@10.11.99.1 &quot;cat &gt; .ssh/authorized_keys&quot;
+</code></pre></div>
+
+<p>Finally, back in the <span class="caps">SSH</span> session, don&#8217;t forget to set the permissions&nbsp;correctly:</p>
+<div class="highlight"><pre><span></span><code>reMarkable: ~/ chmod -R og-rwx /home/root/.ssh
+reMarkable: ~/ exit
+</code></pre></div>
+
+<p>Now try <code>ssh root@10.11.99.1</code> again. It should <strong>not</strong> ask for a&nbsp;password.</p>
+<p>Finally, copy over the <a href="https://github.com/rien/reStream/blob/main/restream.arm.static">binary</a> over to the reMarkable and make it&nbsp;executable:</p>
+<div class="highlight"><pre><span></span><code>C:\Users\Seppe&gt; scp restream.arm.static root@10.11.99.1:/home/root/restream
+C:\Users\Seppe&gt; ssh root@10.11.99.1 &#39;chmod +x /home/root/restream&#39;
+</code></pre></div>
+
+<p>Next, create an empty folder on your machine, and dump the <a href="https://www.gyan.dev/ffmpeg/builds/">ffmpeg</a> (<code>ffplay.exe</code>) and <a href="https://github.com/lz4/lz4/releases">lz4</a> into it (<code>lz4.exe</code>). Then navigate to this folder and run the following command on&nbsp;Windows:</p>
+<div class="highlight"><pre><span></span><code>ssh root@10.11.99.1 -o ConnectTimeout=1 &quot;./restream&quot; | lz4 -d | ffplay -window_title Restream -vcodec rawvideo -loglevel info -f rawvideo -pixel_format gray8 -video_size 1872,1404 -i - -vf &quot;transpose=2,transpose=1,setpts=(RTCTIME-RTCSTART)/(TB*1000000)&quot;
+</code></pre></div>
+
+<p>And there we&nbsp;go:</p>
+<p><img alt="" src="/images/2021/restream2.gif"></p>
+<p><code>transpose=1</code> can be replaced with <code>transpose=0</code> for portrait&nbsp;mode.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

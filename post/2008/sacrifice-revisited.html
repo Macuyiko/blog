@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Sacrifice Revisited</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 26 October 2008, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2008/sacrifice-revisited.html" rel="bookmark"
+			title="Permalink to Sacrifice Revisited">Sacrifice&nbsp;Revisited</a></div>
+		</header>
+	
+	    <p><a href="////blog.macuyiko.com/post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html">A while ago I posted</a> on this blog how you could resolve the &#8220;Insufficient page file space&#8221; problem in Sacrifice. Since then a few people have emailed me, saying that the fix described in that post does not longer work. After trying various things with various people (thanks for all the help and input by the way), a solution was&nbsp;found.</p>
+<p><strong>Problem</strong></p>
+<p>The problem is that <span class="caps">XP</span> does not longer present GlobalMemoryStatusTrim when running&nbsp;QFixApp.</p>
+<p>First the good news. If you have Vista, the game works out of the box. Not because Vista has better memory management or something like that, but because Vista comes with lots of Compatibility Profiles built-in. I&#8217;ve looked into these profiles to see which ones were used with Sacrifice,&nbsp;being:</p>
+<ol>
+<li>GlobalMemoryStatusLie</li>
+<li>GlobalMemoryStatus2GB (this replaces GlobalMemoryStatusTrim and is also available in QFixApp when running <span class="caps">XP</span>)</li>
+</ol>
+<p>So the solution seems simple, enable GlobalMemoryStatusLie and GlobalMemoryStatus2GB, and try again. However, when trying this under <span class="caps">XP</span> <span class="caps">SP3</span>, almost everyone gets the following (new) error: &#8220;error while trying to initiate the application&nbsp;(0x000005)&#8221;.</p>
+<p>If you get this error, you now have the following&nbsp;options:</p>
+<ol>
+<li>Upgrade to Vista&nbsp;(yuck);</li>
+<li>You could disable virtual memory and/or use the <code>/BURNMEMORY=N</code> <code>boot.ini</code>-switch (adventurous and&nbsp;bad/ugly);</li>
+<li>Use the solution below (clean and&nbsp;works).</li>
+</ol>
+<p><strong>Solution</strong></p>
+<p>It turns out there is a patch available <a href="http://aluigi.altervista.org/patches.htm">over here</a> which removes the memory-check from the game. This patch was created a while ago by Luigi Auriemma, but is still quite difficult to find. Follow the following steps to get your game&nbsp;working:</p>
+<ol>
+<li>Download and extract Lame Patcher <a href="http://aluigi.altervista.org/mytoolz.htm#lpatch">from here</a>.</li>
+<li>Download and save the Sacrifice .lpatch file <a href="http://aluigi.org/patches.htm">from here</a> (search for: &#8220;sacrifice&#8221; or <a href="http://aluigi.org/patches/sacrifice_pagefile.lpatch">direct link</a> &#8212; direct link is back thanks to a friendly e-mail from Luigi, the author,&nbsp;thanks!).</li>
+<li>Open <code>lpatch.exe</code>.</li>
+<li>The program will display a message asking you if you want to select a <code>.dat</code> or <code>.lpatch</code> file, choose&nbsp;&#8220;Yes&#8221;.</li>
+<li>Pick the <code>sacrifice_pagefile.lpatch</code> you have saved in step&nbsp;2.</li>
+<li>The program will display some information, press &#8220;<span class="caps">OK</span>&#8221;.</li>
+<li>Another file chooser dialog opens, locate your <code>Sacrifice.exe</code> and select&nbsp;it.</li>
+</ol>
+<p>All done! You should be able to enjoy the game&nbsp;now.</p>
+<p>One last thing. If you&#8217;re too lazy to follow the steps above, or you don&#8217;t have Sacrifice but would like to play this (and other old) games, then check out <a href="http://www.gog.com/en/frontpage/">Good Old Games</a>. They&#8217;ve just went into public beta and are offering <span class="caps">MDK2</span>, Giants: Citizen Kabuto and Sacrifice (for $5.99). They also offer support, so your game&#8217;ll probably work without complaining out of the box; it seems they provide the Virtual Memory tip as&nbsp;well.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

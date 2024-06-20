@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Gmail</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 02 January 2007, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2007/gmail.html" rel="bookmark"
+			title="Permalink to Gmail">Gmail</a></div>
+		</header>
+	
+	    <p>What&#8217;s up with Google the last few days? First, a glitch was reported about users getting <a href="http://www.techcrunch.com/2006/12/28/gmail-disaster-reports-of-mass-email-deletions/">their mails deleted</a>. This glitch is now (luckily)&nbsp;fixed.</p>
+<p>Then that hack about your contact list getting stolen, try logging into Gmail and go to one of the following&nbsp;links:</p>
+<p><a href="http://docs.google.com/data/contacts?out=js&amp;show=ALL&amp;psort=Affinity&amp;callback=google&amp;max=99999">http://docs.google.com/data/contacts?out=js&amp;show=<span class="caps">ALL</span>&amp;psort=Affinity&amp;callback=google&amp;max=99999</a></p>
+<p><a href="http://video.google.com/data/contacts?out=js&amp;max=500&amp;psort=Affinity&amp;callback=getContacts">http://video.google.com/data/contacts?out=js&amp;max=500&amp;psort=Affinity&amp;callback=getContacts</a></p>
+<p>All your contacts in <span class="caps">JSON</span> format! Accessible to any website which uses this as a src in a&nbsp;script-tag.</p>
+<p>Solutions? Referrer-checking (not that good: can be spoofed). Better: using unique keys in each request. They probably used a combination of&nbsp;solutions.</p>
+<p>It seems to be already fixed now, the only thing it returns for me now&nbsp;is:</p>
+<div class="highlight"><pre><span></span><code>google ({ Success: false, Errors: []})
+</code></pre></div>
+
+<p>But the <span class="caps">XML</span> output is still accessible though: <a href="http://docs.google.com/data/contacts?out=xml&amp;show=ALL&amp;psort=Affinity&amp;callback=google&amp;max=999999">http://docs.google.com/data/contacts?out=xml&amp;show=<span class="caps">ALL</span>&amp;psort=Affinity&amp;callback=google&amp;max=999999</a>.</p>
+<p>I tried hacking up a little piece of code, but alas: loading the <span class="caps">XML</span> into the frame and then trying to do a frames[&#8216;the_frame&#8217;].document.getElementsByTagName(&#8216;Email&#8217;); does not work. Both Firefox and <span class="caps">IE</span> prevent stealing content from frames across&nbsp;domains.</p>
+<p>Maybe we should use XMLHTTPRequest, then? Also doesn&#8217;t work in Firefox, even when trying to netscape.security.PrivilegeManager.enablePrivilege(&#8220;UniversalBrowserRead&#8221;); it will fail. Internet Explorer (tested in 7) will complain about ActiveX objects being&nbsp;used.</p>
+<p>So is this still a security issue? I would say no. Locally (trusted zone): Firefox doesn&#8217;t allow the described actions, and <span class="caps">IE</span> at least warns the user. When surfing on the Internet (untrusted zone): the objects were blocked by default (my <span class="caps">IE</span> and Firefox were set up in such a way that when I tried to run this script from the web: they would block the cross-domain XMLHTTPRequest by default without asking). Maybe <span class="caps">IE6</span> is a bit more&nbsp;insecure.</p>
+<p>For the people who want to try it out: example <a href="http://student.kuleuven.be/~s0172696/src/gmailsrc.html">html here</a> (use <span class="caps">IE</span>, allow Blocked ActiveX content for it to&nbsp;work).</p>
+<p>Another sad message: <a href="http://digg.com/tech_news/Gmail_s_Storage_Capacity_Stops_Increasing">Gmail&#8217;s storage has stopped increasing</a>&#8230; Mine has also stopped at <span class="caps">2800MB</span>&#8230;&nbsp;Why?</p>
+<p>There is a little bit of good news too: the calculator <a href="http://www.google.com/search?q=2%2B2&amp;lr=">works again</a>&#8230;</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+
+<div style="margin-bottom: 0.5em;" class="article-title">Archives</div>
+
+	
+	<h2>2021</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2021-06-14T20:57:00+02:00" pubdate>14&nbsp;June</time> </td>
+			<td><a href='post/2021/adding-new-levels-to-a-keras-embedding-layer-without-having-to-completely-retrain-it.html'>Adding New Levels to a Keras Embedding Layer Without Having to Completely Retrain&nbsp;It</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2021-01-14T12:50:00+01:00" pubdate>14&nbsp;January</time> </td>
+			<td><a href='post/2021/remarkable-2-screen-capture-on-windows-10.html'>reMarkable 2 Screen Capture on Windows&nbsp;10</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2021-01-05T10:03:00+01:00" pubdate>05&nbsp;January</time> </td>
+			<td><a href='post/2021/does-it-make-sense-to-tune-the-cutoff-of-trees-in-a-random-forests.html'>Does It Make Sense to Tune the Cutoff of Trees in a Random&nbsp;Forests?</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2021-01-03T11:37:00+01:00" pubdate>03&nbsp;January</time> </td>
+			<td><a href='post/2021/revisiting-discovery-of-interaction-effects.html'>Revisiting Discovery of Interaction&nbsp;Effects</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2020</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2020-11-08T22:31:00+01:00" pubdate>08&nbsp;November</time> </td>
+			<td><a href='post/2020/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-4.html'>An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;4</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2020-11-04T22:30:00+01:00" pubdate>04&nbsp;November</time> </td>
+			<td><a href='post/2020/rigging-match-3-games.html'>Rigging Match 3&nbsp;Games</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2020-10-14T20:11:00+02:00" pubdate>14&nbsp;October</time> </td>
+			<td><a href='post/2020/list-of-apps-2020.html'>List of Apps&nbsp;(2020)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2020-01-07T22:01:00+01:00" pubdate>07&nbsp;January</time> </td>
+			<td><a href='post/2020/and-now-time-for-another-rant.html'>And Now, Time for Another&nbsp;Rant</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2019</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2019-11-01T17:45:00+01:00" pubdate>01&nbsp;November</time> </td>
+			<td><a href='post/2019/my-coursefastai-notes.html'>My course.fast.ai&nbsp;Notes</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2019-05-18T21:23:00+02:00" pubdate>18&nbsp;May</time> </td>
+			<td><a href='post/2019/list-of-apps-2019.html'>List of Apps&nbsp;(2019)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2019-04-07T12:36:00+02:00" pubdate>07&nbsp;April</time> </td>
+			<td><a href='post/2019/a-tour-of-open-mongodb-instances.html'>A Tour of Open MongoDB&nbsp;Instances</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2019-04-06T19:02:00+02:00" pubdate>06&nbsp;April</time> </td>
+			<td><a href='post/2019/rendering-minecraft-maps-with-rs-rayshader-package.html'>Rendering Minecraft Maps with R&#8217;s rayshader&nbsp;Package</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2019-02-22T20:10:00+01:00" pubdate>22&nbsp;February</time> </td>
+			<td><a href='post/2019/discovering-interaction-effects-in-ensemble-models.html'>Discovering Interaction Effects in Ensemble&nbsp;Models</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2018</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2018-08-03T21:09:00+02:00" pubdate>03&nbsp;August</time> </td>
+			<td><a href='post/2018/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-3.html'>An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;3</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2018-05-10T12:23:00+02:00" pubdate>10&nbsp;May</time> </td>
+			<td><a href='post/2018/list-of-apps-2018.html'>List of Apps&nbsp;(2018)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2018-04-24T20:13:00+02:00" pubdate>24&nbsp;April</time> </td>
+			<td><a href='post/2018/predicting-voobly-age-of-empires-2-matches.html'>Predicting Voobly Age of Empires 2&nbsp;Matches</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2017</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2017-12-19T18:05:00+01:00" pubdate>19&nbsp;December</time> </td>
+			<td><a href='post/2017/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-2.html'>An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;2</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-12-07T17:10:00+01:00" pubdate>07&nbsp;December</time> </td>
+			<td><a href='post/2017/note-to-self-fast-android-screen-capture.html'>Note to Self: Fast Android Screen&nbsp;Capture</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-11-29T18:25:00+01:00" pubdate>29&nbsp;November</time> </td>
+			<td><a href='post/2017/bypassing-android-cert-pinning-using-a-rooted-emulator-avd.html'>Bypassing Android Cert Pinning Using a Rooted Emulator (<span class="caps">AVD</span>)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-11-13T14:30:00+01:00" pubdate>13&nbsp;November</time> </td>
+			<td><a href='post/2017/note-to-self-using-tesseract-to-extract-subtitles.html'>Note to Self: Using Tesseract to Extract&nbsp;Subtitles</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-11-09T12:00:00+01:00" pubdate>09&nbsp;November</time> </td>
+			<td><a href='post/2017/an-exploration-of-cellular-automata-and-graph-based-game-systems-part-1.html'>An Exploration of Cellular Automata and Graph Based Game Systems: Part&nbsp;1</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-11-08T08:18:00+01:00" pubdate>08&nbsp;November</time> </td>
+			<td><a href='post/2017/and-now-time-for-a-rant.html'>And Now, Time for a&nbsp;Rant</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-08-14T22:12:00+02:00" pubdate>14&nbsp;August</time> </td>
+			<td><a href='post/2017/cleaning-up-a-gmail-inbox.html'>Cleaning Up a Gmail&nbsp;Inbox</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-01-10T08:36:00+01:00" pubdate>10&nbsp;January</time> </td>
+			<td><a href='post/2017/word-spellchecking-in-python.html'>Word Spellchecking in&nbsp;Python</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-01-09T19:10:00+01:00" pubdate>09&nbsp;January</time> </td>
+			<td><a href='post/2017/some-games-to-look-forward-to-in-2017.html'>Some Games to Look Forward to in&nbsp;2017</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-01-08T17:44:00+01:00" pubdate>08&nbsp;January</time> </td>
+			<td><a href='post/2017/smoothlife-in-processing.html'>SmoothLife in&nbsp;Processing</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2017-01-06T16:52:00+01:00" pubdate>06&nbsp;January</time> </td>
+			<td><a href='post/2017/some-quick-spatial-kriging-fun-with-aqicnorg.html'>Some Quick Spatial Kriging Fun With&nbsp;Aqicn.org</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2016</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2016-09-24T15:59:00+02:00" pubdate>24&nbsp;September</time> </td>
+			<td><a href='post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html'>How-to: Send <span class="caps">HTML</span> Mails with OAuth2 and Gmail in&nbsp;Python</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2016-09-24T15:57:00+02:00" pubdate>24&nbsp;September</time> </td>
+			<td><a href='post/2016/fun-with-audiosurf-2-and-mitmproxy.html'>Fun with Audiosurf 2 and&nbsp;Mitmproxy</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2016-09-24T15:31:00+02:00" pubdate>24&nbsp;September</time> </td>
+			<td><a href='post/2016/converting-plain-text-references-to-bibtex-updated.html'>Converting Plain Text References To BibTeX,&nbsp;Updated</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2016-06-13T10:44:00+02:00" pubdate>13&nbsp;June</time> </td>
+			<td><a href='post/2016/programming-languages-to-try.html'>Programming Languages to&nbsp;Try</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2016-04-22T10:01:00+02:00" pubdate>22&nbsp;April</time> </td>
+			<td><a href='post/2016/fixing-flask-url_for-when-behind-mod_proxy.html'>Fixing Flask url_for when Behind&nbsp;mod_proxy</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2015</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2015-09-27T15:21:00+02:00" pubdate>27&nbsp;September</time> </td>
+			<td><a href='post/2015/list-of-apps-updated.html'>List of Apps&nbsp;(Updated)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2015-05-11T19:34:00+02:00" pubdate>11&nbsp;May</time> </td>
+			<td><a href='post/2015/a-quick-look-at-java-decompilers.html'>A Quick Look at Java&nbsp;Decompilers</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2015-02-08T00:00:00+01:00" pubdate>08&nbsp;February</time> </td>
+			<td><a href='post/2015/removing-background-color-from-a-pdf-presentation.html'>Removing Background Color from a <span class="caps">PDF</span>&nbsp;Presentation</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2015-01-21T00:00:00+01:00" pubdate>21&nbsp;January</time> </td>
+			<td><a href='post/2015/rebuilding-our-jython-console-plugin-for-minecraft.html'>Rebuilding our Jython Console Plugin for&nbsp;Minecraft</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2015-01-18T11:39:00+01:00" pubdate>18&nbsp;January</time> </td>
+			<td><a href='post/2015/some-games-to-look-forward-to-in-2015.html'>Some Games to Look Forward to in&nbsp;2015</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2014</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2014-12-29T22:34:00+01:00" pubdate>29&nbsp;December</time> </td>
+			<td><a href='post/2014/this-is-what-the-chinese-cloud-looks-like.html'>This is What the Chinese Cloud Looks&nbsp;Like</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-11-30T22:34:00+01:00" pubdate>30&nbsp;November</time> </td>
+			<td><a href='post/2014/list-of-apps.html'>List of&nbsp;Apps</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-09-10T14:44:00+02:00" pubdate>10&nbsp;September</time> </td>
+			<td><a href='post/2014/joomla-15-security-fixes.html'>Joomla 1.5 Security&nbsp;Fixes</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-08-03T15:19:00+02:00" pubdate>03&nbsp;August</time> </td>
+			<td><a href='post/2014/small-jrjs-junior-modification.html'>Small jr.js (Junior)&nbsp;Modification</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-07-31T12:04:00+02:00" pubdate>31&nbsp;July</time> </td>
+			<td><a href='post/2014/windows-8-annoyances-and-the-sad-state-of-operating-systems-and-everything-really.html'>Windows 8 Annoyances (and the Sad State of Operating Systems and Everything,&nbsp;Really)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-06-29T16:05:00+02:00" pubdate>29&nbsp;June</time> </td>
+			<td><a href='post/2014/replacing-bibtex-references-with-dblp-entries.html'>Replacing BibTeX References With <span class="caps">DBLP</span>&nbsp;Entries</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2014-02-26T20:21:00+01:00" pubdate>26&nbsp;February</time> </td>
+			<td><a href='post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html'>Converting Plain Text References To BibTeX (or Endnote,&nbsp;or&#8230;)</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2013</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2013-10-20T18:15:00+02:00" pubdate>20&nbsp;October</time> </td>
+			<td><a href='post/2013/note-to-self-setting-up-vnc-desktop-for-remote-user.html'>Note To Self: Setting Up <span class="caps">VNC</span> Desktop For Remote&nbsp;User</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-07-31T00:00:00+02:00" pubdate>31&nbsp;July</time> </td>
+			<td><a href='post/2013/pelican-switch-follow-up.html'>Pelican Switch&nbsp;Follow-Up</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-07-11T01:05:00+02:00" pubdate>11&nbsp;July</time> </td>
+			<td><a href='post/2013/i-did-switch-to-pelican.html'>I Did Switch to&nbsp;Pelican</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-06-29T00:00:00+02:00" pubdate>29&nbsp;June</time> </td>
+			<td><a href='post/2013/a-bukkit-jython-console-plugin-for-minecraft.html'>A Bukkit Jython Console Plugin for&nbsp;Minecraft</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-06-20T00:00:00+02:00" pubdate>20&nbsp;June</time> </td>
+			<td><a href='post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html'>I Almost Switched to Pelican, a Static Blog&nbsp;Engine</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-06-20T00:00:00+02:00" pubdate>20&nbsp;June</time> </td>
+			<td><a href='post/2013/raring-digital-ocean-server-setup.html'>Raring / Digital Ocean Server&nbsp;Setup</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2013-01-01T00:00:00+01:00" pubdate>01&nbsp;January</time> </td>
+			<td><a href='post/2013/games-ill-keep-an-eye-on-in-2013.html'>Games I&#8217;ll Keep An Eye On In&nbsp;2013</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2012</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2012-05-22T00:00:00+02:00" pubdate>22&nbsp;May</time> </td>
+			<td><a href='post/2012/ubuntu-1204-fixed-channel-mon0-1.html'>Ubuntu 12.04: &#8220;fixed channel mon0:&nbsp;-1&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2012-05-13T00:00:00+02:00" pubdate>13&nbsp;May</time> </td>
+			<td><a href='post/2012/an-attempt-at-making-a-javascripthtml5-sliceit-clone-and-a-failed-attempt-at-a-genetic-algorithm-based-solver.html'>An Attempt At Making A Javascript/<span class="caps">HTML5</span> SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based&nbsp;Solver</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2012-03-24T00:00:00+01:00" pubdate>24&nbsp;March</time> </td>
+			<td><a href='post/2012/gibbeds-mass-effect-3-audio-extractor-iopathcombine-path1-cannot-be-null.html'>Gibbed&#8217;s Mass Effect 3 Audio Extractor: &#8220;<span class="caps">IO</span>.Path.Combine path1 cannot be&nbsp;null&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2012-02-28T00:00:00+01:00" pubdate>28&nbsp;February</time> </td>
+			<td><a href='post/2012/the-nvmcp64sys-blue-screen.html'>The nvmcp64.sys Blue&nbsp;Screen</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2012-02-12T00:00:00+01:00" pubdate>12&nbsp;February</time> </td>
+			<td><a href='post/2012/games-ill-keep-an-eye-on-in-2012.html'>Games I&#8217;ll Keep An Eye On In&nbsp;2012</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2011</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2011-12-18T00:00:00+01:00" pubdate>18&nbsp;December</time> </td>
+			<td><a href='post/2011/oneiric-linode-server-migration.html'>Oneiric / Linode Server&nbsp;Migration</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2011-12-10T00:00:00+01:00" pubdate>10&nbsp;December</time> </td>
+			<td><a href='post/2011/rooting-kindle-fire.html'>Rooting Kindle&nbsp;Fire</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2011-03-27T00:00:00+01:00" pubdate>27&nbsp;March</time> </td>
+			<td><a href='post/2011/quick-fix-windows-7-service-pack-1-error-80073701.html'>Quick Fix: Windows 7 Service Pack 1 Error&nbsp;80073701</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2011-03-10T00:00:00+01:00" pubdate>10&nbsp;March</time> </td>
+			<td><a href='post/2011/running-a-ssh-honeypot-with-kippo-lets-catch-some-script-kiddies.html'>Running A <span class="caps">SSH</span> Honeypot With Kippo: Let&#8217;s Catch Some Script&nbsp;Kiddies</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2011-01-18T00:00:00+01:00" pubdate>18&nbsp;January</time> </td>
+			<td><a href='post/2011/motioninjoy-appcrash-when-loading-driver.html'>MotionInJoy Appcrash When Loading&nbsp;Driver</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2011-01-12T00:00:00+01:00" pubdate>12&nbsp;January</time> </td>
+			<td><a href='post/2011/slowloris-and-mitigations-for-apache.html'>Slowloris And Mitigations For&nbsp;Apache</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2010</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2010-11-19T00:00:00+01:00" pubdate>19&nbsp;November</time> </td>
+			<td><a href='post/2010/compiling-firesheep-on-linux.html'>Compiling Firesheep on&nbsp;Linux</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-11-03T00:00:00+01:00" pubdate>03&nbsp;November</time> </td>
+			<td><a href='post/2010/aircrack-quick-tutorial-wireless-wep-cracking.html'>Aircrack Quick Tutorial (Wireless <span class="caps">WEP</span>&nbsp;Cracking)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-11-03T00:00:00+01:00" pubdate>03&nbsp;November</time> </td>
+			<td><a href='post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html'>Ubuntu 10.10: &#8220;fixed channel mon0: -1&#8221; Aircrack Problem With&nbsp;iwl3945</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-09-07T00:00:00+02:00" pubdate>07&nbsp;September</time> </td>
+			<td><a href='post/2010/solving-color-problem-in-directdraw-games-update.html'>Solving Color Problem In DirectDraw Games&nbsp;Update</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-08-18T00:00:00+02:00" pubdate>18&nbsp;August</time> </td>
+			<td><a href='post/2010/missing-icons-in-notification-area-tray-bar.html'>Missing Icons In Notification Area (Tray&nbsp;Bar)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-08-17T00:00:00+02:00" pubdate>17&nbsp;August</time> </td>
+			<td><a href='post/2010/oldie-but-goodie-privilege-escalation-in-windows.html'>Oldie But Goodie: Privilege Escalation In&nbsp;Windows</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-07-02T00:00:00+02:00" pubdate>02&nbsp;July</time> </td>
+			<td><a href='post/2010/note-to-self-remote-vnc-listen-connection.html'>Note To Self: Remote <span class="caps">VNC</span> (Listen)&nbsp;Connection</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-05-16T00:00:00+02:00" pubdate>16&nbsp;May</time> </td>
+			<td><a href='post/2010/get-a-list-of-steam-games-as-of-may-2010.html'>Get A List Of Steam Games (As Of May&nbsp;2010)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-05-14T00:00:00+02:00" pubdate>14&nbsp;May</time> </td>
+			<td><a href='post/2010/python-web-scraping-tools.html'>Python Web Scraping&nbsp;Tools</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-04-23T00:00:00+02:00" pubdate>23&nbsp;April</time> </td>
+			<td><a href='post/2010/installing-heroes-of-might-and-magic-iii-3-on-linux-ubuntu.html'>Installing Heroes Of Might And Magic <span class="caps">III</span> (3) On Linux&nbsp;(Ubuntu)</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-03-02T00:00:00+01:00" pubdate>02&nbsp;March</time> </td>
+			<td><a href='post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general-part-2.html'>The University Of Waterloo <span class="caps">CS</span> Club Tron Challenge, And Some Minimax In General - Part&nbsp;2</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2010-02-25T00:00:00+01:00" pubdate>25&nbsp;February</time> </td>
+			<td><a href='post/2010/the-university-of-waterloo-cs-club-tron-challenge-and-some-minimax-in-general.html'>The University Of Waterloo <span class="caps">CS</span> Club Tron Challenge, And Some Minimax In&nbsp;General</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2009</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2009-12-31T00:00:00+01:00" pubdate>31&nbsp;December</time> </td>
+			<td><a href='post/2009/get-a-list-of-steam-games.html'>Get A List Of Steam&nbsp;Games</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-12-05T00:00:00+01:00" pubdate>05&nbsp;December</time> </td>
+			<td><a href='post/2009/building-a-presenter-view-for-linux.html'>Building A Presenter View For&nbsp;Linux</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-11-02T00:00:00+01:00" pubdate>02&nbsp;November</time> </td>
+			<td><a href='post/2009/dont-get-caught-in-this-steam-phishing-scam-how-phishers-work.html'>Don&#8217;t Get Caught In This Steam Phishing Scam - How Phishers&nbsp;Work</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-07-29T00:00:00+02:00" pubdate>29&nbsp;July</time> </td>
+			<td><a href='post/2009/solving-color-problem-red-grass-purple-water-in-age-of-empires-2-age-of-kings-the-conquerors-and-others-too-on-vista-and-windows-7.html'>Solving Color Problem (Red Grass, Purple Water) In Age Of Empires 2: Age Of Kings (The Conquerors And Others Too) On Vista And Windows&nbsp;7</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-06-23T00:00:00+02:00" pubdate>23&nbsp;June</time> </td>
+			<td><a href='post/2009/solving-a-tetris-cube-recursive-backtracking-algorithm-x-oh-my.html'>Solving A Tetris Cube, Recursive Backtracking, Algorithm X, Oh&nbsp;My!</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-04-28T00:00:00+02:00" pubdate>28&nbsp;April</time> </td>
+			<td><a href='post/2009/ubuntu-jauntu-skype-worked-before-now-problem-with-audio-capture.html'>Ubuntu Jauntu: Skype Worked Before, Now: &#8220;Problem with audio&nbsp;capture&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-04-28T00:00:00+02:00" pubdate>28&nbsp;April</time> </td>
+			<td><a href='post/2009/vice-city-and-perhaps-other-games-in-wine-cd-error-with-iso.html'>Vice City (And Perhaps Other Games) In Wine - <span class="caps">CD</span> Error With <span class="caps">ISO</span></a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-02-05T00:00:00+01:00" pubdate>05&nbsp;February</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html'>Modern Genetic (And Other) Algorithms Explained: Part 7 -&nbsp;Conclusion</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-29T00:00:00+01:00" pubdate>29&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html'>Modern Genetic (And Other) Algorithms Explained: Part 6 - Tabu&nbsp;Search</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-22T00:00:00+01:00" pubdate>22&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html'>Modern Genetic (And Other) Algorithms Explained: Part 5 - Ant Colony&nbsp;Optimization</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-19T00:00:00+01:00" pubdate>19&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html'>Modern Genetic (And Other) Algorithms Explained: Part 4 - Simulated&nbsp;Annealing</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-16T00:00:00+01:00" pubdate>16&nbsp;January</time> </td>
+			<td><a href='post/2009/nokia-n95-3g-bluetooth-and-ubuntu-intrepid-3g-tethering-howto.html'>Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering&nbsp;Howto</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-13T00:00:00+01:00" pubdate>13&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html'>Modern Genetic (And Other) Algorithms Explained: Part 3 - <span class="caps">CHC</span>&nbsp;Eshelman</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-10T00:00:00+01:00" pubdate>10&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html'>Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic&nbsp;Algorithms</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2009-01-07T00:00:00+01:00" pubdate>07&nbsp;January</time> </td>
+			<td><a href='post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html'>Modern Genetic (And Other) Algorithms Explained: Part 1 -&nbsp;Introduction</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2008</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2008-12-09T00:00:00+01:00" pubdate>09&nbsp;December</time> </td>
+			<td><a href='post/2008/trying-googles-native-client.html'>Trying Google&#8217;s Native&nbsp;Client</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-12-07T00:00:00+01:00" pubdate>07&nbsp;December</time> </td>
+			<td><a href='post/2008/trying-arch-linux.html'>Trying Arch&nbsp;Linux</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-10-26T00:00:00+02:00" pubdate>26&nbsp;October</time> </td>
+			<td><a href='post/2008/sacrifice-revisited.html'>Sacrifice&nbsp;Revisited</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-09-07T00:00:00+02:00" pubdate>07&nbsp;September</time> </td>
+			<td><a href='post/2008/virtualbox-expanding-a-disk-drive.html'>Virtualbox: Expanding A Disk&nbsp;Drive</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-07-17T00:00:00+02:00" pubdate>17&nbsp;July</time> </td>
+			<td><a href='post/2008/odbc-missing-driver-64-bit.html'><span class="caps">ODBC</span> Missing Driver&#8230; 64&nbsp;Bit</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-06-27T00:00:00+02:00" pubdate>27&nbsp;June</time> </td>
+			<td><a href='post/2008/is-w32codecs-freezing-your-ubuntu.html'>Is w32codecs Freezing Your&nbsp;Ubuntu?</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-06-26T00:00:00+02:00" pubdate>26&nbsp;June</time> </td>
+			<td><a href='post/2008/muxtape-downloader-shell-script.html'>Muxtape Downloader Shell&nbsp;Script</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-03-14T00:00:00+01:00" pubdate>14&nbsp;March</time> </td>
+			<td><a href='post/2008/assembly-component-303994ba-6487-47ae-af1d-7af6088eebdb.html'>Assembly Component {<span class="caps">303994BA</span>-6487-<span class="caps">47AE</span>-<span class="caps">AF1D</span>-<span class="caps">7AF6088EEBDB</span>}</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2008-01-20T00:00:00+01:00" pubdate>20&nbsp;January</time> </td>
+			<td><a href='post/2008/javascript-browser-detection-using-dom-capabilities.html'>Javascript Browser Detection using <span class="caps">DOM</span>&nbsp;Capabilities</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2007</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2007-09-15T00:00:00+02:00" pubdate>15&nbsp;September</time> </td>
+			<td><a href='post/2007/sql-check-existing-rows-matching-a-condition.html'><span class="caps">SQL</span>: Check Existing Rows Matching A&nbsp;Condition</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-08-10T00:00:00+02:00" pubdate>10&nbsp;August</time> </td>
+			<td><a href='post/2007/scrolling-unfocused-windows.html'>Scrolling Unfocused&nbsp;Windows</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-07-29T00:00:00+02:00" pubdate>29&nbsp;July</time> </td>
+			<td><a href='post/2007/simulating-limit-with-offsets-in-sql.html'>Simulating <span class="caps">LIMIT</span> with offsets in <span class="caps">SQL</span></a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-05-01T00:00:00+02:00" pubdate>01&nbsp;May</time> </td>
+			<td><a href='post/2007/the-number.html'>The&nbsp;Number</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-04-30T00:00:00+02:00" pubdate>30&nbsp;April</time> </td>
+			<td><a href='post/2007/feisty-upgrade-first-problem.html'>Feisty Upgrade - First&nbsp;Problem</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-04-30T00:00:00+02:00" pubdate>30&nbsp;April</time> </td>
+			<td><a href='post/2007/ubuntu-feisty-second-problem.html'>Ubuntu Feisty - Second&nbsp;Problem</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2007-01-02T00:00:00+01:00" pubdate>02&nbsp;January</time> </td>
+			<td><a href='post/2007/gmail.html'>Gmail</a></td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>2006</h2>
+	<table class="table-archive">
+		<tbody>
+			<tr>
+			<td><time datetime="2006-10-26T00:00:00+02:00" pubdate>26&nbsp;October</time> </td>
+			<td><a href='post/2006/finished.html'>Finished</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-10-25T00:00:00+02:00" pubdate>25&nbsp;October</time> </td>
+			<td><a href='post/2006/oki-printers-in-ubuntu.html'>Oki Printers In&nbsp;Ubuntu</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-09-18T00:00:00+02:00" pubdate>18&nbsp;September</time> </td>
+			<td><a href='post/2006/crappy-scanners-and-linux.html'>Crappy Scanners And&nbsp;Linux</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-09-11T00:00:00+02:00" pubdate>11&nbsp;September</time> </td>
+			<td><a href='post/2006/neverwinter-nights-on-my-ubuntu-laptop.html'>Neverwinter Nights On My&nbsp;Ubuntu-Laptop</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-29T00:00:00+02:00" pubdate>29&nbsp;August</time> </td>
+			<td><a href='post/2006/linux-games.html'>Linux&nbsp;Games</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-22T00:00:00+02:00" pubdate>22&nbsp;August</time> </td>
+			<td><a href='post/2006/close-call.html'>Close&nbsp;Call</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-22T00:00:00+02:00" pubdate>22&nbsp;August</time> </td>
+			<td><a href='post/2006/visiting-aiglxcompix-and-back-again.html'>Visiting <span class="caps">AIGLX</span>/Compix And Back&nbsp;Again</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-14T00:00:00+02:00" pubdate>14&nbsp;August</time> </td>
+			<td><a href='post/2006/thinkpad-stories-5-already-bluetooth-and-nokia-phones.html'>Thinkpad Stories (5 already): &#8220;Bluetooth and Nokia&nbsp;phones.&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-12T00:00:00+02:00" pubdate>12&nbsp;August</time> </td>
+			<td><a href='post/2006/realtime-monitoring-with-php.html'>Realtime Monitoring With <span class="caps">PHP</span></a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-11T00:00:00+02:00" pubdate>11&nbsp;August</time> </td>
+			<td><a href='post/2006/thinkpad-stories-1-so-ya-wanna-boot-ubuntu.html'>Thinkpad Stories 1: &#8220;So ya wanna boot&nbsp;Ubuntu?&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-11T00:00:00+02:00" pubdate>11&nbsp;August</time> </td>
+			<td><a href='post/2006/thinkpad-stories-2-partitioning-woes.html'>Thinkpad Stories 2: &#8220;Partitioning&nbsp;woes.&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-11T00:00:00+02:00" pubdate>11&nbsp;August</time> </td>
+			<td><a href='post/2006/thinkpad-stories-3-now-for-some-colours.html'>Thinkpad Stories 3: &#8220;Now for some&nbsp;colours&#8230;&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-11T00:00:00+02:00" pubdate>11&nbsp;August</time> </td>
+			<td><a href='post/2006/thinkpad-stories-4-render-it-dammit.html'>Thinkpad Stories 4: &#8220;Render it&nbsp;dammit!&#8221;</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-08-11T00:00:00+02:00" pubdate>11&nbsp;August</time> </td>
+			<td><a href='post/2006/welcome-thinkpad-x60.html'>Welcome Thinkpad&nbsp;X60</a></td>
+			</tr>
+			<tr>
+			<td><time datetime="2006-07-13T00:00:00+02:00" pubdate>13&nbsp;July</time> </td>
+			<td><a href='post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html'>Sacrifice <span class="caps">RAM</span> Problem (Or: Fixing an Old&nbsp;Game)</a></td>
+			</tr>
+		</tbody>
+	</table>
+
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

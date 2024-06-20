@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Modern Genetic (And Other) Algorithms Explained: Part 7 - Conclusion</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 05 February 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html" rel="bookmark"
+			title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 7 - Conclusion">Modern Genetic (And Other) Algorithms Explained: Part 7 -&nbsp;Conclusion</a></div>
+		</header>
+	
+	    <p>(This is the final part in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>In the past series, we have looked at genetic algorithms, simulated annealing, ant colony simulation and tabu search. Each method had its pro&#8217;s and cons, and there certainly is room for exploration&nbsp;left.</p>
+<p>I hope you&#8217;ve enjoyed this series, or that it has at least sparked your interest in the&nbsp;topic.</p>
+<p>Below are a few more (general resources), if you want to know&nbsp;more.</p>
+<p>Other related&nbsp;techniques:</p>
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Evolutionary_programming">Evolutionary&nbsp;programming</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Genetic_programming">Genetic&nbsp;programming</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Harmony_search">Harmony search</a> - this is interesting: it&#8217;s based on how musicians compose music, also see <a href="http://www.hydroteq.com/">this&nbsp;website</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Memetic_algorithm">Memetic algorithms</a> - a very new and interesting area in evolutionary optimization. It combines a genetic algorithm to the ability of learning (hence the name:&nbsp;&#8220;memes&#8221;)</li>
+<li>And <a href="http://en.wikipedia.org/wiki/Genetic_algorithm#Related_techniques">many more</a>&#8230;</li>
+</ul>
+<p>Books:</p>
+<ul>
+<li><a href="http://www.amazon.com/Introduction-Evolutionary-Computing-Natural/dp/3540401849/ref=pd_sim_b_3">Introduction to Evolutionary&nbsp;Computing</a></li>
+<li><a href="http://www.amazon.com/Evolutionary-Computation-Kenneth-Jong/dp/0262041944">Evolutionary&nbsp;Computation</a></li>
+<li><a href="http://www.amazon.com/How-Solve-Heuristics-Zbigniew-Michalewicz/dp/3540660615">How to Solve It: Modern&nbsp;Heuristics</a></li>
+<li><a href="http://www.gp-field-guide.org.uk/">A Field Guide to Genetic Programming</a> (the <span class="caps">PDF</span> is&nbsp;free!)</li>
+<li><a href="http://www.amazon.com/Genetic-Programming-Computers-Selection-Adaptive/dp/0262111705/ref=pd_bbs_sr_1?ie=UTF8&amp;s=books&amp;qid=1230992985&amp;sr=8-1">Genetic Programming: On the Programming of Computers by Means of Natural&nbsp;Selection</a></li>
+</ul>
+<p>A specialized event was held in the <span class="caps">USA</span>: Foundations Of Genetic Algorithms. You can find a lot of interesting information on <a href="http://www.sigevo.org/foga-2009/">their website</a>.</p>
+<p>Finally, I want to mention a software project which looks promising: <a href="http://paradiseo.gforge.inria.fr/index.php?n=Paradiseo.Home">Paradiseo</a>:</p>
+<blockquote>
+<p>A white-box object-oriented framework, portable (Windows, Unix and MacOS), dedicated to the flexible design of metaheuristics: solution-based metaheuristics (Local search, Simulated annealing, Iterated local search, Tabu search, &#8230;) and population-based metaheuristics (Genetic algorithm, Particle swarm optimization, Evolution strategy, Differential evolution algorithms,&nbsp;&#8230;).</p>
+</blockquote>
+<hr>
+<p>Table Of Contents (click a link to jump to that&nbsp;post)</p>
+<p>1- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">Introduction</a>
+2- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html">Genetic Algorithms</a>
+3- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html"><span class="caps">CHC</span> Eshelman</a>
+4- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html">Simulated Annealing</a>
+5- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html">Ant Colony Optimization</a>
+6- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html">Tabu Search</a>
+7- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html">Conclusion</a></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

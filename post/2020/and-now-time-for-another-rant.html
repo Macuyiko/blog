@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>And Now, Time for Another Rant</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 07 January 2020, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2020/and-now-time-for-another-rant.html" rel="bookmark"
+			title="Permalink to And Now, Time for Another Rant">And Now, Time for Another&nbsp;Rant</a></div>
+<div class="article-subtitle">Everything about computing is still horrible</div>		</header>
+	
+	    <p>I was going to spew this out as a Twitter &#8220;thread&#8221; as is the fashion these days, but I decided against it. Blogging is still cool. Especially once I realized this is not the <a href="////blog.macuyiko.com/post/2017/and-now-time-for-a-rant.html">first time</a> I&#8217;ve done&nbsp;this&#8230;</p>
+<p>&#8230; Meaning that I&#8217;m sitting at my machine and realize computing is (still) terrible. No worries, this rant won&#8217;t be as long as last time, since turns out most of it boils down to the same stuff anyway, but let me revisit some of the topics from &#8212; now &#8212; three (!) years ago. Yes, Windows 10 was already a thing then, we get&nbsp;old.</p>
+<p><strong>On Windows and Interfaces</strong>: this is still terrible. I&#8217;ve learnt how to deal with Windows 10 random crashing shenanigans by just buying a new laptop every year. Truth be said, the update mechanism appears to be less invasive, except if you have a bunch of machines like me just resting at random offices which crap out the moment you return to them after a month or so. The interface, on the other hand, whilst useable, even look more outdated today. Not just because of the fact that you can still visit all &#8220;design era&#8217;s&#8221; all the way from 10 to Vista to 7 to <span class="caps">XP</span> to 98 if you continue to dig deep enough in the control panel (even although most of it is better hidden nowadays), but also simply because the flat design looks outdated. I still miss good old&nbsp;buttons.</p>
+<p>Discoverability is an issue. Clickability is an issues. How the !@#$ can you claim in the Snipping Tool app that it&#8217;s &#8220;gone soon&#8221; whilst no one knows about WinKey + Shift + S? The same holds for Apple: cover 80% of use cases in an easy to use manner, whilst making the other 20% near impossible. It&#8217;s a user&#8217;s&nbsp;nightmare.</p>
+<p>Apart from that, I&#8217;m getting more and more annoyed that my beast of a machine &#8212; because let&#8217;s be honest, an octa-core 3Ghz machine is a beast, in fact &#8212; will randomly spin its (probably too cheap since we only look at &#8220;them GigaHertz&#8221;) fans in the middle of the night because of&#8230; who knows? Indexing, perhaps? There&#8217;s always some important indexing or telemetry work to&nbsp;do.</p>
+<p>I&#8217;m also annoyed that there&#8217;s no simple way to &#8220;sync and ready&#8221; Windows systems (neither is there on Linux or Max, but I know their users would defend the point more heavily with home-brew solutions). Case in point: one of my favorite use cases for a <span class="caps">VM</span> is to boot from a snapshot. I want that for my main machines, but: (i) keep my documents in sync (even if that means a Dropbox or Google Drive), (ii), keep my main set of apps in an updated state (but not whilst I&#8217;m working), (iii) put everything else in &#8220;containers&#8221; or whatever and let me decide if this new app I&#8217;ve just installed becomes part of the &#8220;main bunch&#8221; or just something I want to try out. The first real tool that provides this has my $ (and I can only imagine this is an issue many multi-device users face). Going on the road with &#8220;that travel laptop&#8221; and having to get everything ready in the hotel room the night before is hellish, when you just want to boot it up, go over your slides, make some last minute changes to your Jupyter notebooks, enjoy a beer and go to bed. I&#8217;m even tempted to try it myself, but know I&#8217;d botch the&nbsp;implementation.</p>
+<p>For a while, in fact, Chromebooks offerred a good solution. Always updated, always browser-only. Then Google lost interest and went for a last-resort &#8220;meh let&#8217;s support (badly so) Android apps&#8221;. Also, why is there no good way to set up ChromeOS on a non Chromebook device? I tried this Cloudready thing to prepare a beefy replacement laptop for my mom (who was a big ChromeOS fan &#8212; even whilst not knowing it &#8212; the first laptop she liked to use), and even apart from the <span class="caps">USB</span> boot stick taking six hours to prepare (my problem), the mouse pointer decided to randomly disappear completely after a day or so of use, even whilst working after install, even after two fresh installs (her problem, but even more so my&nbsp;problem).</p>
+<p>Last year I wrote&nbsp;this:</p>
+<blockquote>
+<p>Interfaces in general have become horrid. An interesting <a href="https://tttthreads.com/thread/927593460642615296">discussion on Twitter</a> has lots
+of people talking about this (funny that a separate website is needed to kind-of properly render out a list of tweets in a somewhat 
+readable&nbsp;format)</p>
+</blockquote>
+<p>This conversation got revisited, I think, recently &#8212; no wait, it&#8217;s <a href="https://news.ycombinator.com/item?id=21835417">this one</a> (I&#8217;m linking to the Hacker News page as that&#8217;s the site that actually allowed my to find this post in a rapid way instead of Twitter, which still is &#8212; in 2020 &#8212; a massive sinkhole in which any good content simply goes dark&#8230;&nbsp;sigh.)</p>
+<p>What actually sparked me to write this post were two Google products. One, Google Translate (in Chrome), which still randomly cannot detect that a web page I&#8217;m viewing is in Mandarin whilst at other times &#8212; on the same domain &#8212; will pop up a very helpful button asking if I want to translate the page. Good luck forcing Chrome to do so if you don&#8217;t get that pop up. The second one is Google Drive which still&#8230; years later&#8230; with so many paying customers&#8230; will for some reason randomly continue to sync but context-menu-up a completely grey box when you right click its icon. Why? Because I have many files? You offer <span class="caps">2TB</span> of space. You have a hundred engineers (easily) slacking off at this very moment. Redesign your management style. Fix this&nbsp;mess.</p>
+<p>Oh, and Google Maps is getting worse as well, as commenters on <a href="https://news.ycombinator.com/item?id=21782101">Hacker News point out as well</a>.</p>
+<p>Anyway, another item from three years ago was <strong>On Devices, Apple and Linux</strong>&#8230; I don&#8217;t think I want to get into that again. The whole mobile ecosystem has burned down. At least Apple was quick enough with &#8220;Arcade&#8221; to salvage what they could from the gaming subsphere. Okay move. Google has <a href="https://www.theverge.com/2019/11/4/20948098/google-play-pass-rewards-program-points-us-apple-app-store-arcade">this</a>. Worse&nbsp;move.</p>
+<p>I also&nbsp;wrote:</p>
+<blockquote>
+<p>Also: good luck using your Linux laptop to give a presentation at some corp where they&#8217;re using some FuYouDianNoa brand of projectors which only work in some kind of devil&#8217;s 888x666&nbsp;resolution.</p>
+</blockquote>
+<p>That point still stands. systemd being another one, too. Wayland is still &#8220;in progress&#8221; as well. Also, Intel <span class="caps">CPU</span> issues post-Spectre and Meltdown (yes, already a thing in 2017) have simply continued, too. Foreshadow, <a href="https://techcrunch.com/2019/05/14/zombieload-flaw-intel-processors/">Zombieload</a>&#8230; Have we collectively stood&nbsp;still?</p>
+<blockquote>
+<p>All these &#8220;smart&#8221; tablets, phones, fridges and whatnot need to update a bajillion apps if you don&#8217;t use them for a few weeks and start to slow down after every <span class="caps">OS</span>&nbsp;update.</p>
+</blockquote>
+<p>Let alone the fact that they&#8217;re <a href="https://www.washingtonpost.com/technology/2019/09/18/you-watch-tv-your-tv-watches-back/">sending screenshots of what you&#8217;re watching</a>&#8230; to somewhere. As if we didn&#8217;t expect that. Samsung is in <a href="https://android.gadgethacks.com/how-to/prevent-samsungs-shady-360-storage-cleaner-from-phoning-home-china-0225941/">cahoots with Qihoo</a> &#8212; just happened at the time of&nbsp;writing. </p>
+<p>I&#8217;ve briefly mentioned some points <strong>on gaming</strong> above already. Again, the situation hasn&#8217;t gotten better. Well, at least <span class="caps">EA</span> and Microsoft have wised up and are coming back to&nbsp;Steam.</p>
+<blockquote>
+<p>If you do finally manage to get into a game, be prepared to cough up money for microtransactions, &#8220;cosmetic unlockables&#8221;, &#8220;loot boxes&#8221;, (edit: and now: &#8220;live services&#8221;) and all those other gamblind-inspired horrids that have come straight from the seventh hell that is mobile gaming to infest the rest of the gaming&nbsp;world.</p>
+</blockquote>
+<p><strong>Programming</strong> has continued to get worse. The tyranny of Javascript continues. For everything else, it&#8217;s Rust or invalid. Virtualize, containerize, package it up, but <span class="caps">AWS</span> in front of it, get your keys stolen by posting them on Github, make a type in a package name and get hacked. I&#8217;m not going to link to all this. I&#8217;m just going to <a href="https://twitter.com/cmuratori/status/1213202388598714368">link to a tweet from Casey Muratori</a>:</p>
+<blockquote>
+<p>As we come into 2020, I am now pretty sure I picked the wrong career. If I had known what computers were going to become, I probably wouldn&#8217;t have wanted to be a programmer. It is definitely no longer a career for people who take pride in their&nbsp;work.</p>
+</blockquote>
+<p><a href="https://twitter.com/Jonathan_Blow">Jonathan Blow</a> (who&#8217;s been working on his own language and understands that computers are fast enough) has similar good points to peruse. <a href="https://twitter.com/ID_AA_Carmack/status/1210997702152069120">John Carmack</a> also made a good&nbsp;point:</p>
+<blockquote>
+<p>My formative memory of Python was when the Quake Live team used it for the back end work, and we wound up having serious performance problems with a few million users. My bias is that a lot (not all!) of complex “scalable” systems can be done with a simple, single C++&nbsp;server.</p>
+</blockquote>
+<p>&#8230; and even he got flamed by Javascript/Rust/&#8230;&nbsp;fanboys.</p>
+<p>By the way, this leads me to <strong><span class="caps">AI</span></strong>, since Carmack is working on that as well these days. Everyone is still <span class="caps">AI</span> crazy. Hadoop is gone, Spark is known. Kafka is still hot, but Tensorflow and PyTorch are bursting with energy. Forget about that simple model which is understandable and robust, just slap twenty layers on your small tabular data set and let it train for a&nbsp;week.</p>
+<p>Tensorflow is a mess right now. Good luck finding your way between old and new tutorials as Google makes its transition to v2 of the <span class="caps">API</span>. As with all things Google, it&#8217;s &#8220;don&#8217;t use v1, its outdated and deprecated and boring, use v2, which is not ready&nbsp;yet&#8221;.</p>
+<p>A while ago I encountered a (published) paper where the authors first convert a structured instance to a row of pixels by freaking one-hot encoding everything (including numerical values) and feeding that to a 1d <span class="caps">CNN</span>. For god&#8217;s sake, at least you could&#8217;ve used&nbsp;greyscales.</p>
+<p>Meanwhile, <a href="https://arxiv.org/pdf/1910.11015.pdf">there&#8217;s this</a> (check out the Figure in that <span class="caps">PDF</span>).</p>
+<p>I&#8217;m going to call it quits here and go hang out at <a href="https://href.cool/">href.cool</a> and <a href="https://neocities.org/">Neocities</a>, or play a bit of the excellent and wacky <a href="https://store.steampowered.com/app/844590/Hypnospace_Outlaw/">Hypnospace Outlaw</a>.</p>
+<p>I close by repeating my final points from three years&nbsp;back:</p>
+<blockquote>
+<p>What has happened with &#8220;computing&#8221; as of today? Perhaps &#8212; most likely &#8212; all of this is due to me getting older, more busier, less easily impressed, or simply a case of nostalgia goggles firmly stuck on my face, but I can&#8217;t shake the feeling that computing today has lost a lot of its appeal, its &#8220;magic&#8221;, if you will, compared to the days of old.
+I used to laugh (silently) at &#8220;dinosaurs&#8221; I&#8217;d meet telling me about how all of this new stuff already existed in the eighties. I still laugh (silently), as I can still gleem in the fact that I at least try to keep up to date with all these new developments whereas they have given up and perhaps just want to emphasize their relevancy, but I&#8217;m feeling increasingly more sour as I start to wonder towards where, exactly, we&#8217;re trying to &#8220;evolve&#8221;&nbsp;to.</p>
+</blockquote>
+<p>See you in three years from&nbsp;now.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

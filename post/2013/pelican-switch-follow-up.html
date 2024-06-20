@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Pelican Switch Follow-Up</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+	<div class="postheader">
+		<div class="postheader-wrap">
+			<img class="postheader-trans" src="data:image/gif;base64,R0lGODlhMgAVAPAAAP///wAAACH5BAEAAAAALAAAAAAyABUAAAIfhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8dTAQA7">
+			<img class="postheader-cover" src="/images/backgrounds/pelican.jpg">
+		</div>
+	</div>
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 31 July 2013, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2013/pelican-switch-follow-up.html" rel="bookmark"
+			title="Permalink to Pelican Switch Follow-Up">Pelican Switch&nbsp;Follow-Up</a></div>
+<div class="article-subtitle">Blogger wasn't working out after all...</div>		</header>
+	
+	    <p>Phew, all internal links on the blog should work fine now. There are a bunch left which link to the <em>old</em> Blogger pages, but that&#8217;s fine I guess; I&#8217;ll fix these as they&nbsp;come.</p>
+<p>I promised to <a href="////blog.macuyiko.com/post/2013/i-did-switch-to-pelican.html">follow-up</a> with some more details, so here&nbsp;goes&#8230;</p>
+<p>Quickly after writing up a <a href="////blog.macuyiko.com/post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html">huge rant</a> more than a month ago about how Blogger &#8212; especially its editor &#8212; was starting to annoy me and how I made some fixes to make the blog appear more &#8220;fresh&#8221;, I was still not really quite sure about the whole&nbsp;thing.</p>
+<p>This hit me yet again when I was trying to write up my recent Minecraft post. Again, I was fighting against this outdated interface to publish the thing. My initial strategy &#8212; writing up the draft using StackEdit and publishing it to Blogger quickly turned out to be a hassle when making edits. You can sync to Dropbox or Google Drive, but only &#8220;publish&#8221; to Blogger, meaning that editing either involves entering a Blogger post <span class="caps">ID</span> (hard), or just logging into Blogger and edit the thing through there (&#8220;it&#8217;s only one typo&#8221; &#8212; easy). Sadly, Blogger&#8217;s editor makes all sort of assumptions and just loves to wrangle your post after saving your edits.&nbsp;Ugh.</p>
+<p>I briefly considered moving everything to Medium, but after exploring the platform, I still found it was not completely up to my taste (yours may vary). Turns out there actually is support for code fragments (using a non-documented shortcut), but Medium&#8217;s typography helper still insists on changing your quotes to curly ones. Looks great in text, not in code. Oops. I tried putting a &#8220;note&#8221; (Medium&#8217;s version of a comment) on the &#8220;explaining the editor&#8221; page, but got no response. Maybe it&#8217;s fixed now, I don&#8217;t&nbsp;know.</p>
+<p>Second, I don&#8217;t like how Medium tries to take away your online identity. You can&#8217;t use a custom domain, can&#8217;t set up a profile page, heck, even trying to &#8220;get discovered&#8221; when writing on Medium is less than easy. There are no deep analytics or a possibility to integrate Google analytics. There is no theming (although the site does look very pretty)&#8230; everybody looks the same. Writes the same, even, as I&#8217;ve noticed that certain kinds of posts get more attention than others. Don&#8217;t get me wrong, I like the platform as a reader and might still post things on there, but it doesn&#8217;t fit the content of this&nbsp;blog.</p>
+<p>So anyway, back to the drawing board. If I was going to go through with this thing I still had to make some changes to my earlier developed Pelican site in order to make everything work, most notable implementing search (just using Google, that&#8217;s right), implementing comments (Google+, Facebook and Disqus tabs inspired by the Google+ Wordpress plugin) and some general theming changes, including a Medium-like circle profile pic (using the same <span class="caps">CSS</span> tricks) and the possibility to insert a full-width post cover. The latter took more time than I&#8217;m willing to admit to make the whole ordeal &#8220;responsive&#8221; and &#8220;mobile-ready&#8221;, but it turned out pretty nice I think (well, I checked with Chrome and Firefox &#8212; more about that later, by the&nbsp;way).</p>
+<p>Speaking of responsive: you might have noticed that some images have captions next to them (the images in this post will feature them). I had to use just a tad of Jquery magic to push them under the figures when space gets too cramped. This probably could be done with pure <span class="caps">CSS</span>, but I&#8217;m glad with the result nonetheless. You might also recognize this as being inspired by&nbsp;Medium.</p>
+<p>One final thing I did change were the fonts and the font-size. I like big serif fonts as much as the next person, but I noticed that they were not optimal for the type of content I&#8217;m currently producing here: long winded posts often containing lots of code and images. Still, I&#8217;m using webfonts and gratuitous amounts of white space to create some breathing&nbsp;space.</p>
+<p>&#8230; so, with everything up and running, guess how this was influencing my page&nbsp;views:</p>
+<p><img alt="Graph of page visits after migration to Pelican" src="http://i.imgur.com/Ej0mDvq.png"></p>
+<p>A huge drop. I have never cared that much about page views, but after digging some more, I was surprised at the amount of visitors coming in from external links &#8212; being referred by links which did no longer work. If I wanted to retain those visitors, I had to fix my&nbsp;URLs.</p>
+<p>Insert a few hours of fiddling with <code>mod_rewrite</code> in order to get everything sorted. When you enter from an old <span class="caps">URL</span>, you will now be shown <a href="http://moved.macuyiko.com/moved_blog.php?y=2009&amp;m=07&amp;slug=solving-color-problem-red-grass-purple">this page</a>. It&#8217;s not optimal, but it seems to work. Note by the way that bounce rate significantly dropped after adding the &#8220;tl;dr&#8221; thing &#8212; most people do not want to read anything. At all. Which is strange considering that they&#8217;re probably going to end up at a long blog post anyway. Also, most visitors click through to the old blog, but that&#8217;s better than losing them completely, I&nbsp;suppose.</p>
+<p>That&#8217;s it considering the technical stuff. There is another reason, however, why I&#8217;m quite happy with the move&#8230; The internet has been buzzed up lately about privacy, content ownership, identity ownership, walled gardens, and other related topics. Especially with the up-and-coming status of Medium and the <span class="caps">NSA</span> spying going on, us &#8220;old internet farts&#8221; seem to become more and more concerned with these affairs. I refer for example to <a href="http://www.marco.org/2011/07/11/own-your-identity">this great post</a> by Marco Arment about owning your online presence. He gives the example of <span class="caps">RSS</span> as well, which I also find to be a great case study on the creation of walled gardens. Google indeed seems very busy lately on stabbing stakes in RSSs poor heart. Sadly, he also mentions Tumblr as a &#8220;best-practise&#8221; follower to this regard. Now with Yahoo! as the owner, how long before things change for this platform as well, I&nbsp;wonder?</p>
+<p><a href="https://blog.samwhited.com/2013/07/dont-be-evil/">Sam Whited</a> is another great guy who runs his own blog, on his own domain, and is also worried about online identity and content ownership. He also gives the example of Google and the Google Reader debacle, and tries to find alternatives for the many, <em>many</em> Google products he is using. Not as easy as you think it might&nbsp;be.</p>
+<p>This realization is not worrysome (for now), but at least worth to think about for two seconds. How many Google products do you use? Can you find alternatives? I&#8217;ve already quit one (Blogger) and I&#8217;m happier with the result. I tried Fastmail as a Gmail alternative (as suggested and discussed on Hacker News lately), and although I like the snappy interface (and dislike Gmail&#8217;s recent &#8220;additions&#8221;) the switch turned out to be near impossible. The integration with my phone, for example (Android, another Google product) was just too tight, the amount of e-mails too large. I&#8217;m since backuping all my e-mail daily (using &#8220;Gmvault&#8221;), but what if Google shuts down <span class="caps">IMAP</span> support (there are rumors suggesting this)? Calendar. Another example. Much better than any competitor, works great on Android. Impossible to quit. Google Maps? Maybe, again, I&#8217;m not a huge fan of the &#8220;new maps&#8221; overhaul, but the data quality is still among the best. Search (funny how this is no longer at the top of the list)? Perhaps. Duckduckgo? Maybe, but wasn&#8217;t this just some shell around the inferior Yah!&nbsp;search?h</p>
+<p>Google Chrome? Perhaps. I remember quiting Firefox years ago because it was starting to feel bloated and slow. Chrome back then was the saviour of browsers the internet needed and wanted. On the other hand, I&#8217;ve noticed Chrome using more and more memory, and it generally does not feel as snappy as it used to. I&#8217;ve followed <a href="http://www.campaul.net/blog/2013/03/10/why-im-switching-back-to-firefox/">Cameron Paul&#8217;s</a> example and tried switching back to Firefox for a week. It actually did not feel bad at all. Firefox seems to have become much better again, and I commend the Mozilla team on continuing their efforts. Yes, Chrome might outrun Firefox in some edge cases (benchmark environments, mainly), but Paul makes a more important point as&nbsp;well:</p>
+<blockquote>
+<p>Technical issues aside, there&#8217;s something else that&#8217;s been in the back of my mind for a while now. I honestly believe Mozilla is committed to freedom and privacy on the web. Google is committed to making money and knowing everything I do. Firefox greets me with a page explaining my rights as a user of open source software. Chrome greets me with&#8230; sigh&#8230; Chrome greets me with a fucking advertisement for a&nbsp;Chromebook.</p>
+</blockquote>
+<p>As a funny aside, I only noticed after switching to Firefox that my own blog theme was rendering incorrectly due to some erroneous floating, something Chrome was ignoring (hence causing me to think that all was well), but Firefox was actually implementing correctly. I&#8217;m not trying to argue Chrome was wrong and Firefox was right (in fact, you could argue Chrome being smart enough to figure out what the desired end result was), but it did show me how much I&#8217;d come to depend on Chrome, together with all the arrogant &#8220;it only needs to work on&nbsp;Chrome&#8221;-mentality.</p>
+<p>And so a quick migration from one blogging platform to another resulted in some analysis about the state of the internet as it is moving forward&#8230; or onward. I&#8217;m not bitter, mind you. I love Medium, I love Google+, I love Twitter, and I still believe Google to try (in general) to do no evil &#8212; the fact that I&#8217;m using Google for search and comments here supports this. But maybe we should think before putting all our content &#8212; and identities &#8212; into online containers we have no control over&nbsp;whatsoever.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

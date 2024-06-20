@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - 2016 category</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html" rel="bookmark"
+				title="Permalink to How-to: Send HTML Mails with OAuth2 and Gmail in Python">How-to: Send <span class="caps">HTML</span> Mails with OAuth2 and Gmail in&nbsp;Python</a></div>
+			</header>
+			<div class="article-summary">
+					<p>If you&#8217;ve been trying to send e-mails from a program using your Gmail account, you&#8217;ll probably have encountered the following error&nbsp;message:</p>
+<div class="highlight"><pre><span></span><code>SMTP Error: Could not authenticate. Error: SMTP Error: Could not authenticate.
+535 5.7.1 Username and Password not accepted. Learn more at
+535 5.7 …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/how-to-send-html-mails-with-oauth2-and-gmail-in-python.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/fun-with-audiosurf-2-and-mitmproxy.html" rel="bookmark"
+				title="Permalink to Fun with Audiosurf 2 and Mitmproxy">Fun with Audiosurf 2 and&nbsp;Mitmproxy</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I enjoy firing up <a href="http://audiosurf2.com/">Audiosurf 2</a> from time to time to have some rythmic musical fun. One of the things that has been bothering me, however, is the fact that Audiosurf 2 only integrates with Soundcloud for its music streaming. You can use local files, but since I stream all …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/fun-with-audiosurf-2-and-mitmproxy.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 September 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/converting-plain-text-references-to-bibtex-updated.html" rel="bookmark"
+				title="Permalink to Converting Plain Text References To BibTeX, Updated">Converting Plain Text References To BibTeX,&nbsp;Updated</a></div>
+			</header>
+			<div class="article-summary">
+					<p>This blog post is an update for <a href="////blog.macuyiko.com/post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html">this one</a>. I was recently contacted regarding the original post no longer working. Indeed, the <code>scholar.py</code> version used there is being blocked by Google&nbsp;Scholar.</p>
+<p>Looking at the <a href="https://github.com/ckreibich/scholar.py">scholar.py</a> GitHub page, we do find an updated version from about 8 months …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/converting-plain-text-references-to-bibtex-updated.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 13 June 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/programming-languages-to-try.html" rel="bookmark"
+				title="Permalink to Programming Languages to Try">Programming Languages to&nbsp;Try</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I routinely use Python, R and Java during my day-to-day tasks, but have been itching recently to get up to speed or try out some of the following&nbsp;languages.</p>
+<p>This list basically serves as a note to myself to start experimenting with some of&nbsp;them:</p>
+<ul>
+<li><a href="http://haxe.org/">Haxe</a> &#8212; basically in combination with …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/programming-languages-to-try.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 22 April 2016, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2016/fixing-flask-url_for-when-behind-mod_proxy.html" rel="bookmark"
+				title="Permalink to Fixing Flask url_for when Behind mod_proxy">Fixing Flask url_for when Behind&nbsp;mod_proxy</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Imagine you have an Apache server set up with a virtualhost configuration listening to some domain,&nbsp;e.g.</p>
+<div class="highlight"><pre><span></span><code>my.domain:8080
+</code></pre></div>
+
+<p>You have a Flask app running&nbsp;at:</p>
+<div class="highlight"><pre><span></span><code><span class="n">localhost</span><span class="o">:</span><span class="mi">5000</span>
+</code></pre></div>
+
+<p>You want to add a mod_proxy directive so&nbsp;that:</p>
+<div class="highlight"><pre><span></span><code><span class="n">http</span><span class="o">://</span><span class="n">my</span><span class="p">.</span><span class="n">domain</span><span class="o">:</span><span class="mi">8080</span><span class="o">/</span><span class="n">app_location</span><span class="o">/</span><span class="w">  </span><span class="o">---&gt;</span><span class="w">  </span><span class="n">http</span><span class="o">://</span><span class="n">localhost</span><span class="o">:</span><span class="mi">5000</span>
+</code></pre></div>
+
+<p>Most resources will …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2016/fixing-flask-url_for-when-behind-mod_proxy.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+	&laquo; Prev
+	Page 1 of 1	
+	Next &raquo;
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

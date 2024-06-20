@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Quick Fix: Windows 7 Service Pack 1 Error 80073701</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 27 March 2011, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2011/quick-fix-windows-7-service-pack-1-error-80073701.html" rel="bookmark"
+			title="Permalink to Quick Fix: Windows 7 Service Pack 1 Error 80073701">Quick Fix: Windows 7 Service Pack 1 Error&nbsp;80073701</a></div>
+		</header>
+	
+	    <p>If your Windows 7 service pack upgrade is failing with error code 80073701, you might be able to fix it with the following steps. I&#8217;ve had to search around quite a bit before resolving this error, mainly because I saw the first and second solutions listed below pop up everywhere, but it was the third solution that actually fixed the problem for me in the&nbsp;end.</p>
+<h3>Solution 1: reset Windows Update components (you&#8217;ve probably done this&nbsp;already)</h3>
+<p>Download the Fix It tool from <a href="http://support.microsoft.com/kb/971058/en-us">this Microsoft <span class="caps">KB</span> article</a> and run it. Afterwards, restart your computer and try installing <span class="caps">SP1</span>&nbsp;again.</p>
+<h3>Solution 2: run the System Update Readiness Tool (you&#8217;ve probably done this,&nbsp;too)</h3>
+<p>The tool can be downloaded from <a href="http://support.microsoft.com/kb/947821/en-us">this Microsoft <span class="caps">KB</span> article</a>. Make sure to download the correct version. Note that the updates installed by this tool might take a <em>long</em> time to complete. It will appear as if the installation process is stuck. Don&#8217;t worry, as the progress bar might go from zero to hundred per cent in an instant, just be patient. Afterwards, restart your computer and try installing <span class="caps">SP1</span>&nbsp;again.</p>
+<h3>Solution 3: check out the logs and run lpksetup (this might be&nbsp;new)</h3>
+<p>Still no dice? Then check the logs at <code>c:\Windows\Logs\CBS\CheckSUR.log</code> and/or <code>c:\Windows\Logs\CBS\CheckSUR.persist.log</code>. These will give you more detailed information about the error. For me, and for <a href="http://superuser.com/questions/249641/error-80073701-when-installing-windows-7-service-pack-1">this user</a> at superuser.com, the culprit was a language&nbsp;pack.</p>
+<p>However, contrary to the user mentioned above, I am not using a language other than the default English, and cannot recall ever installing one. I ignored the language pack problem (as re-installing a language pack was not an option for me) until I learned about the Language Pack Setup Tool. Just run <code>lpksetup.exe</code> from your Start Menu. A window will pop up asking you if you want to install or uninstall a language pack. Pick uninstall. Sure enough, a list of languages was presented: English (the in use, default and system language), and some other language (Portuguese or Spanish, I can&#8217;t remember) with a yellow danger sign marking that it was in a broken state. Very strange indeed. After selecting the language for removal and pressing next, the situation was promptly resolved. Deinstalling the language took just a few seconds, probably because no language files were actually present on the&nbsp;disk.</p>
+<p>Anyway, after this small operation, installing <span class="caps">SP1</span> went&nbsp;smoothly.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

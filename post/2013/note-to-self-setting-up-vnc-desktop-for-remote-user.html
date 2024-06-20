@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Note To Self: Setting Up VNC Desktop For Remote User</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 20 October 2013, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2013/note-to-self-setting-up-vnc-desktop-for-remote-user.html" rel="bookmark"
+			title="Permalink to Note To Self: Setting Up VNC Desktop For Remote User">Note To Self: Setting Up <span class="caps">VNC</span> Desktop For Remote&nbsp;User</a></div>
+		</header>
+	
+	    <p>Another one of these things I always end up forgetting: setting up a Linux (in this case: Ubuntu) server so that users can login using a <span class="caps">VNC</span> client and get a (slim)&nbsp;desktop.</p>
+<p>First thing you need to do is make sure you have a <span class="caps">VNC</span> server (<code>tightvncserver</code>), desktop apps and window manager installed.&nbsp;E.g.:</p>
+<div class="highlight"><pre><span></span><code>apt-get -y install ubuntu-desktop tightvncserver xfce4 xfce4-goodies
+</code></pre></div>
+
+<p>Next, add a user (if you haven&#8217;t already) for the remote user going to&nbsp;login:</p>
+<div class="highlight"><pre><span></span><code>adduser remote_user
+passwd remote_user
+</code></pre></div>
+
+<p>Add to sudoers if&nbsp;required.</p>
+<p>Next, set a <span class="caps">VNC</span> password. Best to set this to something else than normal&nbsp;password:</p>
+<div class="highlight"><pre><span></span><code>su - remote_user
+vncpasswd
+</code></pre></div>
+
+<p>Next, create a <code>vncserver.sh</code> helper script to start to <span class="caps">VNC</span> server for a&nbsp;user:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:/usr/bin/&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">USER</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$2</span><span class="s2">&quot;</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PWD</span><span class="o">=</span><span class="s2">&quot;/home/</span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="nv">DISPLAY</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$3</span><span class="s2">&quot;</span>
+<span class="nv">DEPTH</span><span class="o">=</span><span class="s2">&quot;16&quot;</span>
+<span class="nv">GEOMETRY</span><span class="o">=</span><span class="s2">&quot;1024x768&quot;</span>
+<span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">&quot;-depth </span><span class="si">${</span><span class="nv">DEPTH</span><span class="si">}</span><span class="s2"> -geometry </span><span class="si">${</span><span class="nv">GEOMETRY</span><span class="si">}</span><span class="s2"> :</span><span class="si">${</span><span class="nv">DISPLAY</span><span class="si">}</span><span class="s2">&quot;</span>
+.<span class="w"> </span>/lib/lsb/init-functions
+
+<span class="k">case</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">in</span>
+start<span class="o">)</span>
+log_action_begin_msg<span class="w"> </span><span class="s2">&quot;Starting vncserver for user &#39;</span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">&#39; on localhost:</span><span class="si">${</span><span class="nv">DISPLAY</span><span class="si">}</span><span class="s2">&quot;</span>
+su<span class="w"> </span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/bin/vncserver </span><span class="si">${</span><span class="nv">OPTIONS</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">;;</span>
+
+stop<span class="o">)</span>
+log_action_begin_msg<span class="w"> </span><span class="s2">&quot;Stoping vncserver for user &#39;</span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">&#39; on localhost:</span><span class="si">${</span><span class="nv">DISPLAY</span><span class="si">}</span><span class="s2">&quot;</span>
+su<span class="w"> </span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;/usr/bin/vncserver -kill :</span><span class="si">${</span><span class="nv">DISPLAY</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="p">;;</span>
+
+restart<span class="o">)</span>
+<span class="nv">$0</span><span class="w"> </span>stop
+<span class="nv">$0</span><span class="w"> </span>start
+<span class="p">;;</span>
+<span class="k">esac</span>
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</code></pre></div></td></tr></table></div>
+
+<p>And start&nbsp;with:</p>
+<div class="highlight"><pre><span></span><code>./vncserver.sh start remote_user 1
+</code></pre></div>
+
+<p>The remote user is then able to login to port <code>5901</code>.</p>
+<p>Edit <code>/home/remote_user/.vnc/xstartup</code> to your liking. I&#8217;m using <span class="caps">LXDE</span>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/sh</span>
+xrdb<span class="w"> </span><span class="nv">$HOME</span>/.Xresources
+xsetroot<span class="w"> </span>-solid<span class="w"> </span>black
+lxterminal<span class="w"> </span><span class="p">&amp;</span>
+/usr/bin/lxsession<span class="w"> </span>-s<span class="w"> </span>LXDE<span class="w"> </span><span class="p">&amp;</span>
+</code></pre></div></td></tr></table></div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

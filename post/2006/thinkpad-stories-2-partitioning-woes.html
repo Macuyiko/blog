@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Thinkpad Stories 2: “Partitioning woes.”</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-2-partitioning-woes.html" rel="bookmark"
+			title="Permalink to Thinkpad Stories 2: “Partitioning woes.”">Thinkpad Stories 2: &#8220;Partitioning&nbsp;woes.&#8221;</a></div>
+		</header>
+	
+	    <p>It was getting late when I finally figured out how to properly boot. Now: it was time for the actual&nbsp;install&#8230;</p>
+<p>Of course: I had to partition, but I wanted to keep Windows <span class="caps">XP</span> (on a smaller partition) and my Recovery partition. I was happy to see a resize option for my Windows <span class="caps">XP</span> drive, I picked it and try to&nbsp;execute.</p>
+<p>Nothing&nbsp;happens&#8230;</p>
+<p>Again? Nothing! Oh well, I had expected this. <span class="caps">NTFS</span> always gives me headaches in Linux (reading, writing, resizing, the&nbsp;works&#8230;).</p>
+<p>So I want to boot back into Windows and try some resizing&nbsp;tool.</p>
+<div class="highlight"><pre><span></span><code>No operating system
+</code></pre></div>
+
+<p>Great, the partition is messed up. Ah well, back to Ubuntu installer and execute plan B, I partition my harddrive as&nbsp;follows:</p>
+<ul>
+<li>First - 40 <span class="caps">GB</span>, <span class="caps">FAT32</span>: Windows <span class="caps">XP</span>, no mount point,&nbsp;bootable.</li>
+<li>Second - 50 <span class="caps">GB</span>, ext3: Ubuntu, mount point /,&nbsp;bootable.</li>
+<li>Third - <span class="caps">MAX</span> <span class="caps">GB</span> (around 4 <span class="caps">GB</span>),&nbsp;swap.</li>
+<li>Last - remaining size, my recovery partition: remains&nbsp;untouched.</li>
+</ul>
+<p>Save and format / and swap. Exit installer, and press the ThinkVantage&nbsp;button.</p>
+<p>Yes: the recovery partition still works. File recovery, back to factory settings (&#8220;oh no it is going to wipe my partitions&#8221;), keep&nbsp;nothing.</p>
+<p><span class="dquo">&#8220;</span>Do you want to install on C:\ and format. Or do you want to format the whole hard&nbsp;driver?&#8221;</p>
+<p>Yes! Only C:\ of course (the <span class="caps">FAT32</span> partition I made in Ubuntu&nbsp;installer).</p>
+<p>Okay: this takes a lot of time. Really a lot. The first steps go fast (I was happy) but after that it has to perform a truckload of post-installation installs (that bullshitware again). It&#8217;s passed&nbsp;midnight&#8230;</p>
+<p>Done: I wipe the crapware and go back to&nbsp;Ubuntu.</p>
+<div class="highlight"><pre><span></span><code>boot:
+</code></pre></div>
+
+<p>I type &#8220;server&#8221; and press enter. I&#8217;m tired and fetching all that stuff now over the Internet will take too long. It installs. Grub&#8217;s being nice and detects both my Windows <span class="caps">XP</span> and Recovery&nbsp;partition.</p>
+<p>I went to bed (2 am). And did&nbsp;a</p>
+<div class="highlight"><pre><span></span><code>sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install ubuntu-desktop
+</code></pre></div>
+
+<p>this&nbsp;morning.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

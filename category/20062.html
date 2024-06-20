@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - 2006 category</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-2-partitioning-woes.html" rel="bookmark"
+				title="Permalink to Thinkpad Stories 2: “Partitioning woes.”">Thinkpad Stories 2: &#8220;Partitioning&nbsp;woes.&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>It was getting late when I finally figured out how to properly boot. Now: it was time for the actual&nbsp;install&#8230;</p>
+<p>Of course: I had to partition, but I wanted to keep Windows <span class="caps">XP</span> (on a smaller partition) and my Recovery partition. I was happy to see a resize option …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/thinkpad-stories-2-partitioning-woes.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-3-now-for-some-colours.html" rel="bookmark"
+				title="Permalink to Thinkpad Stories 3: “Now for some colours…”">Thinkpad Stories 3: &#8220;Now for some&nbsp;colours&#8230;&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Ubuntu&#8217;s finished installing. It all looks&nbsp;nice.</p>
+<p>I picked a nice <a href="http://interfacelift.com/wallpaper/index.php">wallpaper,</a> set my workspaces to 8, and installed gnome-art (sudo apt-get install gnome-art). Picked some nice decorations (I like the Human theme but not that much) and sat back for a few seconds to admire my new&nbsp;desktop …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/thinkpad-stories-3-now-for-some-colours.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/thinkpad-stories-4-render-it-dammit.html" rel="bookmark"
+				title="Permalink to Thinkpad Stories 4: “Render it dammit!”">Thinkpad Stories 4: &#8220;Render it&nbsp;dammit!&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>i810&#8230; <code>glxinfo | grep direct</code> is giving nothing. Something about 1.5.0 expected but 1.4.*&nbsp;found.</p>
+<p>Anyhow: I could not get it to work. It seemed fine however, but glgears proved otherwise: slow as&nbsp;hell.</p>
+<p>I was giving up on it and decided to try and install <span class="caps">AIGLX</span>, so …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/thinkpad-stories-4-render-it-dammit.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Fri 11 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/welcome-thinkpad-x60.html" rel="bookmark"
+				title="Permalink to Welcome Thinkpad X60">Welcome Thinkpad&nbsp;X60</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Good news everyone: yesterday my Thinkpad X60 arrived. I toyed a little bit but had already decided I wanted to put Ubuntu on&nbsp;it.</p>
+<p>I encountered some (small) problems on my way to my perfect Ubuntu setup, but I&#8217;ve been able to solve them. In the following posts I …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/welcome-thinkpad-x60.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 13 July 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html" rel="bookmark"
+				title="Permalink to Sacrifice RAM Problem (Or: Fixing an Old Game)">Sacrifice <span class="caps">RAM</span> Problem (Or: Fixing an Old&nbsp;Game)</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Update: check out new post with updated instructions <a href="|filename/2008_10_sacrifice-revisited.md">over here</a>.</p>
+<p>Recently I found my old copy of Sacrifice (<a href="http://www.gamespot.com/pc/strategy/sacrifice/">Gamespot link</a>). I really like this game because it reminds me of <a href="http://en.wikipedia.org/wiki/Julian_Gollop">Jullian Gollop</a>&#8216;s Chaos. (Has anyone ever played this game on the Spectrum?) Basically, it&#8217;s a bunch of wizards …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/sacrifice-ram-problem-or-fixing-an-old-game.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/category/2006.html">&laquo; Prev</a>
+	Page 2 of 2	
+	Next &raquo;
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

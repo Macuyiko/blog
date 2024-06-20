@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Some Quick Spatial Kriging Fun With Aqicn.org</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 06 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/some-quick-spatial-kriging-fun-with-aqicnorg.html" rel="bookmark"
+			title="Permalink to Some Quick Spatial Kriging Fun With Aqicn.org">Some Quick Spatial Kriging Fun With&nbsp;Aqicn.org</a></div>
+		</header>
+	
+	    <p>Our local Belgian media was just reporting on a study showing that air pollution has a negative impact on the cognitive abilities of children (<a href="http://www.demorgen.be/binnenland/wetenschappers-trekken-aan-alarmbel-vuile-lucht-maakt-kind-minder-aandachtig-bc60b3ac/">link in Dutch</a>).</p>
+<p>With that in mind, I was reminded of the <a href="http://aqicn.org/">World Air Quality Index team</a>, which keeps track of pollution values across the world. In <a href="http://aqicn.org/city/brussels/">Brussels</a>, the index is (today) at 75. Well, if that&#8217;s bad, the index is &gt;300 for <a href="http://aqicn.org/city/beijing">Beijing</a>.</p>
+<p>Seeing as I&#8217;ll be heading towards China again soon, I spend half an hour trying to have some quick fun with spatial <a href="https://en.wikipedia.org/wiki/Kriging">kriging</a> using this data set, also sometimes referred to as &#8212; or used to perform &#8212; <a href="https://docs.qgis.org/2.2/en/docs/gentle_gis_introduction/spatial_analysis_interpolation.html">spatial interpolation</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="nf">library</span><span class="p">(</span><span class="n">rworldmap</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">rjson</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RCurl</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">kriging</span><span class="p">)</span>
+
+<span class="n">baseurl</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&#39;https://wind.waqi.info/mapq/bounds/?bounds={bounds}&amp;inc=placeholders&#39;</span>
+<span class="n">newmap</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">getMap</span><span class="p">(</span><span class="n">resolution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;low&quot;</span><span class="p">)</span>
+
+<span class="n">bounds</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">18.312810846425442</span><span class="p">,</span><span class="m">77.783203125</span><span class="p">,</span><span class="m">48.16608541901253</span><span class="p">,</span><span class="m">129.462890625</span><span class="p">)</span>
+
+<span class="n">jsondata</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">getURL</span><span class="p">(</span><span class="nf">str_replace</span><span class="p">(</span><span class="n">baseurl</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;\\{bounds\\}&#39;</span><span class="p">,</span><span class="w"> </span><span class="nf">paste</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span><span class="w"> </span><span class="n">collapse</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">)))</span>
+<span class="n">jsondata</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">do.call</span><span class="p">(</span><span class="n">rbind.data.frame</span><span class="p">,</span><span class="w"> </span><span class="nf">fromJSON</span><span class="p">(</span><span class="n">jsondata</span><span class="p">))</span>
+<span class="n">jsondata</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">jsondata</span><span class="p">[</span><span class="n">jsondata</span><span class="o">$</span><span class="n">aqi</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">&#39;-&#39;</span><span class="p">,]</span>
+
+<span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">kriging</span><span class="p">(</span><span class="n">jsondata</span><span class="p">[,</span><span class="s">&#39;lon&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">jsondata</span><span class="p">[,</span><span class="s">&#39;lat&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">jsondata</span><span class="p">[,</span><span class="s">&#39;aqi&#39;</span><span class="p">])</span>
+
+<span class="nf">plot</span><span class="p">(</span><span class="n">newmap</span><span class="p">,</span><span class="w"> </span><span class="n">ylim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">bounds</span><span class="p">[</span><span class="m">3</span><span class="p">]),</span><span class="w"> </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="n">bounds</span><span class="p">[</span><span class="m">4</span><span class="p">]),</span><span class="w"> </span><span class="n">asp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+
+<span class="n">colorRamp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="m">100</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">rb</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">colorRampPalette</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#39;green&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;yellow&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;orange&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;red&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;purple&#39;</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;darkred&#39;</span><span class="p">))</span>
+<span class="w">  </span><span class="nf">rb</span><span class="p">(</span><span class="n">b</span><span class="p">)[</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">cut</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">))]</span>
+<span class="p">}</span>
+
+<span class="n">model</span><span class="o">$</span><span class="n">map</span><span class="o">$</span><span class="n">col</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">colorRamp</span><span class="p">(</span><span class="n">model</span><span class="o">$</span><span class="n">map</span><span class="o">$</span><span class="n">pred</span><span class="p">)</span>
+<span class="nf">apply</span><span class="p">(</span><span class="n">model</span><span class="o">$</span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">points</span><span class="p">(</span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;x&#39;</span><span class="p">]],</span><span class="w"> </span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;y&#39;</span><span class="p">]],</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;col&#39;</span><span class="p">]])</span>
+<span class="p">})</span>
+
+<span class="nf">plot</span><span class="p">(</span><span class="n">newmap</span><span class="p">,</span><span class="w"> </span><span class="n">ylim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="m">1</span><span class="p">],</span><span class="w"> </span><span class="n">bounds</span><span class="p">[</span><span class="m">3</span><span class="p">]),</span><span class="w"> </span><span class="n">xlim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="m">2</span><span class="p">],</span><span class="w"> </span><span class="n">bounds</span><span class="p">[</span><span class="m">4</span><span class="p">]),</span><span class="w"> </span><span class="n">asp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">)</span>
+
+<span class="n">jsondata</span><span class="o">$</span><span class="n">col</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">colorRamp</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">jsondata</span><span class="o">$</span><span class="n">aqi</span><span class="p">))</span>
+<span class="nf">apply</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nf">points</span><span class="p">(</span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;lon&#39;</span><span class="p">]],</span><span class="w"> </span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;lat&#39;</span><span class="p">]],</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">23</span><span class="p">,</span><span class="w"> </span><span class="n">bg</span><span class="o">=</span><span class="n">r</span><span class="p">[[</span><span class="s">&#39;col&#39;</span><span class="p">]])</span>
+<span class="p">})</span>
+</code></pre></div>
+
+<p><img alt="" src="/images/2017/spatial.png"></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

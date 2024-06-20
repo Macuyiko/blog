@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>SmoothLife in Processing</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 08 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/smoothlife-in-processing.html" rel="bookmark"
+			title="Permalink to SmoothLife in Processing">SmoothLife in&nbsp;Processing</a></div>
+		</header>
+	
+	    <p>Conway’s <a href="http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Game of Life</a> is one of the most popular examples of cellular automaton. However, did you know that <a href="http://arxiv.org/abs/1111.1567">Stephan Rafler</a> proposed a version of Game of Life in 2011 which works over a contious domain, called&nbsp;SmoothLife?</p>
+<iframe width="500" height="300" src="https://www.youtube.com/embed/KJe9H6qS82I" frameborder="0" allowfullscreen></iframe>
+
+<p>Cool, isn&#8217;t it? The basic idea is that the grid of cells is replaced here with an effective grid where each cell occupies a continuous coordinate with a very small finite size and with the neighbors calculated based on a radius around that&nbsp;cell.</p>
+<p><a href="https://0fps.net/2012/11/19/conways-game-of-life-for-curved-surfaces-part-1/">This blog post</a> summarised the idea well and also provides a <a href="http://jsfiddle.net/mikola/aj2vq/">JavaScript implementation</a>.</p>
+<p>Since I&#8217;m toying around with <a href="https://processing.org/">Processing</a> again these days, it seemed like a fun quick project to convert the source to&nbsp;Java:</p>
+<script src="https://gist.github.com/Macuyiko/566840fe90642b9ddb37f57769496a60.js"></script>
+
+<p>Here&#8217;s what the results look like. Higher resolutions are possible but can&#8217;t be rendered in real-time due to the slower <span class="caps">FFT</span> implementation (it would be fun to import <a href="http://www.fftw.org/download.html"><span class="caps">FFTW</span></a> and see how that&nbsp;fares).</p>
+<p>Here&#8217;s what the result looks&nbsp;like:</p>
+<p><img alt="" src="/images/2017/output.gif"></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

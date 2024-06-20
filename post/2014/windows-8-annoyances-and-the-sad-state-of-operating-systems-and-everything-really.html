@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Windows 8 Annoyances (and the Sad State of Operating Systems and Everything, Really)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 31 July 2014, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2014/windows-8-annoyances-and-the-sad-state-of-operating-systems-and-everything-really.html" rel="bookmark"
+			title="Permalink to Windows 8 Annoyances (and the Sad State of Operating Systems and Everything, Really)">Windows 8 Annoyances (and the Sad State of Operating Systems and Everything,&nbsp;Really)</a></div>
+		</header>
+	
+	    <p>This was going to be a short &#8220;list&#8221; post, but expanded to something a little bit&nbsp;larger.</p>
+<p>Recently, I&#8217;ve acquired a shiny new Dell <span class="caps">XPS</span> laptop. The exact specs are not important; compared to almost a <a href="////blog.macuyiko.com/post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html">decennia ago</a>, phones, laptops, desktops and tablets have gained such a commodity-status that most of us no longer drool over the details. It just needs to work, give me <span class="caps">16GB</span> of <span class="caps">RAM</span>, give me a quad core, and it&#8217;ll be fine for a few years or so. No one&nbsp;cares.</p>
+<p>This &#8220;it just needs to work so I can get stuff done&#8221; mentality has, at least for me, becoming ever more prevalent, not only in hardware usage, but also software. This is why I am also getting ever more annoyed when things don&#8217;t work as expected, oftentimes for very incomprehensible or dumb&nbsp;reasons.</p>
+<p>And so, I arrive at the meat of this post, a list of annoying little grievances which have been bugging me on this Windows 8 installation this laptop came with. I just list them here since they amuse me, but I&#8217;ll try to add some pictures (<a href="http://www.reddit.com/r/softwaregore/">software gore</a> style) later as&nbsp;well.</p>
+<ul>
+<li>My laptop displays &#8220;Windows is low on memory&#8221; errors every time I don&#8217;t use it for a few hours. Mind, however, that no unusual programs are running and that the Task Manager shows more than <span class="caps">8GB</span> out of the <span class="caps">16GB</span> free every single&nbsp;time.</li>
+<li>The <span class="caps">DPI</span> scaling system is a horrible mess. For so many reasons. My laptop screen has this huge resolution, which is totally unnecessary other than for Dell to claim they have a &#8220;retina&#8221; screen. My external monitor has a traditional 1920x1200 resolution. Switching between the two and keeping a sensible scaling is not possible without restarting. Some applications do not adhere to the <span class="caps">DPI</span> scaling setting. So I need to frequently enable and disable <span class="caps">DPI</span> scaling for some applications. In many cases, I have the choice between using an app with correct scaling but as a horrible blurry mess, or in a tiny screen. In some cases, the screen and most <span class="caps">UI</span> elements are scaled correctly, except for some button-panel which has ant-sized buttons. I&#8217;m talking about things such as Remote Desktop and the Dropbox&nbsp;menu&#8230;</li>
+<li>What is up with this horrible start screen. I have to shell out a few bucks for Start8. Ok, fine, no problem, but why not just include this by&nbsp;default.</li>
+<li>In fact, I wish to disable this new interface concept completely. I don&#8217;t want to open this full screen photo viewing app (which stays running in the background even if I go back to the&nbsp;Desktop).</li>
+<li>Same for this WiFi panel. It&#8217;s not too bad, but seriously, a purple&nbsp;slide-in&#8230;</li>
+<li>When I&#8217;m not connected to my university <span class="caps">VPN</span>, Windows will continuously try to connect with some shared drives and printers until the timeout occurs. Explorer windows will freeze during this period. Figure it out, Windows, I&#8217;m not&nbsp;connected!</li>
+<li>Related to the above, Word will actually crash when saving if you open it whilst having shared drives connected and disconnecting from <span class="caps">VPN</span> afterwards, even when the file is saved&nbsp;locally.</li>
+<li>In some cases, and I&#8217;m not sure why and when this happens, my keyboard layout will get messed up and start spewing out random gibberish. Not related to the language setting (those are fine, and switching does nothing). I&#8217;m talking about an qwerty-azerty thing here, I mean qwerty to k$n5d. Restarting is the only thing which magically fixes&nbsp;it.</li>
+</ul>
+<p>I could go on. The reality is that I am not <em>that</em> bothered by Windows 8 (not so much as other people seem to be, at least), and I realize I come pretty late to the complaining-party. The key to this all is though: why can&#8217;t this just work? I have similar feelings when using a shiny new Linux distribution with some &#8220;revolutionary&#8221; window manager. No, a Linux desktop is not a tablet, stop it! The solution is also not to revert back to Windows 7. I&#8217;ve looked into this, it&#8217;s too much work,&nbsp;really.</p>
+<p>I have the same feeling on my iDevices. I had an unfortune accident and switched from Android to an iPhone. Try to download a <span class="caps">ZIP</span> file, putting it on Dropbox and sharing a share link in an e-mail. Good luck&#8230; you&#8217;re better off finding the nearest laptop. This really makes me miss Android&#8217;s brilliant intent system. Honestly, you never know which app will be able to share some object with which other&nbsp;apps.</p>
+<p>On Linux, I have similar feelings. Why did my package repository get corrupted again? Why does sound stop working? Why are WiFi connections dealt with so badly? I can deal with (mostly) elementaryOS and CrunchBang. The first because it is minimal (it also clones <span class="caps">OSX</span> but whatever) and gets out of your way, the second because it is&nbsp;nimble.</p>
+<p>Google: mostly okay, although some recent changes have also been bothering me. What is up with this &#8220;comfortable&#8221; white space design trend. Yes, when I am browsing an <span class="caps">IKEA</span> brochure, this great type and breathing white space is awesome. When I&#8217;m hunting down an e-mail from 2 months ago, use every pixel you got! Compact! Same with the cards on Android. Yes, this material-inspired design philosophy looks awesome, but I can&#8217;t feel but help Google Maps, for example, got crippled in recent years, if I look up a restaurant I <em>know</em> is nearby (and Google also knows given the autosuggest), but still sends me to a similarly named place miles away upon selecting&nbsp;it.</p>
+<p>Updates, another gripe. Luckily, this is something smartphones do tend to do well. Just update it, I don&#8217;t want to babysit. No don&#8217;t tell me about a new version and ask me to download it and go through an installer, just update it and pop up a notifation or&nbsp;something.</p>
+<p>In the past, I used to be amazed by computing. I used to spend weekends installing Linux distro after distro and playing around with it. Now that I am older and more busy, I am still amazed by cool things, but I have also become pragmatic. If I pickup a device after 2 weeks, I don&#8217;t want to fight with it before using it. PlayStation or XBox, I&#8217;m looking at you. For me, I don&#8217;t care if you leave yourself in standby mode and update silently. I want to play a game, not install a <span class="caps">500MB</span> update. Oh, also an update for the game? Oh, then 3 intro screens you can&#8217;t skip. Am I made of&nbsp;time?</p>
+<p>Don&#8217;t get me wrong, stuff gets better all the time and generally, everything works well and great, but there is a lot of room left for improvement. When things do work, however, all is well; there are some systems, I feel, who do it well. The first is Android (the stock one, none of the customized ones) and ChromeOS, off all things. The latter is deliberately very limiting (just a browser), but it is great at what it does (everything in the cloud, app management, automatic updates, simplicity of usage). Maybe this is due to information overload. Too many devices, too many apps, too much stuff. This is also part of the reason why I moved all my documents to Google Drive recently, it at least resolves some of the disparity. I&#8217;m sure this will bite me some day when I forget to do a payment or the sync client royally effs up, but for now it works quite&nbsp;well.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

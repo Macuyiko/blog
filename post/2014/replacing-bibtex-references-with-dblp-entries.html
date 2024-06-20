@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Replacing BibTeX References With DBLP Entries</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 29 June 2014, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2014/replacing-bibtex-references-with-dblp-entries.html" rel="bookmark"
+			title="Permalink to Replacing BibTeX References With DBLP Entries">Replacing BibTeX References With <span class="caps">DBLP</span>&nbsp;Entries</a></div>
+		</header>
+	
+	    <ul>
+<li><em>Update (2014-08-08):</em> commenters on <a href="https://twitter.com/macuyiko">Twitter</a> have notified me about <a href="http://www.snowelm.com/~t/doc/tips/makebib.en.html">this script</a> which aims to accomplish something similar, without <span class="caps">DBLP</span>, however. Fellow researcher Joos Buijs has also started working on a <span class="caps">DBLP</span>-enabled BibTeX cleaner over <a href="https://github.com/joosbuijs/bibcleaner">here</a>.</li>
+<li><em>Update (2014-10-17):</em> all code is now up on a separate <a href="http://blog.macuyiko.com/post/2014/replacing-bibtex-references-with-dblp-entries.html">GitHub repository</a>. <a href="https://twitter.com/macuyiko">Let me know</a> any cool stuff you end up doing with&nbsp;this.</li>
+</ul>
+<p>This post is a kind of a follow-up for <a href="////blog.macuyiko.com/post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html">this one</a>.</p>
+<p>I am currently busy writing up my dissertation, and apart from creating a bunch-of-script to do the&nbsp;following:</p>
+<ul>
+<li>Merge BiBTeX&nbsp;files</li>
+<li>Rekey all of them (the same keys can refer to actual different&nbsp;entries)</li>
+<li>Remove&nbsp;duplicates</li>
+</ul>
+<p>I also wanted to clean up the resulting reference list by using as much as possible information from <a href="http://www.dblp.org/search/index.php"><span class="caps">DBLP</span></a>, a computer science bibliography repository. Not all of the references I use are on there, most most of them are, and I prefer <span class="caps">DBLP</span>&#8217;s structured bibliography above any other sources (they&#8217;re very clean and&nbsp;complete).</p>
+<p>Getting to a BibTeX entry in <span class="caps">DBLP</span> is pretty easy. Performing a search for <a href="http://www.dblp.org/search/index.php#query=seppe vanden broucke">my name</a>, for instance, provides a list of results from which it is easy to find a <a href="http://www.dblp.org/rec/bibtex/conf/caise/BrouckeWBV12">particular entry</a>. A like how the same resource identifier serves as BibTeX key (e.g. &#8220;<span class="caps">DBLP</span>:conf/caise/BrouckeWBV12&#8221;) and as part of the <span class="caps">URL</span> on <span class="caps">DBLP</span> (e.g. &#8220;http://www.dblp.org/rec/bibtex/conf/caise/BrouckeWBV12&#8221;), making it easy to go navigate&nbsp;around.</p>
+<p>I also like how <span class="caps">DBLP</span> provides a search api over at <a href="http://www.dblp.org/search/api/">http://www.dblp.org/search/api/</a>.</p>
+<p>After fiddling for half an hour I put together the following Java script to fetch entries from <span class="caps">DBLP</span> and replace existing ones when&nbsp;possible:</p>
+<script src="https://gist.github.com/Macuyiko/3a7231681a251fc812f0.js"></script>
+
+<p>A caveat though: the script is very messy and not really an exercise in clean coding. In any case, it got the job done and might serve helpful for those trying to do something similar. The script is user driven in order to make sure the right entry gets selected (most of the time, it will be the number one entry). It&#8217;s also possible to change the automatic query string to a manual one and perform the search again for tricky&nbsp;entries.</p>
+<p>Finally, running this will result in some crossrefs being added twice, but since they will have the same key, the duplicates can be easily filtered out in a post-filtering&nbsp;step.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

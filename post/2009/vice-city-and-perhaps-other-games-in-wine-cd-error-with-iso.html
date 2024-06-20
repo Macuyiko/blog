@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Vice City (And Perhaps Other Games) In Wine - CD Error With ISO</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 28 April 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/vice-city-and-perhaps-other-games-in-wine-cd-error-with-iso.html" rel="bookmark"
+			title="Permalink to Vice City (And Perhaps Other Games) In Wine - CD Error With ISO">Vice City (And Perhaps Other Games) In Wine - <span class="caps">CD</span> Error With <span class="caps">ISO</span></a></div>
+		</header>
+	
+	    <p>So, you&#8217;ve just gotten yourself two .iso&#8217;s for Grand Theft Auto: Vice City (your backups, of course), which you want to play in Wine. What do you&nbsp;do?</p>
+<p>That&#8217;s easy, you&nbsp;say:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">sudo</span><span class="w"> </span><span class="nv">mkdir</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimag</span>
+<span class="nv">sudo</span><span class="w"> </span><span class="nv">mount</span><span class="w"> </span><span class="o">-</span><span class="nv">o</span><span class="w"> </span><span class="k">loop</span><span class="w"> </span>.<span class="o">/</span><span class="nv">cd1</span>.<span class="nv">iso</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimage</span>
+</code></pre></div>
+
+<p>And start the setup with&nbsp;Wine.</p>
+<p>Now the installer asks for the second <span class="caps">CD</span>, what do you do? Here we have to &#8220;eject&#8221; our &#8220;cd&#8221;&nbsp;first&#8230;</p>
+<div class="highlight"><pre><span></span><code><span class="nv">wine</span><span class="w"> </span><span class="nv">eject</span>
+<span class="nv">sudo</span><span class="w"> </span><span class="nv">umount</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimage</span>
+<span class="nv">sudo</span><span class="w"> </span><span class="nv">mount</span><span class="w"> </span><span class="o">-</span><span class="nv">o</span><span class="w"> </span><span class="k">loop</span><span class="w"> </span>.<span class="o">/</span><span class="nv">cd2</span>.<span class="nv">iso</span><span class="w"> </span><span class="o">/</span><span class="nv">media</span><span class="o">/</span><span class="nv">isoimage</span>
+</code></pre></div>
+
+<p>And we&#8217;re done. You want to start the game, but it requires the play disk, even although you&#8217;re sure you&#8217;ve mounted it. Thing is, Vice City isn&#8217;t looking at your <code>/media/isoimage</code> mount point, but it&#8217;s looking at your drive letters&#8230; where could the cd&nbsp;be?</p>
+<p>Take a look in <code>~/.wine/dosdevices</code> (it&#8217;s a hidden directory in your home folder). We&#8217;re going to create two symbolic links there (in my case, there were a lot of symbolic, broken links already there, I deleted every one of them except c: and z:). One for the mount point, and one for the actual device (or in our case: the&nbsp;image).</p>
+<div class="highlight"><pre><span></span><code>ln -sf /media/isoimage ~/.wine/dosdevices/e:
+ln -sf ~/cd2.iso ~/.wine/dosdevices/e::
+</code></pre></div>
+
+<p>Note the double colons (e::) in the second line. That&#8217;s it, the game should start fine&nbsp;now.</p>
+<p>Be sure to replace <code>/media/isoimage</code>, <code>e:</code>, <code>e::</code>, <code>~/cd1.iso</code>, <code>~/cd2.iso</code> and other displayed paths/locations with the ones relevant for&nbsp;you.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

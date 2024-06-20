@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Rebuilding our Jython Console Plugin for Minecraft</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+	<div class="postheader">
+		<div class="postheader-wrap">
+			<img class="postheader-trans" src="data:image/gif;base64,R0lGODlhMgAVAPAAAP///wAAACH5BAEAAAAALAAAAAAyABUAAAIfhI+py+0Po5y02ouz3rz7D4biSJbmiabqyrbuC8dTAQA7">
+			<img class="postheader-cover" src="/images/backgrounds/minecraft2.png">
+		</div>
+	</div>
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 21 January 2015, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2015/rebuilding-our-jython-console-plugin-for-minecraft.html" rel="bookmark"
+			title="Permalink to Rebuilding our Jython Console Plugin for Minecraft">Rebuilding our Jython Console Plugin for&nbsp;Minecraft</a></div>
+<div class="article-subtitle">A Python interpreter for a CanaryMod Minecraft server</div>		</header>
+	
+	    <h3>Summary and&nbsp;Changes</h3>
+<p>This post describes how you can create a Python interpreter for a CanaryMod Minecraft server, providing access to the full internal Canary <span class="caps">API</span> (CanaryLib). Commands are issued on a separate console window and do not require players or server administrators to be running the game&nbsp;itself.</p>
+<p>Following list provides an overview of&nbsp;changes:</p>
+<ul>
+<li>2015-01-21: Initial&nbsp;version.</li>
+</ul>
+<h3>Introduction</h3>
+<p>About two years ago (man, time flies), I wrote a <a href="////blog.macuyiko.com/post/2013/a-bukkit-jython-console-plugin-for-minecraft.html">blog post</a> about setting up a Python shell which allows you to interact with a running Minecraft server using the full arsenal of the Bukkit <span class="caps">API</span>. I&#8217;ve gotten some nice comments, even although it was not very clear for some people what the goal was. E.g. &#8220;Doesn&#8217;t <a href="https://www.scriptcraftjs.org">ScriptCraft</a> already do this?&#8221; Answer: yes, although by means of hooking commands &#8220;using <code>/js</code> and through a JavaScript interpreter&#8221;. In my project, I wanted Python and avoid the whole hooking mess (also, I wanted to avoid that you should be logged in to the server as a player in order to run&nbsp;commands).</p>
+<p>Sadly, though, the Bukkit people encountered some legal issues and have ceased developing their server implementation. When this came to my attention, I did some browsing around and it looks like the <a href="http://canarymod.net/">CanaryMod</a> project is now the de facto way to go to set up servers with modding support. The <span class="caps">API</span> even looks similar to&nbsp;Bukkit.</p>
+<p>So to re-iterate, here&#8217;s what we are going to be making&#8230; We&#8217;re thus going to create a Canary (I use &#8220;Canary&#8221;, &#8220;CanaryMod&#8221; and &#8220;CanaryLib&#8221; interchangeably here) plugin which gives server administrators or programming students direct access to the full <a href="http://docs.visualillusionsent.net/CanaryLib/">Canary <span class="caps">API</span></a>. The actual plugin is actually very simple, thanks to the magic of Jython, a Python implementation in Java which allows for Python&lt;-&gt;Java crosstalk and saves us from having to implement any command in the plugin itself. Commands are issued on a separate console window and do not require players or server administrators to be running the game&nbsp;itself.</p>
+<p>To provide an example of what this means, let&#8217;s say you want to make a plugin which makes it rain. Normally, you&#8217;d make a plugin which binds this to a player command, say, <code>/rain</code> and would execute the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><code>Canary.getServer().getDefaultWorld().setRaining(true);
+</code></pre></div>
+
+<p>That&#8217;s nice in case your goal is to deliver a packaged plugin with a well defined set of functionality, but what if a server administrator would like to make it rain, just because they feel like it. Normally, they&#8217;d need to search for a plugin which allows them to do this, install it, restart the server, and type <code>\rain</code> into chat. What our Python console will allow is just to&nbsp;type:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="kn">from</span><span class="w"> </span><span class="nn">net.canarymod</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Canary</span>
+<span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Canary</span><span class="o">.</span><span class="n">getServer</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">w</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">getDefaultWorld</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">s</span><span class="o">.</span><span class="n">broadcastMessage</span><span class="p">(</span><span class="s2">&quot;I&#39;ll make it rain now&quot;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">w</span><span class="o">.</span><span class="n">setRaining</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The video below shows some more action shots, including changing the time, weather, creating explosions, lightning, and placing blocks. Read on in case this catches your&nbsp;interest.</p>
+<div class="videowrapper"><iframe src="//www.youtube.com/embed/j4JfwS5hNlw" frameborder="0" allowfullscreen></iframe></div>
+
+<h3>Developing the&nbsp;Plugin</h3>
+<p>We&#8217;ll be creating a Canary plugin which will spawn a server listening for incoming connection requests to obtain a Python interactive console, as well as showing a <span class="caps">GUI</span> console for the local administrator. In case you just want to get started as quickly as possible with the plugin, you can skip this&nbsp;section.</p>
+<p>First of all, we&#8217;re going to create a new Java project in Eclipse. I&#8217;ll call this <code>CanaryConsole</code>. We create a <code>Canary.inf</code> file in the project root with some basic&nbsp;information:</p>
+<div class="highlight"><pre><span></span><code>main-class = com.macuyiko.canaryconsole.MainPlugin
+name = CanaryConsole
+author = Seppe vanden Broucke
+version = 1.0.0
+isLibrary = false
+</code></pre></div>
+
+<p>Next up, we create a <code>lib</code> folder in which we&#8217;re going to put our main&nbsp;libraries:</p>
+<ul>
+<li><code>jython-standalone-*.jar</code>: to be downloaded from the <a href="http://www.jython.org/downloads.html">Jython</a> web&nbsp;site</li>
+<li><code>CanaryLib-*.jar</code>: the Canary development <span class="caps">API</span>, which can be downloaded from <a href="https://ci.visualillusionsent.net/job/CanaryLib/lastSuccessfulBuild/">here</a>.</li>
+<li><code>CanaryMod-*.jar</code>: the main Canary&nbsp;server.</li>
+</ul>
+<p>Add these libraries to the build&nbsp;path.</p>
+<p>As CanaryLib is a Maven project, it is also possible to follow the instruction over at <a href="http://canarymod.net/books/canarymod-development/setting-your-eclipse">the official site</a>. In order to set everything up. I prefer to avoid working with Maven, so I just fetched all the dependency jars and put them in a <code>deps</code> folder.</p>
+<p>The <a href="https://github.com/Macuyiko/MinecraftPythonConsole">complete Eclipse project can be found over at GitHub</a>, which you can just clone or download to get&nbsp;started.</p>
+<p>Next, we&#8217;ll create the plugin classes themselves. Create a package under <code>src</code> called <code>com.macuyiko.canaryconsole</code>. We&#8217;re going to add two classes to start&nbsp;with.</p>
+<p><code>MainPlugin.java</code>, this class just loads the libraries from the <code>lib</code> folder and spawns a <code>PythonConsole</code> window:</p>
+<div class="highlight"><pre><span></span><code><span class="n">package</span><span class="w"> </span><span class="n">com</span><span class="o">.</span><span class="n">macuyiko</span><span class="o">.</span><span class="n">canaryconsole</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.IOException</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.lang.reflect.Method</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.net.URL</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.net.URLClassLoader</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">net.canarymod.plugin.Plugin</span><span class="p">;</span>
+
+<span class="n">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MainPlugin</span><span class="w"> </span><span class="n">extends</span><span class="w"> </span><span class="n">Plugin</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="n">boolean</span><span class="w"> </span><span class="n">guiconsole</span><span class="p">;</span>
+<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="n">boolean</span><span class="w"> </span><span class="n">serverconsole</span><span class="p">;</span>
+<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">serverport</span><span class="p">;</span>
+<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="n">serverpass</span><span class="p">;</span>
+<span class="w">    </span><span class="n">private</span><span class="w"> </span><span class="n">final</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">serverconns</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">MainPlugin</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nb">super</span><span class="p">();</span>
+<span class="w">        </span><span class="n">guiconsole</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">getBoolean</span><span class="p">(</span><span class="s2">&quot;canaryconsole.guiconsole.enabled&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">);</span>
+<span class="w">        </span><span class="n">serverconsole</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">getBoolean</span><span class="p">(</span><span class="s2">&quot;canaryconsole.serverconsole.enabled&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">true</span><span class="p">);</span>
+<span class="w">        </span><span class="n">serverport</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">getInt</span><span class="p">(</span><span class="s2">&quot;canaryconsole.serverconsole.port&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">44444</span><span class="p">);</span>
+<span class="w">        </span><span class="n">serverpass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">getString</span><span class="p">(</span><span class="s2">&quot;canaryconsole.serverconsole.password&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;swordfish&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">serverconns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">getInt</span><span class="p">(</span><span class="s2">&quot;canaryconsole.serverconsole.maxconnections&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">boolean</span><span class="w"> </span><span class="n">enable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading&quot;</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">File</span><span class="w"> </span><span class="n">dependencyDirectory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;lib/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">File</span><span class="p">[]</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dependencyDirectory</span><span class="o">.</span><span class="n">listFiles</span><span class="p">();</span>
+<span class="w">            </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;JARs found: &quot;</span><span class="o">+</span><span class="n">files</span><span class="o">.</span><span class="n">length</span><span class="p">);</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nb">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">files</span><span class="o">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">endsWith</span><span class="p">(</span><span class="s2">&quot;.jar&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; - &quot;</span><span class="o">+</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">());</span>
+<span class="w">                    </span><span class="n">addURL</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;lib/&quot;</span><span class="o">+</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span><span class="o">.</span><span class="n">toURI</span><span class="p">()</span><span class="o">.</span><span class="n">toURL</span><span class="p">());</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="p">());</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">getConfig</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">();</span>
+
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">guiconsole</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Jython GUI console&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">new</span><span class="w"> </span><span class="n">PythonConsole</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">serverconsole</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting Jython socket console server&quot;</span><span class="p">);</span>
+<span class="w">                </span><span class="n">SocketServer</span><span class="w"> </span><span class="n">server</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">SocketServer</span><span class="p">(</span><span class="n">serverport</span><span class="p">,</span><span class="w"> </span><span class="n">serverconns</span><span class="p">,</span><span class="w"> </span><span class="n">serverpass</span><span class="p">);</span>
+<span class="w">                </span><span class="n">Thread</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Thread</span><span class="p">(</span><span class="n">server</span><span class="p">);</span>
+<span class="w">                </span><span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+<span class="w">                </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Clients can connect to port: &quot;</span><span class="o">+</span><span class="n">serverport</span><span class="p">);</span>
+<span class="w">                </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using the password: &quot;</span><span class="o">+</span><span class="n">serverpass</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="p">());</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">true</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="nd">@Override</span>
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">void</span><span class="w"> </span><span class="n">disable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">getLogman</span><span class="p">()</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;CanaryConsole: Plugin disabled&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">static</span><span class="w"> </span><span class="n">void</span><span class="w"> </span><span class="n">addURL</span><span class="p">(</span><span class="n">URL</span><span class="w"> </span><span class="n">u</span><span class="p">)</span><span class="w"> </span><span class="n">throws</span><span class="w"> </span><span class="n">IOException</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">Horrible</span><span class="w"> </span><span class="n">hack</span><span class="w"> </span><span class="n">taken</span><span class="w"> </span><span class="n">from</span><span class="p">:</span>
+<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">stackoverflow</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">questions</span><span class="o">/</span><span class="mi">60764</span><span class="o">/</span><span class="n">how</span><span class="o">-</span><span class="n">should</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="n">load</span><span class="o">-</span><span class="n">jars</span><span class="o">-</span><span class="n">dynamically</span><span class="o">-</span><span class="n">at</span><span class="o">-</span><span class="n">runtime</span>
+<span class="w">        </span><span class="o">//</span><span class="w"> </span><span class="n">Fix</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">I</span><span class="w"> </span><span class="n">figure</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">there</span><span class="s1">&#39;s a class loader in Canary</span>
+<span class="w">        </span><span class="n">URLClassLoader</span><span class="w"> </span><span class="n">sysloader</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">URLClassLoader</span><span class="p">)</span><span class="w"> </span><span class="n">ClassLoader</span><span class="o">.</span><span class="n">getSystemClassLoader</span><span class="p">();</span>
+<span class="w">        </span><span class="n">Class</span><span class="o">&lt;</span><span class="n">URLClassLoader</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sysclass</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">URLClassLoader</span><span class="o">.</span><span class="n">class</span><span class="p">;</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Method</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sysclass</span><span class="o">.</span><span class="n">getDeclaredMethod</span><span class="p">(</span><span class="s2">&quot;addURL&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Class</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="n">URL</span><span class="o">.</span><span class="n">class</span><span class="p">});</span>
+<span class="w">            </span><span class="n">method</span><span class="o">.</span><span class="n">setAccessible</span><span class="p">(</span><span class="n">true</span><span class="p">);</span>
+<span class="w">            </span><span class="n">method</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">sysloader</span><span class="p">,</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Object</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="n">u</span><span class="p">});</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Throwable</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">t</span><span class="o">.</span><span class="n">printStackTrace</span><span class="p">();</span>
+<span class="w">            </span><span class="n">throw</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">IOException</span><span class="p">(</span><span class="s2">&quot;Error, could not add URL to system classloader&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Note that injecting the libraries in <code>lib</code> is necessary to ensure that the plugin will be able to be aware of Jython while it is running. There are other ways to deal with this as well, such as just extracting the JARs in the final produced <span class="caps">JAR</span> file, if you&nbsp;prefer.</p>
+<p><code>PythonConsole.java</code> contains the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><code><span class="n">package</span><span class="w"> </span><span class="n">com</span><span class="o">.</span><span class="n">macuyiko</span><span class="o">.</span><span class="n">canaryconsole</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">java.io.File</span><span class="p">;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.python.core.PyString</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.python.core.PySystemState</span><span class="p">;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">org.python.util.InteractiveInterpreter</span><span class="p">;</span>
+
+<span class="n">public</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">PythonConsole</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">PythonConsole</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Runnable</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">Runnable</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">public</span><span class="w"> </span><span class="n">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">InteractiveInterpreter</span><span class="w"> </span><span class="n">interpeter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">InteractiveInterpreter</span><span class="p">(</span>
+<span class="w">                        </span><span class="n">null</span><span class="p">,</span><span class="w"> </span><span class="n">getPythonSystemState</span><span class="p">());</span>
+<span class="w">                </span><span class="nb">String</span><span class="w"> </span><span class="n">scriptname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;python/console.py&quot;</span><span class="p">;</span>
+<span class="w">                </span><span class="n">interpeter</span><span class="o">.</span><span class="n">execfile</span><span class="p">(</span><span class="n">scriptname</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">};</span>
+<span class="w">        </span><span class="n">new</span><span class="w"> </span><span class="n">Thread</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">public</span><span class="w"> </span><span class="n">static</span><span class="w"> </span><span class="n">PySystemState</span><span class="w"> </span><span class="n">getPythonSystemState</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">PySystemState</span><span class="w"> </span><span class="n">sys</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">PySystemState</span><span class="p">();</span>
+<span class="w">        </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">PyString</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">PyString</span><span class="p">(</span><span class="s2">&quot;python/&quot;</span><span class="p">));</span>
+<span class="w">        </span><span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">File</span><span class="w"> </span><span class="n">dependencyDirectory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;lib/&quot;</span><span class="p">);</span>
+<span class="w">            </span><span class="n">File</span><span class="p">[]</span><span class="w"> </span><span class="n">files</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dependencyDirectory</span><span class="o">.</span><span class="n">listFiles</span><span class="p">();</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="nb">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">files</span><span class="o">.</span><span class="n">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">()</span><span class="o">.</span><span class="n">endsWith</span><span class="p">(</span><span class="s2">&quot;.jar&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="w"> </span><span class="n">PyString</span><span class="p">(</span>
+<span class="w">                            </span><span class="n">new</span><span class="w"> </span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;lib/&quot;</span><span class="o">+</span><span class="n">files</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">getName</span><span class="p">())</span><span class="o">.</span><span class="n">getAbsolutePath</span><span class="p">()));</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="n">catch</span><span class="w"> </span><span class="p">(</span><span class="n">Exception</span><span class="w"> </span><span class="n">e</span><span class="p">){}</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">sys</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Just as before, I&#8217;m reusing a Jython <span class="caps">GUI</span> console by <a href="http://don.freeshell.org/jython/">Don Coleman</a>. We also need to ensure that all libraries in the <code>lib</code> folder get added to the system path for any Python interpreter we&nbsp;spawn.</p>
+<p>There are two additional classes, <code>SocketServer.java</code> and <code>ConnectionThread.java</code>, which just allow users to login remotely and get a Python interpreter shell. Again, check <a href="https://github.com/Macuyiko/MinecraftPythonConsole">GitHub</a>. For all the&nbsp;details.</p>
+<h4>Installation</h4>
+<p>Installing the plugin is easy. Just export a <span class="caps">JAR</span> file from Eclipse, and dump everything in your CanaryMod&nbsp;folder:</p>
+<ul>
+<li>Your <span class="caps">JAR</span> file should be under <code>/plugins</code>.</li>
+<li>Create a <code>/lib</code> folder next to <code>/plugins</code> (<em>not in <code>/plugins</code></em>) and put the three <span class="caps">JAR</span> libraries from before&nbsp;here.</li>
+<li>Create a <code>/python</code>folder next to <code>/plugins</code> and place the Python console code here (see <a href="https://github.com/Macuyiko/MinecraftPythonConsole">GitHub</a>).</li>
+</ul>
+<p>It is a good idea to change the server configuration to make sure players aren&#8217;t kicked off for inactivity. This allows you to play around while keeping an eye on the Minecraft world to see what is&nbsp;happening.</p>
+<p>Here&#8217;s what it should look like when everything&#8217;s started up: the Canary server console window, Minecraft, and the interpreter console where you can type Python&nbsp;commands.</p>
+<p><img alt="The Minecraft console in action" src="http://blog.macuyiko.com/images/2015/minecraft/minecraft.png"></p>
+<h3>Example&nbsp;Usage</h3>
+<p>The following Python code shows some things you can do from the console using the Canary <span class="caps">API</span>. For more inspiration and ideas, you can look over the <a href="http://docs.visualillusionsent.net/CanaryLib/">Canary <span class="caps">API</span> docs</a>.</p>
+<p>First of, you&#8217;ll want to start of by making sure all your imports are ready to&nbsp;go:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">net.canarymod</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">Canary</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">net.canarymod</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">LineTracer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">net.canarymod.api.world.blocks</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">BlockType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">net.canarymod.api</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="n">GameMode</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="o">*</span>
+
+<span class="c1"># Check if the the main object can be found:</span>
+<span class="n">Canary</span>
+</code></pre></div>
+
+<p>You might also want to set up some helper variables for quick&nbsp;access:</p>
+<div class="highlight"><pre><span></span><code>s = Canary.getServer()
+w = s.getDefaultWorld()
+p = s.getPlayer(&quot;Macuyiko&quot;)
+</code></pre></div>
+
+<p>You can now do things such&nbsp;as:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">s</span>.<span class="nv">broadcastMessage</span><span class="ss">(</span><span class="s2">&quot;An administrator is present... be aware&quot;</span><span class="ss">)</span>
+<span class="nv">w</span>.<span class="k">setTime</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span>
+<span class="nv">w</span>.<span class="nv">setRaining</span><span class="ss">(</span><span class="nv">True</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>Explosions can be created like&nbsp;so:</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="nt">Args</span><span class="o">:</span><span class="w"> </span><span class="nt">spawning</span><span class="w"> </span><span class="nt">entity</span><span class="o">;</span><span class="w"> </span><span class="nt">position</span><span class="o">;</span><span class="w"> </span><span class="nt">force</span><span class="o">;</span><span class="w"> </span><span class="nt">does</span><span class="w"> </span><span class="nt">world</span><span class="w"> </span><span class="nt">damage</span>
+<span class="err">#</span><span class="w"> </span><span class="nt">This</span><span class="w"> </span><span class="nt">one</span><span class="w"> </span><span class="nt">will</span><span class="w"> </span><span class="nt">not</span><span class="w"> </span><span class="nt">damage</span><span class="w"> </span><span class="nt">the</span><span class="w"> </span><span class="nt">player</span><span class="w"> </span><span class="o">(</span><span class="nt">except</span><span class="w"> </span><span class="nt">for</span><span class="w"> </span><span class="nt">fall</span><span class="w"> </span><span class="nt">damage</span><span class="o">)</span>
+<span class="nt">w</span><span class="p">.</span><span class="nc">makeExplosion</span><span class="o">(</span><span class="nt">p</span><span class="o">,</span><span class="w"> </span><span class="nt">p</span><span class="p">.</span><span class="nc">getPosition</span><span class="o">(),</span><span class="w"> </span><span class="nt">8</span><span class="o">,</span><span class="w"> </span><span class="nt">True</span><span class="o">)</span>
+<span class="err">#</span><span class="w"> </span><span class="nt">This</span><span class="w"> </span><span class="nt">one</span><span class="w"> </span><span class="nt">will</span>
+<span class="nt">w</span><span class="p">.</span><span class="nc">makeExplosion</span><span class="o">(</span><span class="nt">None</span><span class="o">,</span><span class="w"> </span><span class="nt">p</span><span class="p">.</span><span class="nc">getPosition</span><span class="o">(),</span><span class="w"> </span><span class="nt">8</span><span class="o">,</span><span class="w"> </span><span class="nt">True</span><span class="o">)</span>
+</code></pre></div>
+
+<p>If you want to create an explosion at the position where the player is looking at, you must use another class, called <code>LineTracer</code>. This replaces the Bukkit way of doing things where there was a method immediately returning the position a player was looking&nbsp;at:</p>
+<div class="highlight"><pre><span></span><code>w.makeExplosion(p, LineTracer(p).getTargetBlock().getPosition(), 8, True)
+</code></pre></div>
+
+<p>It&#8217;s a good idea to create some helper functions while you&#8217;re at&nbsp;it:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">def</span><span class="w"> </span><span class="nv">glp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>:
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nv">LineTracer</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>.<span class="nv">getTargetBlock</span><span class="ss">()</span>.<span class="nv">getPosition</span><span class="ss">()</span>
+<span class="nv">def</span><span class="w"> </span><span class="nv">gpp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>:
+<span class="w">    </span><span class="nv">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">p</span>.<span class="nv">getPosition</span><span class="ss">()</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span>[<span class="nv">int</span><span class="ss">(</span><span class="nv">round</span><span class="ss">(</span><span class="nv">l</span>.<span class="nv">getX</span><span class="ss">()))</span>,
+<span class="w">        </span><span class="nv">int</span><span class="ss">(</span><span class="nv">round</span><span class="ss">(</span><span class="nv">l</span>.<span class="nv">getY</span><span class="ss">()))</span>,
+<span class="w">        </span><span class="nv">int</span><span class="ss">(</span><span class="nv">round</span><span class="ss">(</span><span class="nv">l</span>.<span class="nv">getZ</span><span class="ss">()))</span>]
+</code></pre></div>
+
+<p>Which then allows to&nbsp;do:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="mi">0</span>,<span class="w"> </span><span class="mi">20</span><span class="ss">)</span>:
+<span class="w">    </span><span class="nv">w</span>.<span class="nv">makeExplosion</span><span class="ss">(</span><span class="nv">p</span>,<span class="w"> </span><span class="nv">glp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>,<span class="w"> </span><span class="mi">6</span>,<span class="w"> </span><span class="nv">True</span><span class="ss">)</span>
+<span class="w">    </span><span class="nv">w</span>.<span class="nv">makeLightningBolt</span><span class="ss">(</span><span class="nv">glp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">))</span>
+<span class="w">    </span><span class="nv">sleep</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>Creating blocks is also pretty easy. The following will spawn some pillars around the player complete with&nbsp;lightning:</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="nv">i</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="mi">0</span>,<span class="w"> </span><span class="mi">20</span><span class="ss">)</span>:
+<span class="w">    </span><span class="nv">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">gpp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>
+<span class="w">    </span><span class="nv">pos</span>[<span class="mi">0</span>]<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">randint</span><span class="ss">(</span><span class="o">-</span><span class="mi">10</span>,<span class="mi">10</span><span class="ss">)</span>
+<span class="w">    </span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="nv">randint</span><span class="ss">(</span><span class="o">-</span><span class="mi">10</span>,<span class="mi">10</span><span class="ss">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nv">z</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">1</span>]<span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">10</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">1</span>]<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nv">randint</span><span class="ss">(</span><span class="mi">5</span>,<span class="mi">10</span><span class="ss">))</span>:
+<span class="w">        </span><span class="nv">w</span>.<span class="nv">setBlockAt</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">0</span>],<span class="w"> </span><span class="nv">z</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">2</span>],<span class="w"> </span><span class="nv">BlockType</span>.<span class="nv">CrackedStoneBrick</span><span class="ss">)</span>
+<span class="w">    </span><span class="nv">w</span>.<span class="nv">makeLightningBolt</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">0</span>],<span class="w"> </span><span class="nv">pos</span>[<span class="mi">1</span>],<span class="w"> </span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="ss">)</span>
+<span class="w">    </span><span class="nv">sleep</span><span class="ss">(</span><span class="mi">1</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>Whereas the following creates a wall around the&nbsp;player:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">gpp</span><span class="ss">(</span><span class="nv">p</span><span class="ss">)</span>
+<span class="k">for</span><span class="w"> </span><span class="nv">z</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">1</span>]<span class="o">-</span><span class="mi">20</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">1</span>]<span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">5</span><span class="ss">)</span>:
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nv">x</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">0</span>]<span class="o">-</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">0</span>]<span class="o">+</span><span class="mi">10</span><span class="ss">)</span>:
+<span class="w">        </span><span class="nv">w</span>.<span class="nv">setBlockAt</span><span class="ss">(</span><span class="nv">x</span>,<span class="w"> </span><span class="nv">z</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="o">+</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">BlockType</span>.<span class="nv">CrackedStoneBrick</span><span class="ss">)</span>
+<span class="w">        </span><span class="nv">w</span>.<span class="nv">setBlockAt</span><span class="ss">(</span><span class="nv">x</span>,<span class="w"> </span><span class="nv">z</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="o">-</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">BlockType</span>.<span class="nv">CrackedStoneBrick</span><span class="ss">)</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nv">y</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">range</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="o">-</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">pos</span>[<span class="mi">2</span>]<span class="o">+</span><span class="mi">10</span><span class="ss">)</span>:
+<span class="w">        </span><span class="nv">w</span>.<span class="nv">setBlockAt</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">0</span>]<span class="o">+</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">z</span>,<span class="w"> </span><span class="nv">y</span>,<span class="w"> </span><span class="nv">BlockType</span>.<span class="nv">CrackedStoneBrick</span><span class="ss">)</span>
+<span class="w">        </span><span class="nv">w</span>.<span class="nv">setBlockAt</span><span class="ss">(</span><span class="nv">pos</span>[<span class="mi">0</span>]<span class="o">-</span><span class="mi">10</span>,<span class="w"> </span><span class="nv">z</span>,<span class="w"> </span><span class="nv">y</span>,<span class="w"> </span><span class="nv">BlockType</span>.<span class="nv">CrackedStoneBrick</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>Finally, it&#8217;s even possible to render fractals. I&#8217;m making a <a href="http://en.wikipedia.org/wiki/Mandelbulb">MandelBulb</a> here from code I borrowed&nbsp;online:</p>
+<div class="highlight"><pre><span></span><code>def vir(l, h, s, o):
+    return l+((h-l)/float(s))*float(o)
+
+def rp(cx, cy, cz, maxit, mandpow):
+        x = 0
+        y = 0
+        z = 0
+        for i in range(0, maxit):
+            if (x*x+y*y+z*z) &gt;= 2.0:
+                return i
+            r = sqrt(x*x + y*y + z*z )
+            theta = atan2(sqrt(x*x + y*y) , z)
+            phi = atan2(y,x)
+            rpow = pow(r,mandpow)
+            newx = rpow * sin(theta*mandpow) * cos(phi*mandpow)
+            newy = rpow * sin(theta*mandpow) * sin(phi*mandpow)
+            newz = rpow * cos(theta*mandpow)
+            x=newx+cx
+            y=newy+cy
+            z=newz+cz
+        return maxit
+
+def renderFractal(w, pos, size=64, rng=1.2, maxit=10, mandpow=8.0):
+    # http://www.skytopia.com/project/fractal/mandelbulb.html
+    xlow=-rng
+    xhigh=rng
+    ylow=-rng
+    yhigh=rng
+    zlow=-rng
+    zhigh=rng
+    for z in range(0, size):
+        s.broadcastMessage(&#39;z = &#39;+str(z))
+        for y in range(0, size):
+            for x in range(0, size):
+                fy = vir(ylow, yhigh, size, y)
+                fz = vir(zlow, zhigh, size, z)
+                fx = vir(xlow, xhigh, size, x)
+                val = rp(fx, fy, fz, maxit, mandpow)
+                if val &gt;= (maxit-1):
+                    w.setBlockAt(pos[0]-size/2+x, pos[1]-size/2+z, pos[2]-size/2+y, BlockType.WoolWhite)
+                else:
+                    w.setBlockAt(pos[0]-size/2+x, pos[1]-size/2+z, pos[2]-size/2+y, BlockType.Air)
+</code></pre></div>
+
+<p>Use like&nbsp;so:</p>
+<div class="highlight"><pre><span></span><code>pos = gpp(p)
+pos[1] += 100 #Put the fractal in the air a bit
+renderFractal(w, pos)
+</code></pre></div>
+
+<p>Be careful though when specifying a very large size. Python is not the fastest of languages (at least not the Jython implementation), so rendering a 256^3 sized fractal will take a&nbsp;while.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

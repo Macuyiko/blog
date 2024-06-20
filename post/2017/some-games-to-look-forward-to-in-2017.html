@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Some Games to Look Forward to in 2017</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 09 January 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/some-games-to-look-forward-to-in-2017.html" rel="bookmark"
+			title="Permalink to Some Games to Look Forward to in 2017">Some Games to Look Forward to in&nbsp;2017</a></div>
+<div class="article-subtitle">Most of these are indie titles, again</div>		</header>
+	
+	    <p>2016 turned out to be a great year for gaming, with Dishonored 2, The Witness, Doom, Overwatch, Superhot, Thumper, Hyper Light Drifter, Cogmind, Devil Daggers, Furi, Brigador, Age of Empires 2 <span class="caps">HD</span> keeping me entertained throughout most of the&nbsp;year.</p>
+<p>Which games am I looking forward to in 2017? Below follows my personal&nbsp;list.</p>
+<ul>
+<li>Big budget titles: <a href="https://prey.bethesda.net/"><strong>Prey</strong></a> and <a href="https://www.rockstargames.com/reddeadredemption2/"><strong>Red Dead Redemption 2</strong></a>, of course, as well as <a href="https://www.dawnofwar.com/"><strong>Warhammer 40,000: Dawn of war <span class="caps">III</span></strong></a>.</li>
+<li>I might give <a href="http://store.steampowered.com/app/429660/"><strong>Tales of Berseria</strong></a> a spin, though I&#8217;m not normally one for <span class="caps">JRPG</span>&#8217;s.</li>
+<li><a href="http://www.playtonicgames.com/games/yooka-laylee/"><strong>Yooka-Laylee</strong></a>: hope this one will be a lot of childlike&nbsp;fun.</li>
+<li><a href="http://www.paranoidproductions.com/church/"><strong>The Church In The Darkness</strong></a> looks interesting thanks to its procedurally-generated cult&nbsp;story.</li>
+<li>Described as a love child between <span class="caps">GTA</span> I and Syndicate Wars, <a href="http://www.tokyo42.com/"><strong>Tokyo 42</strong></a> certainly looks&nbsp;interesting.</li>
+<li><a href="https://blog.thimbleweedpark.com/"><strong>Thimbleweed Park</strong></a> might be one of the adventure games I try this year, thanks to Ron Gilbert being at the helm and Mark Ferrari doing the visuals. Mark has a <a href="https://www.youtube.com/watch?v=bRwHpU_kcPE">great talk about 8bit art that you absolutely should watch right now</a>!</li>
+<li><a href="http://www.frozensynapse2.com/"><strong>Frozen Synapse 2</strong></a>; I was a fan of the original so this will be worth checking&nbsp;out.</li>
+<li><a href="http://www.system3.com/games/constructor-hd/"><strong>Constructor <span class="caps">HD</span></strong></a>, as I&#8217;m a sucker for nostalgia-meets-<span class="caps">HD</span>&nbsp;releases.</li>
+</ul>
+<p><img alt="Constructor HD" src="/images/2017/ConstructorHD.jpg"></p>
+<ul>
+<li><a href="https://www.fig.co/campaigns/kingdoms-and-castles?media_id=382#updates"><strong>Kingdoms and Castles</strong></a>, mainly since its art direction is positively&nbsp;adorable.</li>
+</ul>
+<p><img alt="Kingdoms and Castles" src="/images/2017/Kingdoms-and-Castles.jpg"></p>
+<ul>
+<li><a href="https://www.kickstarter.com/projects/514621648/tower-57"><strong>Tower 57</strong></a> is a twin stick shooter with 16-bit inspired pixel art, destructible environments, and a heavy focus on&nbsp;co-op.</li>
+<li><a href="http://store.steampowered.com/app/501590/"><strong>Bulletstorm: Full Clip Edition</strong></a>: not sure yet about this one, since I already own the original and don&#8217;t think it&#8217;s fair having to rebuy it. Also I&#8217;m not that much of a Gearbox fan anymore&nbsp;lately.</li>
+<li><a href="http://store.steampowered.com/app/442780/"><strong>Strafe</strong></a> and <a href="http://store.steampowered.com/app/519860/"><strong>Dusk</strong></a>: two beautiful oldskool gory Quake-like&nbsp;shooters.</li>
+</ul>
+<p><img alt="Strafe" src="/images/2017/STRAFE.png"></p>
+<p><img alt="Dusk" src="/images/2017/dusk.png"></p>
+<ul>
+<li><a href="http://store.steampowered.com/app/350050/"><strong>Eitr</strong></a>: an action <span class="caps">RPG</span> with exceptional&nbsp;combat.</li>
+<li><a href="http://store.steampowered.com/app/342310/"><strong><span class="caps">RIOT</span> - Civil Unrest</strong></a> has been on my list for a few years now but it might finally see a release this&nbsp;year.</li>
+<li><a href="http://manifold.garden/"><strong>Manifold Garden</strong></a>: also an ealier-seen entry, (formerly known as&nbsp;Relativity.)</li>
+<li><a href="http://www.driftstagegame.com/"><strong>Drift Stage</strong></a>: also an older entry. Still not sure about the release date but still like the art style. <a href="http://www.wingsofstnazaire.com/"><strong>Wings of Saint Nazaire</strong></a> is also still on the list, as is <a href="http://www.irkallagame.com/mockups.html"><strong>Irkalla</strong></a> and <a href="http://www.beforegame.net/"><strong>Before</strong></a> (which finally got a trailer&nbsp;up).</li>
+</ul>
+<p>Fun&nbsp;facts:</p>
+<ul>
+<li><a href="/post/2015/some-games-to-look-forward-to-in-2015.html">Earlier I wrote</a> about Mirror&#8217;s Edge 2 as something I was looking forward to without &#8220;having high hopes&#8221;&#8230; well that turned out to be&nbsp;right.</li>
+<li>In a similar vein, I wrote about No Man&#8217;s Sky: &#8220;of course I am including it in this list. Of course I&#8217;m worried about it like everyone else.&#8221; Well that certainly turned out to be a&nbsp;distaster.</li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

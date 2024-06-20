@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>The Number</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 01 May 2007, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2007/the-number.html" rel="bookmark"
+			title="Permalink to The Number">The&nbsp;Number</a></div>
+		</header>
+	
+	    <p>The Internet is going crazy about some random number (and it&#8217;s not&nbsp;23).</p>
+<p>Apparently, typing out an hexadecimal value will get you killed / deleted / censored / jailed / destroyed / ignored / access to <span class="caps">HD</span>-<span class="caps">DVD</span> content. It goes something like: <code>09 F9 11 02</code>. But it also has <code>9D 74 E3 5B</code> in it. Maybe <code>D8 41 56</code> somewhere too. <code>C5 63 56</code> may or may not have something to do with it. I will give away that it ends with <code>88 C0</code> tho.</p>
+<p>Anyway, Digg is going nuts. Moderators are constantly deleting any article about this number. They are even deleting irrelevant posts to cover up their censoring tracks. However, they seem to forget that this is the&nbsp;Internet.</p>
+<p>Articles about The Number&nbsp;(growing):</p>
+<ul>
+<li><a href="http://digg.com/linux_unix/Spread_this_number_Now">Spread this number now</a>. Article is deleted! Mirror <a href="http://www.cjmillisock.com/extras/digg/SpreadThisStory/Spread_This_Number_Again.htm">here</a>. Picture <a href="http://img485.imageshack.us/img485/8997/diggspreadthisnumberagaxd5.png">here</a> and <a href="http://img485.imageshack.us/img485/1324/madnesszf3cptzappu9.png">here</a>.</li>
+<li><a href="http://digg.com/tech_news/SLASHDOT_does_not_censor_the_PLEASE_DON_T_POST_IN_COMMENTS">Slashdot does not censor the number</a>. Thank&nbsp;you!</li>
+<li><a href="http://digg.com/tech_news/Digg_Censorship_5">Censorship 5</a>. <a href="http://img485.imageshack.us/img485/1185/diggrecordqh7.jpg">70 diggs in 7 minutes</a>!</li>
+<li><a href="http://digg.com/tech_news/Wikipedia_censors_a_number">Wikipedia censors</a> the number. You <a href="http://en.wikipedia.org/w/index.php?title=09_F9_11_02_9D_74_E3_5B_D8_41_56_C5_63_56_88_C0&amp;action=edit">cannot create the page anymore</a>.</li>
+<li><a href="http://digg.com/software/free_binary_translation">Free binary translation</a>.</li>
+<li>
+<p><a href="http://digg.com/tech_news/May_1st_The_Day_Digg_Died_2">May 1st: the day Digg died</a>. (User got deleted.) lnxaddct made a nice&nbsp;remark:</p>
+<blockquote>
+<p>Is this a violation of the <span class="caps">DMCA</span> too?&nbsp;MDkgRjkgMTEgMDIgOUQgNzQgRTMgNUIgRDggNDEgNTYgQzUgNjMgNTYgODggQzA=n</p>
+</blockquote>
+</li>
+<li>
+<p><a href="http://digg.com/tech_news/Digg_losing_control_of_their_site">Digg losing control of their site</a>. With <a href="http://weblog.infoworld.com/railsback/archives/2007/05/digg_losing_con.html">article</a>.</p>
+</li>
+<li><a href="http://digg.com/offbeat_news/9_F9_11_02_9D_74_E3_5B_D8_41_56_C5_63_56_88_C0_2">The number</a>.</li>
+<li><a href="http://digg.com/political_opinion/You_cowards_No_Number_should_make_you_betray_your_own_community">Cowards</a>.</li>
+<li><a href="http://digg.com/offbeat_news/For_the_love_of_freedom_of_speech">Freedom of speech</a>.</li>
+<li>Digg <a href="http://digg.com/tech_news/Is_DIGG_going_to_be_DUGG">is dugg</a>.</li>
+</ul>
+<p>And it&#8217;s growing every&nbsp;second&#8230;</p>
+<ul>
+<li>Another <a href="http://rudd-o.com/archives/2007/04/30/spread-this-number/">article on rudd-o</a>.</li>
+<li>Also: <a href="http://www.google.be/search?hl=en&amp;safe=off&amp;client=firefox-a&amp;rls=org.mozilla%3Aen-US%3Aofficial&amp;hs=i9c&amp;q=09+F9+11+02+9D+74+E3+5B+D8+41+56+C5+63+56+88+C0+what&amp;btnG=Search">Google is full</a> with the&nbsp;stuff.</li>
+<li>February 13th! <a href="http://blog.wired.com/gadgets/2007/02/the_new_hddvdbl.html">Wired blog posts</a> the&nbsp;key.</li>
+<li>Reddit also seems to have <a href="http://programming.reddit.com/info/1mb4f/comments">no problem</a> with the&nbsp;key.</li>
+<li>Explanation about the key <a href="http://forum.doom9.org/showthread.php?s=d9da68c11a88904641ba24b96ff95a12&amp;p=953036#post953036">at Doom9</a>.</li>
+<li><a href="http://igul222.com/the-number/">igul222</a> also has a nice list about the&nbsp;number.</li>
+</ul>
+<p>Let&#8217;s see how this ends. I wonder how Rose will talk his way out of&nbsp;this.</p>
+<p>Update: <a href="http://digg.com/tech_news/DIGG_What_s_Happening_with_HD_DVD_Stories">this</a> just <a href="http://blog.digg.com/?p=73">in</a>. Told ya&nbsp;:).</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Trying Google’s Native Client</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 09 December 2008, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2008/trying-googles-native-client.html" rel="bookmark"
+			title="Permalink to Trying Google’s Native Client">Trying Google&#8217;s Native&nbsp;Client</a></div>
+		</header>
+	
+	    <p>From <a href="http://blogoscoped.com/archive/2008-12-09-n82.html">Google Blogoscoped</a>:</p>
+<blockquote>
+<p>Google has released something to the open source world they call the <a href="http://code.google.com/p/nativeclient/">Native Client</a>. It is meant as a way for website developers to execute rich code faster within the browser&#8230; by having it run &#8220;natively&#8221; on the computer. This could help any program needing fast graphics; a web-based photo editor might be one of the use cases of this, Google explains. Right now, as a developer you&#8217;re usually picking Flash or Java for that purpose. Google describes their&nbsp;efforts:</p>
+</blockquote>
+<p>Following <a href="http://nativeclient.googlecode.com/svn/trunk/nacl/googleclient/native_client/documentation/getting_started.html">the guide</a> in Ubuntu worked remarkably well. The&nbsp;result:</p>
+<p><img alt="" src="http://2.bp.blogspot.com/_X4W-h82Vgjw/ST6HI6yiLoI/AAAAAAAALIk/a62ynirA0Jw/s400/Screenshot-Quake+Demo+-+Mozilla+Firefox.png"></p>
+<p>Nice, Quake in a browser. Note that this won&#8217;t work with any program, you&#8217;ll&nbsp;need:</p>
+<ul>
+<li>A Firefox&nbsp;plugin.</li>
+<li>The Native Client&nbsp;runtime.</li>
+<li>Special <code>gcc</code> compilation tools to compile your program to make it work with Native&nbsp;Client.</li>
+</ul>
+<p>Still, this is a great idea, I&#8217;m curious which applications or tools (or games) this will&nbsp;spawn.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

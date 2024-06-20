@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>List of Apps (2019)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 18 May 2019, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2019/list-of-apps-2019.html" rel="bookmark"
+			title="Permalink to List of Apps (2019)">List of Apps&nbsp;(2019)</a></div>
+		</header>
+	
+	    <p>It&#8217;s time to setup a new laptop, so <a href="////blog.macuyiko.com/post/2018/list-of-apps-2018.html">once again</a> I&#8217;m jotting down a list of apps I normally install right away, slightly updated&nbsp;again.</p>
+<h2>Web</h2>
+<ul>
+<li><a href="http://www.google.com/chrome/">Chrome</a></li>
+<li><a href="http://www.google.com/drive">Google&nbsp;Drive</a></li>
+<li><a href="https://filezilla-project.org/download.php?type=client">FileZilla</a></li>
+</ul>
+<p>Optional:</p>
+<ul>
+<li><a href="http://www.qbittorrent.org/">qBittorrent</a> install once&nbsp;required</li>
+<li><a href="http://www.dropbox.com/">Dropbox</a> to be replaced with Google Drive completely, after their 3 device&nbsp;limit</li>
+<li><a href="https://www.skype.com/en/">Skype</a> is avoided, use web version if&nbsp;possible</li>
+</ul>
+<h2>General</h2>
+<ul>
+<li>Microsoft&nbsp;Office</li>
+<li><a href="http://www.7-zip.org/">7-Zip</a></li>
+<li><a href="http://www.voidtools.com/">Everything</a> to locate files and folders by name&nbsp;instantly</li>
+<li><a href="https://justgetflux.com/">f.lux</a></li>
+<li><a href="http://www.getpaint.net/">Paint.<span class="caps">NET</span></a></li>
+<li><a href="https://www.sumatrapdfreader.org/free-pdf-reader.html">Sumatra <span class="caps">PDF</span></a> and <a href="https://get.adobe.com/reader/">Adobe Reader</a> for those annoying edge cases where Sumatra doesn&#8217;t&nbsp;work</li>
+<li>Fonts: Open Sans and Fira Code&nbsp;especially</li>
+<li><a href="https://www.putty.org/">Putty</a></li>
+<li><a href="https://obsproject.com/"><span class="caps">OBS</span></a></li>
+<li><a href="https://www.nchsoftware.com/videopad/index.html">VideoPad</a></li>
+<li><a href="https://www.baremetalsoft.com/baregrep/">BareGrep</a></li>
+</ul>
+<p>Optional:</p>
+<ul>
+<li><a href="https://www.virtualbox.org/">VirtualBox</a></li>
+<li><a href="https://www.spotify.com">Spotify</a></li>
+<li><a href="http://www.videolan.org/vlc/index.html"><span class="caps">VLC</span></a></li>
+<li><a href="http://store.steampowered.com/">Steam</a></li>
+<li><a href="https://www.gog.com/galaxy"><span class="caps">GOG</span>&nbsp;Galaxy</a></li>
+<li><a href="https://www.gimp.org/">Gimp</a></li>
+<li><a href="https://geekuninstaller.com/">Geek Uninstaller</a> to clean up Windows Apps&nbsp;cruft</li>
+<li><a href="https://sqlitebrowser.org/">SQLite <span class="caps">DB</span>&nbsp;Browser</a></li>
+</ul>
+<h2>Data&nbsp;Science</h2>
+<ul>
+<li><a href="https://www.anaconda.com/distribution/">Anaconda Python&nbsp;Distribution</a></li>
+<li><a href="http://www.graphviz.org/">GraphViz</a></li>
+<li><a href="http://cran.r-project.org/">R</a> and <a href="http://www.rstudio.com/">RStudio</a> preferably through&nbsp;Anaconda</li>
+<li><a href="https://www.msys2.org/"><span class="caps">MSYS2</span></a></li>
+</ul>
+<h2>Coding and&nbsp;Editing</h2>
+<ul>
+<li><a href="https://code.visualstudio.com/">VSCode</a></li>
+<li><a href="https://desktop.github.com/">GitHub&nbsp;Desktop</a></li>
+<li><a href="http://www.winedt.com/">WinEdt</a></li>
+<li><a href="https://eclipse.org/downloads/">Eclipse</a></li>
+<li><a href="http://www.lyx.org/">LyX</a></li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

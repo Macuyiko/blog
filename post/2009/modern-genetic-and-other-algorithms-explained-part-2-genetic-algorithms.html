@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic Algorithms</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 10 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html" rel="bookmark"
+			title="Permalink to Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic Algorithms">Modern Genetic (And Other) Algorithms Explained: Part 2 - Genetic&nbsp;Algorithms</a></div>
+		</header>
+	
+	    <p>(This is part 2 in the Modern Genetic Algorithms Explained series, click <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">here</a> to go to the first post, or browse through all the parts with the Table Of Contents at the end of this&nbsp;post.)</p>
+<p>Let&#8217;s take another look at <a href="http://lethain.com/entry/2009/jan/02/genetic-algorithms-cool-name-damn-simple/">the blog post</a> on which we will base ourselves on. A general genetic algorithms can be described as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code>Construct initial population
+Repeat until time limit hit or satisfiable solution found:
+  Assign a **fitness** score to each individual
+  Use a **selection** method to pick individuals for reproduction
+  Construct a new population, using a **crossover** method
+  Use a **mutation** method to mutate the new population`
+</code></pre></div>
+
+<p>There are still a lot of gaps to fill in: how large should the population be, how do we construct individuals, which fitness function do we use, which selection methods are available, how do we evolve the population, should we mutate? If yes, and&nbsp;how?</p>
+<h3>Population and Individuals: Encoding and&nbsp;Construction</h3>
+<p>Let&#8217;s start with the population: if the population count is too low, there will not be enough diversity between the individuals to find an optimal or good solution. If the count is too high, the algorithm will execute slower, conversion to a solution might become slower as well. There is no &#8216;golden rule&#8217; to find an optimal&nbsp;number.</p>
+<p>How do we construct individuals? Certainly a simple (and popular choice) is the&nbsp;bit-representation:</p>
+<div class="highlight"><pre><span></span><code><span class="mf">0110</span><span class="w"> </span><span class="mf">0111</span><span class="w"> </span><span class="mf">0001</span><span class="w"> </span><span class="mf">1011</span><span class="w"> </span><span class="mf">...</span>
+</code></pre></div>
+
+<p>When evaluating the individuals, those bits are converted in something meaningful, be it numbers, strings, or other symbols, depending on the&nbsp;problem.</p>
+<p>If we had used this representation, an individual for the problem described in the article (find x numbers each between a and b so that the summation of those numbers equal z) would look like this (e.g. x =&nbsp;4):</p>
+<div class="highlight"><pre><span></span><code><span class="mf">01100111</span><span class="w"> </span><span class="mf">01000101</span><span class="w"> </span><span class="mf">11010101</span><span class="w"> </span><span class="mf">11010111</span>
+</code></pre></div>
+
+<p>Which would represent 4 numbers between zero and 255: 103+69+213+215. Also notice that our individuals have a fixed-length. Variable-length is a bit more complex, but also possible, and sometimes&nbsp;needed.</p>
+<p>What do we do if the number lies out of the permitted bounds? We could:
+(1) Avoid that situation by making sure we never generate an individual with a number &lt; a or &gt; b.
+(2) Permit those individuals, but assign a very low fitness score to them. In the article, the score is calculated as the absolute difference between the sum of the individual&#8217;s numbers and the target value. So a score zero (0) means perfect fitness: a valid solution. In this case, invalid individuals would get a score of 1000, for example. Or even better, we evaluate it normally, but then add a &#8220;penalty&#8221;. E.g. the absolute difference between the bounds and the numbers times&nbsp;two.</p>
+<p>Why would we use (2)? In some cases it is too difficult or too time-consuming to check every individual to see if it is valid, before putting it in the population pool. Also: permitting invalid individuals might still be useful. They can introduce more variety in the population, and their valid parts can still be used to create&nbsp;offspring.</p>
+<p>Why would we use this representation? As we will see in the following steps, a crossover between two individuals will happen to create new offspring, with a bit representation, the crossover point can be placed at any&nbsp;point:</p>
+<div class="highlight"><pre><span></span><code>             v
+01100111 010 | 00101 11010101 11010111
+01101111 000 | 00100 10010111 10011100
+</code></pre></div>
+
+<p>When we use a list of integers, we place the crossover point between two numbers, this is different from the previous example, where the crossover point could be arbitrarily placed &#8220;in the middle of a&nbsp;number&#8221;:</p>
+<div class="highlight"><pre><span></span><code>    v
+103 | 69 , 213 , 215
+13  | 22 , 123 , 76
+</code></pre></div>
+
+<p>Bit-representation is thus often used when it is not clear how to place the crossover point, but when we do know a way to &#8220;convert&#8221; a solution to a bitstring. However, always watch out. Some representations become too sensitive to &#8220;random&#8221; tinkering with bits, making them quickly invalid. In our case: using a bit-representation would be permitted (changing a random bit still creates four integers), but in other cases this method becomes&nbsp;unfeasible.</p>
+<h3>Selection</h3>
+<p>Good, we now have constructed an initial population, containing, say 100, individuals. We also have a fitness function to assign a score to each of them. Lower is better, 0 being a perfect&nbsp;solution.</p>
+<p>How do we pick individuals to use to create offspring? We&#8217;ll need two individuals (a father and a mother). A first way (1) to choose them might be: just pick them at random. Of course, it is ease to see that this is a bad way of choosing parents. There has to be a relation between the fitness and the selection, so that better offspring can be created. When we choose parents at random, bad parents have an equal chance of producing children than fitter parents. (This is against the &#8216;survival of the fittest&#8217;-idea, on which genetic algorithms are based&nbsp;on.)</p>
+<p>In the article, a second (2) method is&nbsp;used:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">Pick</span><span class="w"> </span><span class="nv">the</span><span class="w"> </span><span class="nv">n</span><span class="o">-</span><span class="nv">best</span><span class="w"> </span><span class="nv">individuals</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">our</span><span class="w"> </span><span class="nv">current</span><span class="w"> </span><span class="nv">population</span>
+<span class="nv">Pick</span><span class="w"> </span><span class="nv">two</span><span class="w"> </span><span class="nv">different</span><span class="w"> </span><span class="k">random</span><span class="w"> </span><span class="nv">individuals</span><span class="w"> </span><span class="nv">from</span><span class="w"> </span><span class="nv">those</span><span class="w"> </span><span class="nv">n</span><span class="o">-</span><span class="nv">best</span>
+<span class="nv">Use</span><span class="w"> </span><span class="nv">those</span><span class="w"> </span><span class="nv">as</span><span class="w"> </span><span class="nv">parents</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nv">a</span><span class="w"> </span><span class="nv">child</span>
+</code></pre></div>
+
+<p>This is certainly a better option, but this way, we completely abandon the lower scoring individuals. It is always better to give even the worst individuals a little chance to be a parent, to maintain a higher level of possible&nbsp;diversity.</p>
+<p>With that remark in mind, we arrive at a third (3) solution, the roulette-wheel selection method: the chance of each individual to be selected becomes: <code>fitness of that individual / total of fitness scores of every individual in the population</code>. For example, consider the following population of five individuals, ordered by their score (let&#8217;s say that higher is&nbsp;better).</p>
+<div class="highlight"><pre><span></span><code><span class="n">i3</span><span class="o">:</span><span class="w"> </span><span class="mi">9</span>
+<span class="n">i2</span><span class="o">:</span><span class="w"> </span><span class="mi">7</span>
+<span class="n">i5</span><span class="o">:</span><span class="w"> </span><span class="mi">6</span>
+<span class="n">i4</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span>
+<span class="n">i1</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">Total</span><span class="o">:</span><span class="w"> </span><span class="mi">26</span>
+</code></pre></div>
+
+<p>Now pick a random value between zero and 26. Let&#8217;s say 8: 8 &gt; 1, continue; 8 &gt; 1 + 3, continue; 8 &gt; 1 + 3 + 6, we pick i5. It&#8217;s easy to see where the name &#8220;roulette selection&#8221; comes&nbsp;from.</p>
+<p>Another selection method (4) is called tournament&nbsp;selection:</p>
+<div class="highlight"><pre><span></span><code>Choose k (the tournament size) individuals from the population at random
+  Choose the best individual from pool/tournament with probability p
+  Choose the second best individual with probability p*(1-p)
+  Choose the third best individual with probability p*((1-p)^2)
+  ...
+</code></pre></div>
+
+<p>Note that p can be = 1. Then the best out of k individuals is chosen, this is fairly common. For k, often 2, 3, or 4 is used. This is an often-used method because it is easy to implement, and can be used in parallel environments. Note that when p = 1, k = 1 this method essentially becomes a pure random&nbsp;selection.</p>
+<h3>Crossover</h3>
+<p>Now that we know how to select two parents, how do we create children? Again, there are many techniques here. The first one (1) is the one-point crossover (simple crossover). I will illustrate the following examples with bit-represented&nbsp;individuals.</p>
+<div class="highlight"><pre><span></span><code>                    v
+0000 0000 0000 0000 | 0000 0000
+1111 1111 1111 1111 | 1111 1111
+</code></pre></div>
+
+<p>Creates two&nbsp;children:</p>
+<div class="highlight"><pre><span></span><code>                    v
+0000 0000 0000 0000 | 1111 1111
+1111 1111 1111 1111 | 0000 0000
+</code></pre></div>
+
+<p>The crossover point can be randomly chosen, or can be a fixed location (1/4, 1/3, 1/2 are commonly used). After the crossover point, two children are created by swapping their&nbsp;bits.</p>
+<p>The second (2) crossover method is two-point crossover, and looks a lot like the previous&nbsp;method:</p>
+<div class="highlight"><pre><span></span><code>     v                v
+0000 | 0000 0000 0000 | 0000 0000
+1111 | 1111 1111 1111 | 1111 1111
+</code></pre></div>
+
+<p>Creates two&nbsp;children:</p>
+<div class="highlight"><pre><span></span><code>     v                v
+0000 | 1111 1111 1111 | 0000 0000
+1111 | 0000 0000 0000 | 1111 1111
+</code></pre></div>
+
+<p>Again: it&#8217;s swap - and&nbsp;swap.</p>
+<p>Cut and splice (3) is another one, and is only interesting when you need variable-length individuals. I will skip the description, it&#8217;s in the Wikipedia page (all sources are mentioned at the end of this&nbsp;post).</p>
+<p><span class="caps">UX</span> (Uniform Crossover) (4) is a bit more&nbsp;interesting:</p>
+<div class="highlight"><pre><span></span><code><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">0000</span><span class="w"> </span><span class="mf">0000</span><span class="w"> </span><span class="mf">0000</span>
+<span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span>
+</code></pre></div>
+
+<p>Creates two&nbsp;children:</p>
+<div class="highlight"><pre><span></span><code><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">0010</span><span class="w"> </span><span class="mf">1101</span><span class="w"> </span><span class="mf">0100</span>
+<span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1111</span><span class="w"> </span><span class="mf">1101</span><span class="w"> </span><span class="mf">0010</span><span class="w"> </span><span class="mf">1011</span>
+</code></pre></div>
+
+<p>It works as such: every bit has a 0.5% chance of swapping. Of course, if both parents have a bit 0 or 1, it stays 0 or&nbsp;1.</p>
+<p><span class="caps">HUX</span> (Half Uniform Crossover) (5) swaps exactly half of the non-matching bits. So pick N/2 bits out of N non-matching bits, and swap&nbsp;them.</p>
+<p>In our reference article, a single fixed crossover point is used, placed in the&nbsp;middle.</p>
+<h3>Mutation</h3>
+<p>Now that that&#8217;s out of the way, there is only one aspect to look at: mutation. This phase makes sure that there is enough randomness and diversity in the population. Again, there are different&nbsp;options.</p>
+<p>First (1) of all: no mutation. For example when their is enough diversity by using smart selection and crossover methods, or when the optimization problem is as such that there are no local maxima (more about that a bit&nbsp;later).</p>
+<p>A second (2) method: take N individuals out of our population, and change each of their bits/values with a P chance. Often: N is equal to the complete population size, with P a very small value.&nbsp;Or:</p>
+<p>(3) Take N individuals, pick K bits/values in every individual, and change those bits/values. Again: N is often equal to the complete population, and K also low (one for example). This is the method used in the&nbsp;article.</p>
+<p>Sometimes, also the following additional (4) method is used: create offspring equal to (P-N), with P being to population size and 0&lt;=N&lt;=P, then add N random individuals. When this method is used, often values like N=P/5 to P/10 are&nbsp;used.</p>
+<h3>In&nbsp;Action</h3>
+<p>That&#8217;s it, we&#8217;re done! Let&#8217;s see a few action examples of genetic&nbsp;algorithms.</p>
+<p>A problem involves: given a constrained plane and a few randomly placed circles, how can we place another circle so that the radius is maximal, without overlapping the other circles. You can download and try it for yourself <a href="http://www.ai-junkie.com/ga/intro/gat3.html">here</a> (all sites are also mentioned at the end of this&nbsp;post).</p>
+<p>Before the evolution starts, the situation looks like&nbsp;this:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/_X4W-h82Vgjw/SWOn-_SkIDI/AAAAAAAAPG4/qKUsRGJ8JeA/s320/01.gif"></p>
+<p>After only 61 generations, we are coming close to the&nbsp;optimum:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWOoG4bq8AI/AAAAAAAAPHA/1f1lDLROUEg/s320/02.gif"></p>
+<p>Another really cool example can be found <a href="http://rogeralsing.com/2008/12/07/genetic-programming-evolution-of-mona-lisa/">here</a>. Be sure to download the binary and test it for&nbsp;yourself:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/_X4W-h82Vgjw/SWPcyd3WC2I/AAAAAAAAPH4/JGot2JWWm-g/s400/gvec.png"></p>
+<p><a href="http://www.obitko.com/tutorials/genetic-algorithms/tsp-example.php">This site</a> implements a Traveling Salesman Solver with a <span class="caps">GA</span> Java&nbsp;applet:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWOo9-QmSyI/AAAAAAAAPHI/D3mW7iUNf4g/s400/05.png"></p>
+<p>Finally, using the code from the&nbsp;article:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="w">  </span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;C:\Users\Seppe\Desktop&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="kn">from</span><span class="w"> </span><span class="nn">genetic</span><span class="w"> </span><span class="kn">import</span><span class="w"> </span><span class="o">*</span>
+<span class="w">  </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">300</span>
+<span class="w">  </span><span class="n">p_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">  </span><span class="n">i_length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">  </span><span class="n">i_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="n">i_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">100</span>
+<span class="w">  </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">population</span><span class="p">(</span><span class="n">p_count</span><span class="p">,</span><span class="w"> </span><span class="n">i_length</span><span class="p">,</span><span class="w"> </span><span class="n">i_min</span><span class="p">,</span><span class="w"> </span><span class="n">i_max</span><span class="p">)</span>
+<span class="w">  </span><span class="n">fitness_history</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">grade</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">),]</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">xrange</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evolve</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">)</span>
+<span class="w">    </span><span class="n">fitness_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">grade</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">))</span>
+
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="n">datum</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">fitness_history</span><span class="p">:</span>
+<span class="w">    </span><span class="nb">print</span><span class="w"> </span><span class="n">datum</span>
+</code></pre></div>
+
+<p>Outputs:</p>
+<div class="highlight"><pre><span></span><code><span class="mf">66.51</span>
+<span class="mf">28.84</span>
+<span class="mf">19.41</span>
+<span class="mf">18.66</span>
+<span class="mf">11.97</span>
+<span class="mf">13.26</span>
+<span class="mf">5.41</span>
+<span class="mf">1.15</span>
+<span class="mf">1.5</span>
+<span class="mf">1.55</span>
+<span class="mf">2.9</span>
+<span class="mf">3.0</span>
+<span class="mf">0.3</span>
+<span class="mf">0.0</span>
+<span class="mf">0.0</span>
+<span class="mf">0.0</span>
+<span class="mf">...</span>
+</code></pre></div>
+
+<p>After 14 evolutions we already see a perfect population, not bad&#8230; Do note however that this is an extremely easy problem: there are many optimum&nbsp;solutions.</p>
+<h3>Remarks and&nbsp;Problems</h3>
+<p>Genetic Algorithms are not perfect, nor are they a silver bullet. When badly configured, genetic algorithms tend to expose the same flaws as stochastic hill climbing indeed: a tendency to converge towards local&nbsp;optima.</p>
+<p>Consider the following&nbsp;function:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWOrqZn003I/AAAAAAAAPHQ/P20H9RxbaL8/s200/f01.gif"></p>
+<p>It&#8217;s not hard to construct a <span class="caps">GA</span> which will tend toward the global maximum, even without mutation or introducing much diversity. Consider the following animation, with the green dots representing a few&nbsp;individuals:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWOvO1_uUEI/AAAAAAAAPHY/t6tvdavb744/s320/ff.gif"></p>
+<p>However, when you consider the following&nbsp;function:</p>
+<p><img alt="" src="http://2.bp.blogspot.com/_X4W-h82Vgjw/SWOwd90hKcI/AAAAAAAAPHg/GJQMWF2JPFY/s200/f10.gif"></p>
+<p>We might get lucky and end up&nbsp;with:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SWOw7oKYU9I/AAAAAAAAPHo/Gx0o65Zs82c/s200/f1.gif"></p>
+<p>Notice that there is one individual tending towards the local maximum, but the others &#8220;pull&#8221; it towards the global one. However, the following could also&nbsp;happen:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SWOx4Te88-I/AAAAAAAAPHw/GU7nPQ23C_g/s200/f2.gif"></p>
+<p>To prevent these situations from happening, we have various options at our disposal:
+(1) Choose sensible parameters. Population count, selection- crossover- and mutation-methods. Try to find a balance between enough diversity and fast convergence.
+(2) Run the <span class="caps">GA</span> multiple times, take the best solution.
+(3) If the population converges towards a certain solution, randomly regenerate the N worst members of the population and continue evolution (a similar technique could be used in the mutation stage).
+(4) Use parallel solutions. A parallel genetic algorithm executes multiple populations at once, often on many computers (or a cluster). Often, there is an extra migration stage added, in which individuals migrate from one population to&nbsp;another.</p>
+<h3>Sources</h3>
+<p>Wow, what a lot of text! If you&#8217;re interested in knowing more, check the following&nbsp;links:</p>
+<ul>
+<li><a href="http://lethain.com/entry/2009/jan/02/genetic-algorithms-cool-name-damn-simple/">The original article</a> which inspired this&nbsp;text.</li>
+<li>Wikipedia also has lots of information: <a href="http://en.wikipedia.org/wiki/Genetic_algorithm">Genetic algorithms</a>, <a href="http://en.wikipedia.org/wiki/Selection_%28genetic_algorithm%29">Selection</a> (<a href="http://en.wikipedia.org/wiki/Fitness_proportionate_selection">Roulette</a> and <a href="http://en.wikipedia.org/wiki/Tournament_selection">Tournament</a>), <a href="http://en.wikipedia.org/wiki/Crossover_%28genetic_algorithm%29">Crossover</a> and <a href="http://en.wikipedia.org/wiki/Mutation_%28genetic_algorithm%29">Mutation</a>.</li>
+<li>An <a href="http://www.ai-junkie.com/ga/intro/gat1.html">old tutorial on ai-junkie</a> (but still useful). Back in the day, this was the first thing I read about genetic&nbsp;algorithms.</li>
+<li><a href="http://www.obitko.com/tutorials/genetic-algorithms/index.php">Another old website</a>, made by Marek Obitko, still, the information contained is relevant and interesting. Also hosts the <span class="caps">TSP</span> Java&nbsp;applet.</li>
+<li><a href="http://web.cecs.pdx.edu/~mperkows/temp/JULY8/">This opendir</a> contains university slides about emerging computing technologies. <a href="http://web.cecs.pdx.edu/~mperkows/temp/JULY8/A032.Evolutionary-Algorithms-2.pdf">A032</a> talks about genetic algorithms. The slides are ugly as hell, but contain some good information! (There is a part about <span class="caps">CHC</span> Eshelman, which we will discuss in the next part in this&nbsp;series).</li>
+<li><a href="http://soar.snu.ac.kr/~yhdfly/presentation/MKCP.pps">This Powerpoint file</a> contains some information about <span class="caps">CHC</span> Eshelman as well. The file is not that interesting, but does contain a good example on crossover feasibility: sometimes our individuals are encoded as such that they can become invalid after each crossover. We must then &#8220;normalize&#8221; or correct parents or children to produce valid offspring. We mentioned this problem in the above&nbsp;post.</li>
+<li>Evolution of Mona Lisa, check <a href="http://rogeralsing.com/2008/12/07/genetic-programming-evolution-of-mona-lisa/">this</a>!</li>
+</ul>
+<p>There are a lot of software implementations around for genetic algorithms, most of them are written in C, C++ or <span class="caps">FORTRAN77</span>, but recently languages such as Java and Python are becoming more&nbsp;popular.</p>
+<ul>
+<li><a href="http://www.cisl.ucar.edu/css/staff/travis/mpikaia/"><span class="caps">MPIKAIA</span> - Parallel Genetic&nbsp;Algorithm</a></li>
+<li><a href="http://www-fp.mcs.anl.gov/CCST/research/reports_pre1998/comp_bio/stalk/pgapack.html">PGAPack Parallel Genetic Algorithm&nbsp;Library</a></li>
+</ul>
+<p>Check Wikipedia&#8217;s <a href="http://en.wikipedia.org/wiki/Genetic_algorithm#External_links">External links</a> for more tutorials and software&nbsp;libraries.</p>
+<p>In the next section: we will explore a particular <span class="caps">GA</span> implementation: <span class="caps">CHC</span> by&nbsp;Eshelman.</p>
+<hr>
+<p>Table Of Contents (click a link to jump to that&nbsp;post)</p>
+<p>1- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-1-introduction.html">Introduction</a>
+2- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-2-genetic-algorithms.html">Genetic Algorithms</a>
+3- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-3-chc-eshelman.html"><span class="caps">CHC</span> Eshelman</a>
+4- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-4-simulated-annealing.html">Simulated Annealing</a>
+5- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-5-ant-colony-optimization.html">Ant Colony Optimization</a>
+6- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-6-tabu-search.html">Tabu Search</a>
+7- <a href="////blog.macuyiko.com/post/2009/modern-genetic-and-other-algorithms-explained-part-7-conclusion.html">Conclusion</a></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering Howto</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 16 January 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/nokia-n95-3g-bluetooth-and-ubuntu-intrepid-3g-tethering-howto.html" rel="bookmark"
+			title="Permalink to Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering Howto">Nokia N95, 3G, Bluetooth, And Ubuntu Intrepid - 3G Tethering&nbsp;Howto</a></div>
+		</header>
+	
+	    <p>The following steps are instructions to surf the web using a Nokia N95 with 3G, connected to your Intrepid laptop via&nbsp;Bluetooth.</p>
+<h4>1. Make sure you have the required packages&nbsp;installed:</h4>
+<div class="highlight"><pre><span></span><code>sudo apt-get install bluez-utils bluez-pin ppp
+</code></pre></div>
+
+<h4>2. Find out the phone&#8217;s <span class="caps">MAC</span> address. Enable Bluetooth on phone and laptop, and enter the following&nbsp;command:</h4>
+<div class="highlight"><pre><span></span><code><span class="n">hcitool</span><span class="w"> </span><span class="n">scan</span>
+</code></pre></div>
+
+<p>Output&nbsp;example:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>hcitool<span class="w"> </span>scan
+Scanning<span class="w"> </span>...
+<span class="m">00</span>:1C:9A:26:F5:DD<span class="w"> </span>Macuyiko<span class="w"> </span>N95
+</code></pre></div>
+
+<p>And note your <span class="caps">MAC</span>-address of your&nbsp;phone.</p>
+<h4>3. Find out the phone&#8217;s channel, with the N95, this might change from time to&nbsp;time:</h4>
+<div class="highlight"><pre><span></span><code><span class="n">sdptool</span><span class="w"> </span><span class="n">search</span><span class="w"> </span><span class="o">--</span><span class="n">bdaddr</span><span class="w"> </span><span class="n">MAC</span><span class="w"> </span><span class="n">DUN</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">grep</span><span class="w"> </span><span class="n">Channel</span>
+</code></pre></div>
+
+<p>Replace <span class="caps">MAC</span> with your phone&#8217;s <span class="caps">MAC</span>&nbsp;address.</p>
+<p>Output&nbsp;example:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>sdptool<span class="w"> </span>search<span class="w"> </span>--bdaddr<span class="w"> </span><span class="m">00</span>:1C:9A:26:F5:DD<span class="w"> </span>DUN<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>Channel
+Channel:<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+
+<p>Note this&nbsp;channel.</p>
+<h4>4. Edit <code>/etc/ppp/peers/BluetoothDialup</code>:</h4>
+<div class="highlight"><pre><span></span><code>sudo gedit /etc/ppp/peers/BluetoothDialup
+</code></pre></div>
+
+<p>Paste the&nbsp;following:</p>
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nv">dev</span><span class="o">/</span><span class="nv">rfcomm1</span><span class="w"> </span><span class="mi">115200</span>
+<span class="nv">local</span>
+<span class="nv">nocrtscts</span>
+<span class="k">connect</span><span class="w"> </span><span class="s2">&quot;/usr/sbin/chat -v -f /etc/chatscripts/proximus-gprs&quot;</span>
+<span class="nv">noauth</span>
+<span class="nv">defaultroute</span>
+<span class="nv">usepeerdns</span>
+<span class="nv">novj</span>
+<span class="nv">remotename</span><span class="w"> </span><span class="nv">proximus</span>
+<span class="nv">debug</span>
+#<span class="nv">user</span>
+<span class="nv">lcp</span><span class="o">-</span><span class="nv">restart</span><span class="w"> </span><span class="mi">5</span>
+<span class="nv">ms</span><span class="o">-</span><span class="nv">dns</span><span class="w"> </span><span class="mi">195</span>.<span class="mi">238</span>.<span class="mi">2</span>.<span class="mi">21</span>
+</code></pre></div>
+
+<p>There are a few lines which you might need to change. I&#8217;m using the Belgium Proximus&nbsp;operator.</p>
+<p>First of all, change <code>/etc/chatscripts/proximus-gprs</code> to something more related to your provider (e.g.: <code>/etc/chatscripts/myprovider-gprs</code>). We&#8217;re going to create this script in the next step. Also: you might need to change the <code>ms-dns</code> entry as well (in most cases you can leave it out, but I had to add it though). Also notice that I have used <code>/dev/rfcomm1</code> as the used device, we&#8217;ll use this in the next steps as&nbsp;well.</p>
+<h4>5. Create a chatscript at <code>/etc/chatscripts/proximus-gprs</code></h4>
+<div class="highlight"><pre><span></span><code>sudo gedit /etc/chatscripts/proximus-gprs
+</code></pre></div>
+
+<p>Note that you may have chosen a different name for your chatscript in the previous&nbsp;step.</p>
+<p>Paste:</p>
+<div class="highlight"><pre><span></span><code>ABORT BUSY
+ABORT &#39;NO CARRIER&#39;
+ABORT VOICE
+ABORT &#39;NO DIALTONE&#39;
+ABORT &#39;NO DIAL TONE&#39;
+ABORT &#39;NO ANSWER&#39;
+&quot;&quot; ATZ
+OK AT+CGDCONT=1,&quot;IP&quot;,&quot;internet.proximus.be&quot;
+OK ATDT*99#
+CONNECT &quot;&quot;
+</code></pre></div>
+
+<p>You need to change these entries for your provider. Look up your <span class="caps">APN</span> and data profile number. If you google for &#8220;<span class="caps">APN</span> 3g [yourprovider]&#8221; you will often find the correct results, or look <a href="http://www.iphoneuserguide.com/apple/2008/06/04/iphone3g/apn-settings-for-iphone-3g/">here</a> for APNs for many providers. The data profile number line will often be <code>OK ATDT*99#</code> or <code>OK ATDT*99***1#</code>, so try them&nbsp;both.</p>
+<h4>6. Try it&nbsp;out</h4>
+<p>Enter the following&nbsp;command:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">rfcomm</span><span class="w"> </span><span class="k">connect</span><span class="w"> </span><span class="nv">RFCOMM</span>#<span class="w"> </span><span class="nv">MAC</span><span class="w"> </span><span class="nv">CHANNEL</span>
+</code></pre></div>
+
+<p>Replace <code>RFCOMM#</code> with the <code>/dev/rfcomm</code>-number you&#8217;ve used before (only the number!), I&#8217;ve used 1. <code>MAC</code> is your phone&#8217;s <span class="caps">MAC</span> address again, and <code>CHANNEL</code> is the channel you found&nbsp;earlier.</p>
+<p>If all went well it should&nbsp;say:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>rfcomm<span class="w"> </span>connect<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">00</span>:1C:9A:26:F5:DD<span class="w"> </span><span class="m">4</span>
+Connected<span class="w"> </span>/dev/rfcomm1<span class="w"> </span>to<span class="w"> </span><span class="m">00</span>:1C:9A:26:F5:DD<span class="w"> </span>on<span class="w"> </span>channel<span class="w"> </span><span class="m">4</span>
+Press<span class="w"> </span>CTRL-C<span class="w"> </span><span class="k">for</span><span class="w"> </span>hangup
+</code></pre></div>
+
+<p>Now we&#8217;re going to enable the <span class="caps">PPP</span> connection, in a <em>new</em> terminal window (keep the &#8220;<span class="caps">CTRL</span>-C for hangup&#8221;-one open),&nbsp;enter:</p>
+<div class="highlight"><pre><span></span><code>pon BluetoothDialup
+</code></pre></div>
+
+<p><code>BluetoothDialup</code> is the filename of the file we have created in <code>/etc/ppp/peers/</code> earlier in step&nbsp;4.</p>
+<p>If all went well you should see an entry now in your ifconfig&nbsp;output:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>ifconfig
+<span class="w">  </span>ppp0<span class="w">      </span>Link<span class="w"> </span>encap:Point-to-Point<span class="w"> </span>Protocol
+<span class="w">    </span>inet<span class="w"> </span>addr:81.169.31.99<span class="w">  </span>P-t-P:10.6.6.6<span class="w">  </span>Mask:255.255.255.255
+<span class="w">    </span>UP<span class="w"> </span>POINTOPOINT<span class="w"> </span>RUNNING<span class="w"> </span>NOARP<span class="w"> </span>MULTICAST<span class="w">  </span>MTU:1500<span class="w">  </span>Metric:1
+<span class="w">    </span>RX<span class="w"> </span>packets:3<span class="w"> </span>errors:0<span class="w"> </span>dropped:0<span class="w"> </span>overruns:0<span class="w"> </span>frame:0
+<span class="w">    </span>TX<span class="w"> </span>packets:4<span class="w"> </span>errors:0<span class="w"> </span>dropped:0<span class="w"> </span>overruns:0<span class="w"> </span>carrier:0
+<span class="w">    </span>collisions:0<span class="w"> </span>txqueuelen:3
+<span class="w">    </span>RX<span class="w"> </span>bytes:54<span class="w"> </span><span class="o">(</span><span class="m">54</span>.0<span class="w"> </span>B<span class="o">)</span><span class="w">  </span>TX<span class="w"> </span>bytes:69<span class="w"> </span><span class="o">(</span><span class="m">69</span>.0<span class="w"> </span>B<span class="o">)</span><span class="sb">`</span>
+</code></pre></div>
+
+<p>If you&#8217;re done surfing the internet, turn off <span class="caps">PPP</span>:</p>
+<div class="highlight"><pre><span></span><code>poff
+</code></pre></div>
+
+<p>Press <span class="caps">CTRL</span>-C in that other terminal window to break the&nbsp;Bluetooth/3G-connection.</p>
+<p><strong>Note:</strong> if you&#8217;ve done something wrong (e.g.: used the wrong channel), you can release rfcomm&#8217;s&nbsp;with:</p>
+<div class="highlight"><pre><span></span><code>rfcomm release RFCOMM#
+</code></pre></div>
+
+<p>With <code>RFCOMM#</code> equal to the <code>/dev/rfcomm</code>-number you&#8217;ve used&nbsp;before.</p>
+<h4>Optional steps: use gnome-ppp to&nbsp;connect</h4>
+<p>If you have <code>gnome-ppp</code> installed, you can also use a graphical interface to configure the above&nbsp;steps.</p>
+<p>First of all, you still have to&nbsp;execute:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">rfcomm</span><span class="w"> </span><span class="k">connect</span><span class="w"> </span><span class="nv">RFCOMM</span>#<span class="w"> </span><span class="nv">MAC</span><span class="w"> </span><span class="nv">CHANNEL</span>
+</code></pre></div>
+
+<p>But you <em>don&#8217;t</em> have to create the files from steps 4 and 5. We could automate the connect-step as well, but since the N95&#8217;s channel changes from time to time, this wouldn&#8217;t be very convenient. Also, I like having a terminal open to notify me that I&#8217;m still surfing via my&nbsp;phone.</p>
+<p>Then open up <code>gnome-ppp</code>. If you have to enter a blank username and password for your provider, just enter some dummy values. I used &#8220;blank&#8221; and&nbsp;&#8220;blank&#8221;.</p>
+<p>Phone number: I tried <code>*99***1#</code> this time. And it also seemed to work,&nbsp;great!</p>
+<p>Then press <code>Setup</code>. Enter the following&nbsp;values:</p>
+<ul>
+<li>Device: <code>/dev/rfcomm1</code> (or the other rfcomm you defined&nbsp;earlier)</li>
+<li>Type: <code>USB Modem</code> (yes, <span class="caps">USB</span>!)</li>
+<li>Speed: <code>460800</code> works here, this probably means I could have used this value in the previous configuration files as well, instead of <code>115200</code></li>
+<li>Phone Line: <code>Tone</code> (default)</li>
+<li>Volume: <code>High</code> (default)</li>
+</ul>
+<p>Then press <code>Init Strings</code>.</p>
+<ul>
+<li>Leave <code>Init 2</code> unchanged (<code>ATQ0 V1 E1 S0=0 &amp;C1 &amp;D2 +FCLASS=0</code>)</li>
+<li>Enter this in <code>Init 3</code>: <code>AT+CGDCONT=1,"IP","internet.proximus.be"</code></li>
+</ul>
+<p>Again, change this for your provider! I also had to manually define a <span class="caps">DNS</span> in the <code>Networking</code> tab, just like in the previous steps. This might not be the case for&nbsp;you.</p>
+<p>You&#8217;re done, make sure you&#8217;re not wired or wirelessly connected to test this&nbsp;:).</p>
+<p>Screenshot:</p>
+<p><img alt="" src="http://2.bp.blogspot.com/_X4W-h82Vgjw/SXD_Jdo-kuI/AAAAAAAAPIg/k5UvfUx-Gv4/s400/97214235_6ee4d4a9c4_o.png"></p>
+<p>Final note: some people have to add <code>novj</code> to <code>/etc/ppp/options</code> as well. I didn&#8217;t, tho. Check the Ubuntu forums/Google for information about your specific operator and/or&nbsp;hardware.</p>
+<p>These instructions were only tested with my Thinkpad, my N95, and my operator. I&#8217;ve set up laptops with Vodafone cards before, and you can use <code>gnome-ppp</code> for those as well, just make sure you&#8217;re using the correct device. Often the device will be at <code>/dev/ttyS0</code>, but use <code>dmesg</code> to find out the exact&nbsp;location.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

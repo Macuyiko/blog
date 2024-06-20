@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Building A Presenter View For Linux</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 05 December 2009, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2009/building-a-presenter-view-for-linux.html" rel="bookmark"
+			title="Permalink to Building A Presenter View For Linux">Building A Presenter View For&nbsp;Linux</a></div>
+		</header>
+	
+	    <p>Recently, I had to give a presentation and wanted to use a &#8220;presenter screen&#8221;, allowing to view a clock, current and next slide, and slide notes on my laptop screen. Of course, the audience only sees the current slide fullscreened on the projector&nbsp;screen.</p>
+<p>Powerpoint comes with this option built-in, but Openoffice users are out of luck. There&#8217;s a <a href="http://wiki.services.openoffice.org/wiki/Presenter_Screen">presenter screen plugin</a> in development, which works fine if you&#8217;re using a recent version of Openoffice. I couldn&#8217;t get it to work on my machine, however (I use xrandr to configure my dual screens). Users in <a href="http://user.services.openoffice.org/en/forum/viewtopic.php?f=10&amp;t=23863&amp;start=0">this forum</a> report that Ubuntu requires some fiddling with the display options or installing Sun&#8217;s packaged version of Openoffice. I didn&#8217;t want to do&nbsp;that.</p>
+<p>Instead I opted to use Impressive - a Python-powered presenter with some unique features (OpenGL transitions, zoom, spotlight, overview page,&#8230;). It also provides an option to Python-script your presentation. We will use that to build a custom made presenter&nbsp;screen.</p>
+<h3>Step 1: download and test drive&nbsp;Impressive</h3>
+<p>Download Impressive from the <a href="http://impressive.sourceforge.net/">official web page</a>. Make sure you have Python installed. Extract it&nbsp;somewhere.</p>
+<p>Note: you can follow along with the instructions and perform them yourself, or you can read on and download a packaged <span class="caps">ZIP</span>-file at the end if this&nbsp;post.</p>
+<p>Test drive Impressive by running the following command in a terminal (make sure you&#8217;re in the correct&nbsp;directory):</p>
+<div class="highlight"><pre><span></span><code><span class="o">~/</span><span class="n">Desktop</span><span class="o">/</span><span class="n">Impressive</span><span class="o">-</span><span class="mf">0.10.2</span><span class="err">$</span><span class="w"> </span><span class="o">./</span><span class="n">impressive</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="n">demo</span><span class="o">.</span><span class="n">pdf</span>
+
+<span class="n">Welcome</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">Impressive</span><span class="w"> </span><span class="n">version</span><span class="w"> </span><span class="mf">0.10.2</span>
+<span class="o">./</span><span class="n">impressive</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">94</span><span class="p">:</span><span class="w"> </span><span class="n">DeprecationWarning</span><span class="p">:</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">md5</span><span class="w"> </span><span class="n">module</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="n">deprecated</span><span class="p">;</span><span class="w"> </span><span class="n">use</span><span class="w"> </span><span class="n">hashlib</span><span class="w"> </span><span class="n">instead</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span><span class="o">,</span><span class="w"> </span><span class="nn">getopt</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">types</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span><span class="o">,</span><span class="w"> </span><span class="nn">codecs</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span><span class="o">,</span><span class="w"> </span><span class="nn">glob</span><span class="o">,</span><span class="w"> </span><span class="nn">StringIO</span><span class="o">,</span><span class="w"> </span><span class="nn">md5</span><span class="o">,</span><span class="w"> </span><span class="nn">re</span>
+<span class="n">Detected</span><span class="w"> </span><span class="n">screen</span><span class="w"> </span><span class="n">size</span><span class="p">:</span><span class="w"> </span><span class="mi">1024</span><span class="n">x768</span><span class="w"> </span><span class="n">pixels</span>
+<span class="n">OpenGL</span><span class="w"> </span><span class="n">renderer</span><span class="p">:</span><span class="w"> </span><span class="n">Mesa</span><span class="w"> </span><span class="n">DRI</span><span class="w"> </span><span class="n">Intel</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="w"> </span><span class="mi">945</span><span class="n">GM</span><span class="w"> </span><span class="n">GEM</span><span class="w"> </span><span class="mi">20090712</span><span class="w"> </span><span class="mi">2009</span><span class="n">Q2</span><span class="w"> </span><span class="n">RC3</span><span class="w"> </span><span class="n">x86</span><span class="o">/</span><span class="n">MMX</span><span class="o">/</span><span class="n">SSE2</span>
+<span class="n">Using</span><span class="w"> </span><span class="n">GL_ARB_texture_non_power_of_two</span><span class="o">.</span>
+<span class="n">Note</span><span class="p">:</span><span class="w"> </span><span class="n">pdftk</span><span class="w"> </span><span class="n">failed</span><span class="p">,</span><span class="w"> </span><span class="n">hyperlinks</span><span class="w"> </span><span class="n">disabled</span><span class="o">.</span>
+<span class="n">Total</span><span class="w"> </span><span class="n">presentation</span><span class="w"> </span><span class="n">time</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">:</span><span class="mf">03.</span>
+</code></pre></div>
+
+<p>Press <span class="caps">ESC</span> to close the presentation. Do you see the demo presentation? Good. Take some time to familiarize yourself with the features (they&#8217;re explained in the demo slide, so you can test them out on the&nbsp;fly.</p>
+<p>Don&#8217;t worry about the DeprecationWarning and the pdftk error. We won&#8217;t be using&nbsp;hyperlinks.</p>
+<h3>Step 2: prepare our folder&nbsp;structure</h3>
+<p>We&#8217;ll be doing some housekeeping now. In the Impressive folder (where you extracted into), delete everything except <code>impressive.py</code>.</p>
+<p>Then create a new folder: <code>Presentation</code>.</p>
+<p>In the Presentation-folder, create two new folders: <code>Slides</code> and <code>Text</code>.</p>
+<p>You now have the following folder&nbsp;structure:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/_X4W-h82Vgjw/SxqIGELL2AI/AAAAAAAAPRo/RxflM5iPh5o/s320/Screenshot.png"></p>
+<h3>Step 3: create support&nbsp;scripts</h3>
+<p>In the top-folder (where <code>impressive.py</code> resides), we&#8217;ll create some simple support&nbsp;scripts.</p>
+<p>First: <code>start.sh</code> &#8212; a simple script to start our&nbsp;presentation:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+python<span class="w"> </span>impressive.py<span class="w"> </span>./Presentation/presentation.pdf
+</code></pre></div></td></tr></table></div>
+
+<p>Next: <code>clone.sh</code> &#8212; a simple script to clone our two&nbsp;screens:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+xrandr<span class="w"> </span>--output<span class="w"> </span>LVDS1<span class="w"> </span>--mode<span class="w"> </span>1024x768<span class="w"> </span>--output<span class="w"> </span>VGA1<span class="w"> </span>--same-as<span class="w"> </span>LVDS1<span class="w"> </span>--mode<span class="w"> </span>1024x768
+</code></pre></div></td></tr></table></div>
+
+<p>Then: <code>dual.sh</code> &#8212; a simple script to enable dualscreen (same resolution, screens above each other, which works best on most&nbsp;configurations):</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+xrandr<span class="w"> </span>--output<span class="w"> </span>LVDS1<span class="w"> </span>--mode<span class="w"> </span>1024x768<span class="w"> </span>--output<span class="w"> </span>VGA1<span class="w"> </span>--above<span class="w"> </span>LVDS1<span class="w"> </span>--mode<span class="w"> </span>1024x768<span class="sb">`</span>
+</code></pre></div></td></tr></table></div>
+
+<p><code>converter.sh</code> &#8212; script to make thumbnails for our presenter view, this needs&nbsp;ImageMagick:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">echo</span><span class="w"> </span>Removing<span class="w"> </span>old<span class="w"> </span>images...<span class="p">;</span>
+rm<span class="w"> </span>./Presentation/Slides/slide-*.png<span class="p">;</span>
+<span class="nb">echo</span><span class="w"> </span>Converting...<span class="p">;</span>
+convert<span class="w"> </span>./Presentation/presentation.pdf<span class="w"> </span>-density<span class="w"> </span><span class="m">100</span><span class="w"> </span>slide.png
+<span class="k">for</span><span class="w"> </span>filename<span class="w"> </span><span class="k">in</span><span class="w"> </span>slide-*.png
+<span class="k">do</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span>Moving<span class="w"> </span><span class="nv">$filename</span><span class="p">;</span>
+<span class="w">  </span>mv<span class="w"> </span><span class="nv">$filename</span><span class="w"> </span>./Presentation/Slides/<span class="nv">$filename</span><span class="p">;</span>
+<span class="k">done</span>
+</code></pre></div></td></tr></table></div>
+
+<p><code>makeinfo.php</code> &#8212; <span class="caps">PHP</span> script to generate our info file Impress will use, needs <span class="caps">PHP</span> <span class="caps">CLI</span>:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&lt;</span><span class="err">?</span><span class="n">php</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">count</span><span class="p">(</span><span class="err">$</span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">  </span><span class="n">die</span><span class="w"> </span><span class="p">(</span><span class="s2">&quot;Provide number of pages</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
+<span class="err">$</span><span class="n">nrpages</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">$</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="n">ob_start</span><span class="p">();</span>
+<span class="err">?</span><span class="o">&gt;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateInfo</span><span class="p">():</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">FileName</span><span class="p">,</span><span class="w"> </span><span class="n">FileList</span><span class="p">,</span><span class="w"> </span><span class="n">PageCount</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">DocumentTitle</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">Pcurrent</span><span class="p">,</span><span class="w"> </span><span class="n">Pnext</span><span class="p">,</span><span class="w"> </span><span class="n">Tcurrent</span><span class="p">,</span><span class="w"> </span><span class="n">Tnext</span><span class="p">,</span><span class="w"> </span><span class="n">InitialPage</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">RTrunning</span><span class="p">,</span><span class="w"> </span><span class="n">RTrestart</span><span class="p">,</span><span class="w"> </span><span class="n">StartTime</span><span class="p">,</span><span class="w"> </span><span class="n">PageEnterTime</span><span class="p">,</span><span class="w"> </span><span class="n">CurrentTime</span>
+<span class="w">  </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./Presentation/json.txt&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(({</span><span class="s2">&quot;page_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">PageCount</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;current_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">Pcurrent</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;previous_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">Pnext</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;start_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">StartTime</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;pageenter_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">PageEnterTime</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;current_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">CurrentTime</span><span class="p">}),</span><span class="w"> </span><span class="n">io</span><span class="p">)</span>
+<span class="w">  </span><span class="n">io</span><span class="o">.</span><span class="n">close</span>
+
+<span class="w">  </span><span class="n">PageProps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="o">&lt;</span><span class="err">?</span><span class="n">php</span><span class="w"> </span><span class="k">for</span><span class="p">(</span><span class="err">$</span><span class="n">page</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="err">$</span><span class="n">page</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="err">$</span><span class="n">nrpages</span><span class="p">;</span><span class="w"> </span><span class="err">$</span><span class="n">page</span><span class="o">++</span><span class="p">):</span><span class="w"> </span><span class="err">?</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="o">&lt;</span><span class="err">?</span><span class="n">php</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="err">$</span><span class="n">page</span><span class="p">;</span><span class="w"> </span><span class="err">?</span><span class="o">&gt;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;transition&#39;</span><span class="p">:</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;OnEnter&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">UpdateInfo</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="o">&lt;</span><span class="err">?</span><span class="n">php</span><span class="w"> </span><span class="n">endfor</span><span class="p">;</span><span class="w"> </span><span class="err">?</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="o">&lt;</span><span class="err">?</span><span class="n">php</span>
+<span class="n">file_put_contents</span><span class="p">(</span><span class="s2">&quot;./Presentation/presentation.pdf.info&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ob_get_contents</span><span class="p">());</span>
+<span class="n">ob_end_clean</span><span class="p">();</span>
+<span class="err">?</span><span class="o">&gt;</span>
+</code></pre></div>
+
+<p>You now have the following folder&nbsp;structure:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/_X4W-h82Vgjw/SxqK6fLyQEI/AAAAAAAAPRs/nFVKeMvDz_U/s320/Screenshot-1.png"></p>
+<h3>Step 4: create the <span class="caps">HTML</span>&nbsp;page</h3>
+<p>In the Presentation-folder, we&#8217;ll create an <span class="caps">HTML</span>&nbsp;page.</p>
+<p><code>PresenterView.html</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="w">  </span><span class="nt">&lt;title&gt;</span>Presenter<span class="w"> </span>View<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;style&gt;</span>
+#information<span class="w"> </span>{
+<span class="w">  </span>text-align:<span class="w"> </span>center;
+<span class="w">  </span>font-size:<span class="w"> </span>300%;
+<span class="w">  </span>border:<span class="w"> </span>3px<span class="w"> </span>solid<span class="w"> </span>#ccc;
+<span class="w">  </span>padding:<span class="w"> </span>4px;
+}
+#val_time,<span class="w"> </span>#val_pagethis,<span class="w"> </span>#val_pagecount<span class="w"> </span>{
+<span class="w">  </span>color:<span class="w"> </span>#444;
+<span class="w">  </span>font-weight:<span class="w"> </span>bold;
+}
+#slideleft<span class="w"> </span>{
+<span class="w">  </span>float:<span class="w"> </span>left;
+<span class="w">  </span>padding:<span class="w"> </span>4px;
+<span class="w">  </span>border:<span class="w"> </span>1px<span class="w"> </span>solid<span class="w"> </span>#ccc;
+}
+#slideright<span class="w"> </span>{
+<span class="w">  </span>float:<span class="w"> </span>right;
+<span class="w">  </span>padding:<span class="w"> </span>4px;
+<span class="w">  </span>border:<span class="w"> </span>1px<span class="w"> </span>solid<span class="w"> </span>#ccc;
+}
+#text{
+<span class="w">  </span>padding:<span class="w"> </span>4px;
+<span class="w">  </span>margin-top:<span class="w"> </span>10px;
+<span class="w">  </span>border-top:<span class="w"> </span>3px<span class="w"> </span>solid<span class="w"> </span>#ccc;
+<span class="w">  </span>height:<span class="w"> </span>50px;
+}
+#pane{
+<span class="w">  </span>margin-top:<span class="w"> </span>10px;
+<span class="w">  </span>font-size:<span class="w"> </span>140%;
+}
+#time{
+<span class="w">  </span>margin-top:<span class="w"> </span>40px;
+<span class="w">  </span>text-align:<span class="w"> </span>center;
+<span class="w">  </span>font-size:<span class="w"> </span>200%;
+<span class="w">  </span>border:<span class="w"> </span>3px<span class="w"> </span>solid<span class="w"> </span>#ccc;
+<span class="w">  </span>padding:<span class="w"> </span>4px;
+}
+<span class="nt">&lt;/style&gt;</span>
+
+<span class="nt">&lt;script</span><span class="w"> </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="w"> </span><span class="na">src=</span><span class="s">&quot;jquery-1.3.2.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+var<span class="w"> </span>mins<span class="w"> </span>=<span class="w"> </span>0;
+var<span class="w"> </span>secs<span class="w"> </span>=<span class="w"> </span>0;
+var<span class="w"> </span>clock<span class="w"> </span>=<span class="w"> </span>0;
+var<span class="w"> </span>previousslide<span class="w"> </span>=<span class="w"> </span>0;
+var<span class="w"> </span>refreshtime<span class="w"> </span>=<span class="w"> </span>1000;
+
+function<span class="w"> </span>display_clock(){
+<span class="w">  </span>min<span class="w"> </span>=<span class="w"> </span>Math.floor(clock/60);
+<span class="w">  </span>secs=<span class="w"> </span>clock<span class="w"> </span>-<span class="w"> </span>mins*60;
+<span class="w">  </span>$(&quot;#val_time&quot;).text(mins+<span class="w"> </span>&quot;:&quot;<span class="w"> </span>+<span class="w"> </span>secs);
+}
+
+function<span class="w"> </span>update_clock(){
+<span class="w">  </span>setTimeout<span class="w"> </span>(&quot;update_clock()&quot;,<span class="w"> </span>1000);
+<span class="w">  </span>clock<span class="w"> </span>=<span class="w"> </span>clock<span class="w"> </span>+<span class="w"> </span>1;
+<span class="w">  </span>display_clock();
+}
+
+function<span class="w"> </span>make_call(){
+<span class="w">  </span>$.ajaxSetup({&#39;beforeSend&#39;:<span class="w"> </span>function(xhr){
+if<span class="w"> </span>(xhr.overrideMimeType){
+<span class="w">  </span>xhr.overrideMimeType(&quot;text/plain&quot;);
+}
+<span class="w">  </span>}
+<span class="w">  </span>});
+<span class="w">  </span>$.getJSON(&quot;json.txt&quot;,
+function(data){
+<span class="w">  </span>$(&quot;#val_pagethis&quot;).text(data.current_page);
+<span class="w">  </span>$(&quot;#val_pagecount&quot;).text(data.page_count);
+<span class="w">  </span>if<span class="w"> </span>(previousslide<span class="w"> </span>!=<span class="w"> </span>data.current_page){
+clock<span class="w"> </span>=<span class="w"> </span>data.current_time;<span class="w"> </span>//synchronize
+$(&quot;#val_slideleft&quot;).attr(&quot;src&quot;,<span class="w"> </span>&quot;./Slides/slide-&quot;+(data.current_page-1)+&quot;.png&quot;);
+<span class="w">  </span>if<span class="w"> </span>(data.current_page<span class="w"> </span><span class="nt">&lt; data.page_count</span><span class="err">)</span>
+<span class="err">$(&quot;#val_slideright&quot;).attr(&quot;src&quot;,</span><span class="w"> </span><span class="err">&quot;./Slides/slide-&quot;+(data.current_page)+&quot;.png&quot;);</span>
+<span class="w">  </span><span class="err">$(&quot;#val_text&quot;).text(&quot;</span><span class="w"> </span><span class="err">&quot;);</span>
+<span class="w">  </span><span class="err">$.get(&quot;./Text/text-&quot;+data.current_page+&quot;.txt&quot;,</span>
+<span class="err">function(data){</span>
+<span class="w">  </span><span class="err">$(&quot;#val_text&quot;).html(data);</span>
+<span class="err">});</span>
+<span class="err">}</span>
+<span class="na">previousslide =</span><span class="w"> </span><span class="s">data.current_page;</span>
+<span class="err">display_clock();</span>
+<span class="w">  </span><span class="err">});</span>
+<span class="w">  </span><span class="err">setTimeout</span><span class="w"> </span><span class="err">(&quot;make_call()&quot;,</span><span class="w"> </span><span class="err">refreshtime);</span>
+<span class="err">}</span>
+
+<span class="err">$(document).ready(function(){</span>
+<span class="w">  </span><span class="err">make_call();</span>
+<span class="w">  </span><span class="err">update_clock();</span>
+<span class="err">});</span>
+<span class="err">&lt;/script</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+
+<span class="nt">&lt;body&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;information&quot;</span><span class="nt">&gt;</span>Currently<span class="w"> </span>at<span class="w"> </span>slide
+<span class="nt">&lt;span</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_pagethis&quot;</span><span class="nt">&gt;</span>?<span class="nt">&lt;/span&gt;</span><span class="w"> </span>of<span class="w"> </span><span class="nt">&lt;span</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_pagecount&quot;</span><span class="nt">&gt;</span>?<span class="nt">&lt;/span&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;pane&quot;</span><span class="nt">&gt;</span>
+<span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;slideright&quot;</span><span class="nt">&gt;</span>
+<span class="w">  </span>Next<span class="w"> </span>slide:<span class="nt">&lt;br</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="w">  </span><span class="nt">&lt;img</span><span class="w"> </span><span class="na">height=</span><span class="s">&quot;360&quot;</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_slideright&quot;</span><span class="w"> </span><span class="na">src=</span><span class="s">&quot;./Slides/slide-1.png&quot;</span><span class="w"> </span><span class="nt">/&gt;&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;slideleft&quot;</span><span class="nt">&gt;</span>
+Current<span class="w"> </span>slide:<span class="nt">&lt;br</span><span class="w"> </span><span class="nt">/&gt;</span>
+<span class="nt">&lt;img</span><span class="w"> </span><span class="na">height=</span><span class="s">&quot;360&quot;</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_slideleft&quot;</span><span class="w"> </span><span class="na">src=</span><span class="s">&quot;./Slides/slide-0.png&quot;</span><span class="w"> </span><span class="nt">/&gt;&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">style=</span><span class="s">&quot;clear:both;&quot;</span><span class="nt">&gt;</span><span class="w"> </span><span class="nt">&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;text&quot;</span><span class="nt">&gt;&lt;span</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_text&quot;</span><span class="nt">&gt;</span>?<span class="nt">&lt;/span&gt;&lt;/div&gt;</span>
+<span class="w">  </span><span class="nt">&lt;div</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;time&quot;</span><span class="nt">&gt;</span>Clock:<span class="w"> </span><span class="nt">&lt;span</span><span class="w"> </span><span class="na">id=</span><span class="s">&quot;val_time&quot;</span><span class="nt">&gt;</span>?<span class="nt">&lt;/span&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div>
+
+<p>This page uses <a href="http://docs.jquery.com/Downloading_jQuery#Current_Release">jQuery</a> for a bit of <span class="caps">AJAX</span>-magic. So make sure <code>jquery-1.3.2.min.js</code> is placed in the Presentation-folder as&nbsp;well.</p>
+<p>And we&#8217;re done. We can now start preparing and giving our&nbsp;presentation&#8230;</p>
+<h3>Step 5: preparing your&nbsp;presentation</h3>
+<p><strong>(1 - Convert to <span class="caps">PDF</span>)</strong> Create a nice presentation in Openoffice or Powerpoint. Save it as <span class="caps">PDF</span>-slides. Rename your <span class="caps">PDF</span>-file to <code>presentation.pdf</code> and put it in the Presentation-folder. You now have the following folder&nbsp;structure:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SxqN-negDAI/AAAAAAAAPRw/o4inpHJvLZ4/s1600/Screenshot-2.png"></p>
+<p><strong>(2 - Make thumbnails)</strong> Open a terminal, cd to your top-folder, and execute the&nbsp;converter.sh-script:</p>
+<div class="highlight"><pre><span></span><code>~/Desktop/Impressive-0.10.2$ ./converter.sh
+
+Removing old images...
+Converting...
+Moving slide-0.png
+Moving slide-1.png
+Moving slide-2.png
+</code></pre></div>
+
+<p>Your Presentation/Slides-folder should now contain a bunch of <span class="caps">PNG</span>-files.</p>
+<p><strong>(3 - Make notes)</strong> In the Presentation/Text folder, create <code>text-n.txt</code> files where <em>n</em> is the number of the slide. In the text file: write short notes you want to see for that slide (you may use <span class="caps">HTML</span>&nbsp;formatting).</p>
+<p><strong>(4 - Create the Impress info script)</strong> Run the <span class="caps">PHP</span>&nbsp;file:</p>
+<div class="highlight"><pre><span></span><code>~/Desktop/Impressive-0.10.2$ php makeinfo.php 3
+</code></pre></div>
+
+<p>In my example, I have three slides, so I use <code>3</code> as the argument. Make sure the number you use is equal (or higher) than your number of&nbsp;slides!</p>
+<p>This will have created a <code>presentation.pdf.info</code> file in the&nbsp;Presentation-folder:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">UpdateInfo</span><span class="p">():</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">FileName</span><span class="p">,</span><span class="w"> </span><span class="n">FileList</span><span class="p">,</span><span class="w"> </span><span class="n">PageCount</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">DocumentTitle</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">Pcurrent</span><span class="p">,</span><span class="w"> </span><span class="n">Pnext</span><span class="p">,</span><span class="w"> </span><span class="n">Tcurrent</span><span class="p">,</span><span class="w"> </span><span class="n">Tnext</span><span class="p">,</span><span class="w"> </span><span class="n">InitialPage</span>
+<span class="w">  </span><span class="k">global</span><span class="w"> </span><span class="n">RTrunning</span><span class="p">,</span><span class="w"> </span><span class="n">RTrestart</span><span class="p">,</span><span class="w"> </span><span class="n">StartTime</span><span class="p">,</span><span class="w"> </span><span class="n">PageEnterTime</span><span class="p">,</span><span class="w"> </span><span class="n">CurrentTime</span>
+<span class="w">  </span><span class="n">io</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./Presentation/json.txt&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+<span class="w">  </span><span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(({</span><span class="s2">&quot;page_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">PageCount</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;current_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">Pcurrent</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;previous_page&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">Pnext</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;start_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">StartTime</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;pageenter_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">PageEnterTime</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;current_time&quot;</span><span class="p">:</span><span class="w"> </span><span class="n">CurrentTime</span><span class="p">}),</span><span class="w"> </span><span class="n">io</span><span class="p">)</span>
+<span class="w">  </span><span class="n">io</span><span class="o">.</span><span class="n">close</span>
+
+<span class="w">  </span><span class="n">PageProps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;transition&#39;</span><span class="p">:</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;OnEnter&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">UpdateInfo</span>
+<span class="p">},</span>
+<span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;transition&#39;</span><span class="p">:</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;OnEnter&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">UpdateInfo</span>
+<span class="p">},</span>
+<span class="mi">3</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="s1">&#39;transition&#39;</span><span class="p">:</span><span class="w"> </span><span class="kc">None</span><span class="p">,</span>
+<span class="w">  </span><span class="s1">&#39;OnEnter&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">UpdateInfo</span>
+<span class="p">},</span>
+<span class="w">  </span><span class="p">}</span>
+</code></pre></div>
+
+<p>This script provides Impressive with the necessary actions: every time we enter a script, we write some <span class="caps">JSON</span>-information (time, current slide, next slide,&#8230;) to <code>json.txt</code>. This file will be polled continuously by jQuery in our <span class="caps">HTML</span>-page. Also note that I&#8217;m not using transitions. (You can change that if you&nbsp;want.)</p>
+<p>One last time, your structure should look like&nbsp;this:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/SxqQQAFnEHI/AAAAAAAAPR0/aKyzBwRB7-U/s400/Screenshot-3.png"></p>
+<h3>Step 6: giving your&nbsp;presentation</h3>
+<p><strong>(1 - Dual screen)</strong> Open a terminal in your top-folder. And run the <code>dual.sh</code> script to switch to dual&nbsp;screen.</p>
+<p><strong>(2 - Open web browser)</strong> Open <code>PresenterView.html</code> in a web browser (I like Chromium best). Move it to your laptop screen. Then set it to always stay on top (you can do that by right clicking on the browser-item in the window switcher applet on the Gnome panel). The put it on full screen (F11 in most browsers). Your presenter view is&nbsp;running.</p>
+<p><strong>(3 - Start presentation)</strong> On the main screen, run <code>start.sh</code> to start the presentation. The page in the web browser will automatically update depending on which slide you&#8217;re on. This is what it looks like on the laptop&nbsp;screen:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/_X4W-h82Vgjw/SxqRjx77BOI/AAAAAAAAPR4/i7pI19c3iFo/s400/Screenshot-4.png"></p>
+<p>And on the projector, everything looks&nbsp;nice:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/_X4W-h82Vgjw/SxqRqMLsE_I/AAAAAAAAPR8/YWXlCUV8nOQ/s400/Screenshot-5.png"></p>
+<p>Also note that Impressive captures the mouse pointer. So once the presentation is going you won&#8217;t have nasty situations when your mouse pointer leaves the screen and you press the button to advance a&nbsp;slide.</p>
+<p>I&#8217;ve packed all the scripts, files, and a test presentation into a zip. You can download it <a href="http://static.macuyiko.com/files/presenterview/Impressive-PresenterScreen.zip">here</a>.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

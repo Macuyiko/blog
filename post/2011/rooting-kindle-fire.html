@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Rooting Kindle Fire</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sat 10 December 2011, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2011/rooting-kindle-fire.html" rel="bookmark"
+			title="Permalink to Rooting Kindle Fire">Rooting Kindle&nbsp;Fire</a></div>
+		</header>
+	
+	    <p>The following overview is just a reminder, mainly aimed at myself in the future, on how to root the kindle&nbsp;fire.</p>
+<p><strong>1. Install Android <span class="caps">SDK</span></strong></p>
+<ul>
+<li>Download from&nbsp;http://developer.android.com/sdk/index.html</li>
+<li>Update&nbsp;packages</li>
+</ul>
+<p><strong>2. In Kindle: &#8220;Allow Installation of Applications From Unknown&nbsp;Sources&#8221;</strong></p>
+<p><strong>3. Edit <code>android_winusb.inf</code> in <code>usb_driver</code> in Android install&nbsp;path</strong></p>
+<ul>
+<li>
+<p>Copy and paste right beneath [Google.NTx86] and [Google.NTamd64]&nbsp;line:</p>
+<p>;Kindle Fire
+%SingleAdbInterface% = USB_Install, <span class="caps">USB</span>\VID_1949&amp;PID_0006
+%CompositeAdbInterface% = USB_Install, <span class="caps">USB</span>\VID_1949&amp;PID_0006&amp;MI_01</p>
+</li>
+</ul>
+<p><strong>4. Edit <code>adb_usb.ini</code> in <code>.android</code></strong></p>
+<ul>
+<li>Add&nbsp;0x1949</li>
+</ul>
+<p><strong>5. Update <span class="caps">USB</span>&nbsp;driver</strong></p>
+<ul>
+<li><span class="dquo">&#8220;</span>Update Driver Software&#8221; in Device Manager with <code>android_winusb.inf</code></li>
+</ul>
+<p><strong>6. (Optional) test <span class="caps">USB</span></strong></p>
+<ul>
+<li>In <code>platform-tools</code>, issue <code>adb kill-server</code> and <code>adb devices</code></li>
+</ul>
+<p><strong>7. SuperOneClick&nbsp;root</strong></p>
+<ul>
+<li>Download from&nbsp;ftp://shortfuse.org/SuperOneClick/Packages/SuperOneClickv2.2-ShortFuse.zip</li>
+</ul>
+<p><strong>8. Get <code>Root Explorer v2.17.1.apk</code> and <code>Vending.3.3.12.apk</code>, together with Google Services Framework&nbsp;apk</strong></p>
+<p><strong>9.&nbsp;Finalisation</strong></p>
+<ul>
+<li>Install Google Service Framework apk and Root Explorer&nbsp;apk</li>
+<li><span class="dquo">&#8220;</span>Move&#8221; Vending apk to <code>/system/app</code> with Root&nbsp;Explorer</li>
+<li>Mount as <span class="caps">RW</span> and set Vending apk filepermissions to <code>rw-r-r-</code></li>
+<li>Install Vending apk and&nbsp;reboot</li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

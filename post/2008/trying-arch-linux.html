@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Trying Arch Linux</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 07 December 2008, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2008/trying-arch-linux.html" rel="bookmark"
+			title="Permalink to Trying Arch Linux">Trying Arch&nbsp;Linux</a></div>
+		</header>
+	
+	    <p>I&#8217;ve been hearing some good things about <a href="http://www.archlinux.org/">Arch Linux</a> lately, and I wanted to see how it compares to Ubuntu, which I&#8217;ve been using for a few years now. I loaded up a new VMWare virtual machine and mounted the iso. Let&#8217;s see how this&nbsp;goes&#8230;</p>
+<p>I&#8217;ll be following directions from <a href="http://wiki.archlinux.org/index.php/Beginners_Guide#Tweaks.2FFinishing_touches">this wiki page</a>. So that I&#8217;m not completely&nbsp;lost.</p>
+<ol>
+<li>
+<p>Boot menu comes up. Install? Okay. no graphical installer. We&#8217;re going oldskool. Log in as root and run&nbsp;setup.</p>
+</li>
+<li>
+<p>Installation steps aren&#8217;t too hard to follow. Partition the hard disk, let&#8217;s use <span class="caps">JFS</span> for the first time (why&nbsp;not).</p>
+</li>
+<li>
+<p>Select packages, core packages are selected automatically, I press enter a few times, installation&nbsp;begins.</p>
+</li>
+<li>
+<p>Time to configure the system <em>yuck</em>, configuration files. Editing <code>/etc/rc.conf</code>. Make sure that <code>eth0="dhcp"</code>. All&nbsp;done.</p>
+</li>
+<li>
+<p>Reboot. Login? Works. <code>ping google.com</code>?&nbsp;Works.</p>
+</li>
+<li>
+<p><code>pacman</code> is the package manager. <code>pacman -Syu</code> to sync and update. <code>klibc</code> is complaining: file exists. I check the forums. Turns out I have to do <code>rm /usr/lib/klibc/include/asm</code>. Minus one for&nbsp;user-friendliness.</p>
+</li>
+<li>
+<p>Update works now. Time to add a user. <code>useradd -m -G users,audio,lp,optical,storage,video,wheel,power -s /bin/bash archie</code>. <code>passwd archie</code>.</p>
+</li>
+<li>
+<p><code>pacman -S sudo</code> (we want sudo). <code>EDITOR=nano visudo</code>. Add <code>archie ALL=(ALL) ALL</code>.</p>
+</li>
+<li>
+<p>Install Alsa, works (seems like Arch isn&#8217;t using <code>pulseaudio</code> in their tutorials/beginner&#8217;s&nbsp;guide).</p>
+</li>
+<li>
+<p>On to Xorg - installing lots of stuff. <code>Xorg -configure</code> should do the trick for the configuration. Copy example <code>xinitrc</code> to my home, add <code>exec xterm</code>.&nbsp;Test.</p>
+</li>
+<li>
+<p>Mouse and keyboard aren&#8217;t working. Let&#8217;s try <code>xorgconfig</code>.</p>
+</li>
+<li>
+<p>Even worse, <code>xorgcfg</code>? Nope, still nothing. Starting to miss&nbsp;Ubuntu.</p>
+</li>
+<li>
+<p>Oops! I&#8217;m stupid, forgot to copy new config file to <code>/etc/X11/xorg.conf</code>&#8230;</p>
+</li>
+<li>
+<p>&#8230; but still nothing. Forums again. Looks like someone else had this problem (also using VMWare). Install <code>xf64-input-vmmouse</code>, and execute <code>hwd -x</code>.</p>
+</li>
+<li>
+<p><code>hwd</code> generates wrong <code>xorg.conf</code> files. Remove the line with <code>RgbPath</code>.</p>
+</li>
+<li>
+<p>Still nothing. Add Option <code>"AllowEmptyInput" "false"</code> to <code>ServerLayout</code> section.</p>
+</li>
+<li>
+<p>Finally! X works, I&#8217;m learning stuff already, but still: again one minus point for friendliness (although the community seems nice, and the documentation is actually not bad for a fairly small&nbsp;distro).</p>
+</li>
+<li>
+<p>Worst part is over, on to installing a desktop environment. Let&#8217;s keep it simple and try&nbsp;Gnome.</p>
+</li>
+<li>
+<p>First some fonts. I add <code>ttf-liberation</code> into the mix, glad to see it&#8217;s&nbsp;there.</p>
+</li>
+<li>
+<p><code>gnome</code>, <code>gnome-extra</code>, <code>gdm</code>, downloading and installing. Takes a&nbsp;while.</p>
+</li>
+<li>
+<p><code>/etc/rc.conf</code> again: adding <code>hal</code>, <code>fam</code> and <code>gdm</code> to daemons, and fuse to&nbsp;modules.</p>
+</li>
+<li>
+<p>Installing a bunch of gnome&nbsp;themes.</p>
+</li>
+<li>
+<p>Installing vlc, firefox, flash, and some other&nbsp;things.</p>
+</li>
+<li>
+<p>Login as user, <code>edit xinit</code>, <code>exec gnome-session</code>. And: <code>startx</code>!</p>
+</li>
+<li>
+<p>Gnome pops up, clean background, very minimalistic. But fast&nbsp;indeed.</p>
+</li>
+</ol>
+<p>Screenshot:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/_X4W-h82Vgjw/STsJWIjqvJI/AAAAAAAALIc/59jmigmYngc/s400/arch.jpg"></p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

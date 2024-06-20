@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>I Almost Switched to Pelican, a Static Blog Engine</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 20 June 2013, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html" rel="bookmark"
+			title="Permalink to I Almost Switched to Pelican, a Static Blog Engine">I Almost Switched to Pelican, a Static Blog&nbsp;Engine</a></div>
+		</header>
+	
+	    <p>Visitors familiar with my blog will notice a pretty big change when viewing this post. The blog&#8217;s been due for a redesign for some time now, so a few days ago I finally went through with&nbsp;it.</p>
+<p>The redesign took more time than expected, since I spent quite a lot of time setting up <a href="http://blog.getpelican.com/">Pelican</a> &#8212; a static blog engine written in Python, including converting all my Blogger posts to Markdown. I will describe some of the reasoning behind this, together with the reason why I ultimately stayed with Blogger &#8212; for&nbsp;now.</p>
+<h3>What&#8217;s Wrong with&nbsp;Blogger?</h3>
+<p>I&#8217;ve been using Blogger for many years. Delving into the archives of this site suggest I&#8217;ve been seriously using it since 2005, with my main blog being called &#8220;Macuyiko&#8217;s Mindcube&#8221; back then. In fact, it&#8217;s <a href="http://macuyiko.blogspot.be/">still online</a>, with the last post redirecting visitors to my new blog (&#8220;Bed Against The&nbsp;Wall&#8221;).</p>
+<p>Throughout the years, that &#8212; this &#8212; blog went through a series of redesigns and shifted through topics of interest. To be honest, I was never that good at consistently putting out content, but being able to keep the thing running for almost ten years now is an accomplishment in itself, I&nbsp;suppose.</p>
+<p>Anyway, I&#8217;ve been getting somewhat disappointment with Blogger lately, something which started some two or three years ago, when I started putting out longer articles, containing also more code fragments. Don&#8217;t get me wrong, I don&#8217;t think Blogger is bad, but the following things were becoming an&nbsp;annoyance:</p>
+<ul>
+<li>
+<p>I&#8217;ve seen my fair share of Javascript <span class="caps">WYSIWYG</span> editors &#8212; either bolted to your favorite blogging platform of choice or &#8220;that <span class="caps">PHP</span> Content Management System from the nineties&#8221;. While libraries and frameworks such as JQuery have helped to clear out some of the mess, I honestly feel that 99% of them still behave like&nbsp;crap.</p>
+<p>I&#8217;ll not go into details about all the things wrong with Javascript editors now. Still, there is one silver lining which is worth mentioning: the amount of great Markdown based Javascript editors which have appeared during the past years. For example, check out <a href="http://epiceditor.com/">EpicEditor</a>, <a href="http://markitup.jaysalvat.com/home/">markItUp!</a>, <a href="http://jrmoran.com/playground/markdown-live-editor/">markdown live editor</a>, <a href="https://code.google.com/p/wmd/"><span class="caps">WMD</span></a> (outdated) and its <a href="http://blog.stackoverflow.com/2008/12/reverse-engineering-the-wmd-editor/">many</a> <a href="https://code.google.com/p/pagedown/">spinoffs</a>. I absolutely love Markdown, and have even forced it to users of websites I&#8217;ve built, using one of the aforementioned Javascript editors to make it clear how easy it is to write Markdown&nbsp;text.</p>
+<p>At this point you might be wondering what, exactly, is so messed up about the Blogger <span class="caps">WYSIWYG</span> editor. There isn&#8217;t anything <em>really</em> wrong with it, but the following has been bothering&nbsp;me:</p>
+<ul>
+<li>Inserting code is a problem. You have to deal with <code>pre</code>, <code>tt</code>, <code>code</code> tags together with installations of Pretty Print (or similar libraries). Don&#8217;t forget to convert your <code>&lt;</code><span class="quo">&#8216;</span>s to <code>&amp;lt;</code> or things won&#8217;t work. Make sure your whitespace is correct, meaning that you alternate between tabs, spaces, or a bunch of <code>&amp;nbsp;</code><span class="quo">&#8216;</span>s.</li>
+<li>So okay, maybe Blogger isn&#8217;t great for code, but at least it&#8217;s perfect for writing, right? Not really. It&#8217;s okay, but the rise of recent &#8220;modern magazines&#8221; such as <a href="https://medium.com/">Medium</a> and <a href="https://svbtle.com/"><span class="caps">SVBTLE</span></a> have made it clear that writing can be a much smoother process. Heck, even Wordpress&#8217; editor is nicer, and will apply many typographic fixes such as converting two dashes to an&nbsp;em-dash.</li>
+<li>Blogger allows too many formatting options. Since its editor is a <span class="caps">WYSIWYG</span> on top of <span class="caps">HTML</span>, it&#8217;s perfectly fine to copy-paste in ugly text coming from an e-mail message or that Word document you typed out&#8230; <code>&lt;span&gt;</code> with <code>mso-style</code>, anyone? Please, just allow me to apply headings, emphasis, lists and paragraphs to my text, but let the theme <span class="caps">CSS</span> do its thing and leave out the&nbsp;styling.</li>
+</ul>
+</li>
+<li>
+<p>Making changes to the template is bothersome. Blogger&#8217;s template system is fine as long as you keep using one of the default themes, maybe make some slight color or font changes, and leave the rest as is. Once you want to start moving stuff around however, add backgrounds or lots of custom <span class="caps">CSS</span>/<span class="caps">JS</span>, things get harder and you quickly and up in the middle of &#8220;tag soup&#8221;. I didn&#8217;t even manage to change the background of the final theme I was using once, even though I was initially planning to do so once in awhile. It&#8217;s not hard, but my laziness outshines the&nbsp;difficulty.</p>
+</li>
+</ul>
+<p>That said, there are plenty of things which I do like about Blogger. It&#8217;s very easy to set up a basic blog, there are many widgets to choose from, basic templating stuff is fine if you don&#8217;t mind your blog having a common look and feel. Also, comment management and moderation works pretty well, especially now with the Google+&nbsp;integration.</p>
+<p>So, in short, what I wanted&nbsp;was:</p>
+<ul>
+<li>The ability to write in&nbsp;Markdown</li>
+<li>The ability to easy add in code, syntax highlighted if&nbsp;possible</li>
+<li>Nice typographic options, beautiful&nbsp;text</li>
+<li>Easy theming&nbsp;support</li>
+</ul>
+<p>Blogger was starting to make this pretty&nbsp;hard.</p>
+<h3>Solutions, Workarounds and&nbsp;Alternatives</h3>
+<h4>Just continue to use&nbsp;Blogger?</h4>
+<p>I&#8217;m not alone in my desire to use Markdown with Blogger. The topic has actually been discussed to a great extent, with solutions including the&nbsp;following:</p>
+<ul>
+<li>Write Markdown on your computer, <a href="http://notely.blogspot.be/2011/08/how-to-use-markdown-in-blogspot-posts.html">then convert to <span class="caps">HTML</span></a> with one of many tools out their. Cons: redundancy, no central &#8220;post&#8221; repository, making edits is hard. Not 100% web&nbsp;based.</li>
+<li>Use one of these neat apps such as <a href="http://mac.appstorm.net/reviews/productivity-review/byword-2-is-the-markdown-blogging-app-weve-been-waiting-for/">Byword</a> (<a href="http://www.red-sweater.com/marsedit/">MarsEdit</a> as well?) which lets you publish to Blogger. Cons: not 100% web based, no central posts repository. Often Mac&nbsp;only&#8230;</li>
+<li>Write a web app using Blogger&#8217;s <span class="caps">API</span> which would allow me write posts using Markdown and publish them to Blogger after converting them to <span class="caps">HTML</span>. But this would&#8217;ve taken so much&nbsp;effort.</li>
+<li>Include a bunch of magic Javascript scripts/parsers on your Blogger blog which will perform the conversion of Markdown to <span class="caps">HTML</span> client-side. This keeps your posts centrally stored, but relies on too much hacks to feel like a great solution. Still, it&#8217;s <a href="http://webreflection.blogspot.be/2013/04/writing-markdown-in-blogger.html">being</a> <a href="http://blog.chukhang.com/2011/09/markdown-in-blogger.html">used</a>. <a href="https://github.com/p01/mmd.js">mmd.js</a> seems to be the preferred Javascript Markdown parser as of&nbsp;now.</li>
+</ul>
+<h4>Switch to another&nbsp;service</h4>
+<p>There has been a renaissance of writing on the web. When 2012 used to be about Tweets and short status updates, sites like <a href="http://neocities.org/">Neocities</a> or <a href="https://medium.com/">Medium</a> are putting the emphasis back on simple, well written web&nbsp;sites.</p>
+<p>Indeed, the options for a minimalistic blog are many. Many of them support Markdown out of the box. Many of them do away with many typical overblown blogging features. No comments, no complex theming, just&nbsp;writing:</p>
+<ul>
+<li><a href="http://tumblr.com">Tumblr</a></li>
+<li><a href="https://medium.com">Medium</a></li>
+<li><a href="https://svbtle.com"><span class="caps">SVBLTE</span></a></li>
+<li><a href="http://scriptogr.am/">Scriptogram</a></li>
+<li><a href="http://calepin.co/">Calepin</a></li>
+<li><a href="http://pages.github.com/">GitHub&nbsp;Pages</a></li>
+</ul>
+<p>I will admin, these all look fantastic. I&#8217;m already using Tumblr for my <a href="http://tumblr.macuyiko.com/">random stuff I find online blog</a>; the Dropbox based options look like great Zen-like blogging experience. I have my invite for Medium, and the platform looks&nbsp;fantastic.</p>
+<p>I would&#8217;ve gone with one of these options (in fact, I&#8217;m still on the fence), but I was a bit disappointed with (i) the lack of code formatting support on most of these platforms, (ii) the lack of any theming to make yourself stand&nbsp;out.</p>
+<h4>Host it yourself,&nbsp;static-like</h4>
+<p>A final alternative solution I was considering was hosting the blog myself using a static blog engine. I don&#8217;t mind Wordpress, but think it&#8217;s completely overkill for a simple use case such as mine. I considered the following&nbsp;options:</p>
+<ul>
+<li><a href="http://jekyllrb.com/">Jekyll</a>: Ruby, Markdown or Textile, robust, proven, powers GitHub&nbsp;Pages&#8230;</li>
+<li><a href="http://octopress.org/">Octopress</a>: sits on top of Jekyll to provide a more full featured blogging&nbsp;platform.</li>
+<li><a href="http://hyde.github.io/">Hyde</a>: &#8220;Jekyll&#8217;s evil twin&#8221;. Python, Jinja2,&nbsp;full-featured.</li>
+<li><a href="http://jaspervdj.be/hakyll/">Hakyll</a>: Haskell, robust,&nbsp;esoteric.</li>
+<li><a href="https://github.com/posativ/acrylamid/">Acrylamid</a>: Python, Markdown and reStructuredText, Jinja2. Fast,&nbsp;experimental.</li>
+<li><a href="https://github.com/stef/utterson">Utterson</a>: Unix, <span class="caps">HTML</span>. Basic,&nbsp;experimental.</li>
+<li><a href="http://rog.rubyforge.org/">Rog</a>: Ruby, simple,&nbsp;young.</li>
+<li><a href="https://pypi.python.org/pypi/cyrax">Cyrax</a>: Python, Jinja2,&nbsp;young.</li>
+<li><a href="http://www.marco.org/secondcrack">Second Crack</a>: <span class="caps">PHP</span>, one of the few <span class="caps">PHP</span> static blogging engines worth mentioning these days (shows how the language has evolved, actually&#8230;). Created by Marco Arment, so you know it can hold its own. Not suitable for everyone&nbsp;though.</li>
+<li><a href="http://pelican.readthedocs.org/">Pelican</a>: Python, Jinja2, Markdown and others, well-featured, easily&nbsp;usable.</li>
+</ul>
+<p>Ultimately, I settled on Pelican. I liked Jekyll, but wanted a Python based engine since I didn&#8217;t want to deal with installing Ruby on the server I&#8217;d be using. Installing Pelican is very simple. Just <code>pip install</code> <code>pelican</code>, <code>Markdown</code> and <code>typogrify</code> and you&#8217;re set. <a href="http://jeffcroft.com/blog/2007/may/29/typogrify-easily-produce-web-typography-doesnt-suc/">Typogrify</a> is a great Python library which helps you to prettify written text, mostly thanks to Gruber&#8217;s fantastic <a href="http://daringfireball.net/projects/smartypants/">SmartyPants</a>&nbsp;plug-in.</p>
+<p>Configuration is just an easy step consisting of modifying <code>pelicanconf.py</code>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*- #</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">unicode_literals</span>
+
+<span class="n">AUTHOR</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;Your Name Here&#39;</span>
+<span class="n">SITENAME</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;Your Title Here&#39;</span>
+<span class="n">SITEURL</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+<span class="n">TIMEZONE</span> <span class="o">=</span> <span class="s1">&#39;Europe/Brussels&#39;</span>
+<span class="n">DEFAULT_LANG</span> <span class="o">=</span> <span class="sa">u</span><span class="s1">&#39;en&#39;</span>
+<span class="n">TYPOGRIFY</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># Generation</span>
+<span class="n">DIRECT_TEMPLATES</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="s1">&#39;archives&#39;</span><span class="p">)</span>
+<span class="n">MONTH_ARCHIVE_SAVE_AS</span> <span class="o">=</span> <span class="s1">&#39;archives/{date:%Y}/{date:%m}/index.html&#39;</span>
+<span class="n">YEAR_ARCHIVE_SAVE_AS</span> <span class="o">=</span> <span class="s1">&#39;archives/{date:%Y}/index.html&#39;</span>
+
+<span class="c1"># Feeds</span>
+<span class="n">FEED_ATOM</span> <span class="o">=</span> <span class="s1">&#39;feeds/atom.xml&#39;</span>
+<span class="n">FEED_RSS</span> <span class="o">=</span> <span class="s1">&#39;feeds/rss.xml&#39;</span>
+<span class="n">FEED_ALL_ATOM</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">CATEGORY_FEED_ATOM</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">TRANSLATION_FEED_ATOM</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="c1"># Blogroll</span>
+<span class="n">LINKS</span> <span class="o">=</span>  <span class="p">((</span><span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;http://url.com/&#39;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+<span class="c1"># Social widget</span>
+<span class="n">SOCIAL</span> <span class="o">=</span> <span class="p">((</span><span class="s1">&#39;Twitter&#39;</span><span class="p">,</span> <span class="s1">&#39;http://twitter.com/username&#39;</span><span class="p">),</span>
+     <span class="p">)</span>
+
+<span class="n">DEFAULT_PAGINATION</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1"># Template</span>
+<span class="n">THEME</span> <span class="o">=</span> <span class="s2">&quot;themes/custom_theme&quot;</span>
+</code></pre></div></td></tr></table></div>
+
+<p>I then picked the <a href="https://github.com/getpelican/pelican-themes/tree/master/tuxlite_zf">TuxLite <span class="caps">ZF</span></a> theme from <code>pelican-themes</code> as a starting point to put in <code>custom_theme</code>. I changed the color scheme, header sizes and spacings and fonts (making use of <a href="http://www.google.com/fonts/">Google&#8217;s web fonts</a> to pick out a nice heading font which would work well with large-sized OpenSans for the normal text, which I&#8217;m currently in love with &#8212; it works great for slides as well, try it!). Editing the Jinja2 themes was a breeze and mostly consisted of taking stuff away &#8212; like tags and categories &#8212; which I didn&#8217;t need. Finally, I made sure to made the background &#8220;pop&#8221; behind the single-column content, using inspirational, high resolution&nbsp;foto&#8217;s.</p>
+<p>Next up, the hard part, <em>converting all my Blogger posts to Markdown</em>&#8230; Luckily, Lars Kellogg-Stedman has had the same problem and describes possible approaches in <a href="http://blog.oddbit.com/post/converting-html-to-markdown">this post</a>. I thus created a folder with the&nbsp;following:</p>
+<ul>
+<li><code>blogger2md.py</code> from&nbsp;https://gist.github.com/larsks/4022537</li>
+<li><code>blogger-export.xml</code> from Blogger: an export of your&nbsp;blog</li>
+<li><code>html2text.py</code> from&nbsp;https://raw.github.com/aaronsw/html2text/master/html2text.py</li>
+</ul>
+<p>You&#8217;ll need to install <code>lxml</code> to get everything to work. This didn&#8217;t work for me using <code>pip</code>, but <code>easy_install</code> did the job. Once this is setup, create a new directory <code>posts</code> and&nbsp;run:</p>
+<div class="highlight"><pre><span></span><code><span class="n">blogger2md</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="o">--</span><span class="n">html2text</span><span class="w"> </span><span class="o">--</span><span class="n">output</span><span class="o">-</span><span class="n">dir</span><span class="w"> </span><span class="n">posts</span><span class="w"> </span><span class="n">blogger</span><span class="o">-</span><span class="k">export</span><span class="o">.</span><span class="n">xml</span>
+</code></pre></div>
+
+<p>The script will start crunching and convert everything. Afterwards, I went through every post to rename the file name, correct the meta data, fix the links (Pelican wants <code>(|filename|FILE_PATH)</code>) and clean up some formatting issues still present after the conversion (quite a lot of them). This took a few evenings, but I now have a collection of Markdown posts for this complete&nbsp;blog.</p>
+<h5>Side track: a trip down&nbsp;memory-lane</h5>
+<p>While I was converting all these posts, it struck me how long I&#8217;ve been blogging, and how &#8220;face-palmingly&#8221; bad my writings were as a kid. Luckily, my Geocities page has since long disappeared thanks to Yahoo! (actually, I should retrieve it from the archive for a laugh), but this wasn&#8217;t that much better. <a href="http://blog.macuyiko.com/2005/07/back-and-right-into-summer.html">&#8220;This dog is gonna check out town&#8221;</a>&#8230; really, young me? I wanted to keep everything intact, but made some modifications to the language where I really felt I had to (swearing, &#8220;hackz0r M$&#8221;-bashing, referenced to piracy&#8230; hey, I was a poor&nbsp;kid).</p>
+<p>It&#8217;s also funny to see the topics my blog has shifted&nbsp;through:</p>
+<ul>
+<li>Games, with sad reviews of &#8220;classics&#8221; such as <a href="http://blog.macuyiko.com/2006/10/game-scarface.html">Scarface</a>&#8230; and <a href="http://blog.macuyiko.com/2007/10/game-portal.html">Portal</a>.</li>
+<li>Linkdumps, oftentimes based on what I&#8217;d read on Digg (yes, Digg!) that day. Is Digg still around? I almost forgot about the <a href="http://blog.macuyiko.com/2007/05/number.html"><span class="caps">HD</span>-<span class="caps">DVD</span> &#8220;number gate&#8221;</a> back&nbsp;then.</li>
+<li>Linux related posts. Mostly following after acquiring my now pre-historic <a href="http://blog.macuyiko.com/2006/08/welcome-thinkpad-x60.html">Thinkpad X60</a> which is, in fact, still somewhat being&nbsp;used.</li>
+<li>Hacking and thinkering&#8230; like <a href="http://blog.macuyiko.com/2010/08/oldie-but-goodie-privilege-escalation.html">here</a> and <a href="http://blog.macuyiko.com/2011/01/slowloris-and-mitigations-for-apache.html">here</a>. Some of these are not that bad. The <a href="http://blog.macuyiko.com/2011/03/running-ssh-honeypot-with-kippo-lets.html">Kippo</a> article has been pretty popular, together with the <a href="http://blog.macuyiko.com/p/palettestealersuspender.html">PalettestealerSuspender</a> tool. Others just show off my <a href="http://blog.macuyiko.com/2006/08/realtime-monitoring-with-php.html">horrific <span class="caps">PHP</span> skills</a>.</li>
+<li><a href="http://blog.macuyiko.com/2009/06/solving-tetris-cube-recursive.html">Puzzles</a>, <a href="http://blog.macuyiko.com/2009/01/modern-genetic-and-other-algorithms.html">algorithms</a>, optimization. I like these as well, but they should be proofed for language, spelling,&nbsp;formatting.</li>
+</ul>
+<p>Anyway, back to the main programming&nbsp;now.</p>
+<h4>Just stay with&nbsp;Blogger?</h4>
+<p>So here I was, ready to launch with Pelican. Admittedly, some of the posts needed some further formatting, some links has to be corrected and the Disqus comment system had to be implemented, but that could be done later. All there was left to do was relink the domain name (<a href="blog.macuyiko.com">blog.macuyiko.com</a>) and put up a message on the old blog that things had&nbsp;moved.</p>
+<p>Still, I wasn&#8217;t feeling sure about things. Just to be sure, I decided to have another look around to see if things had improved on the Blogger side as of yet, since it&#8217;d been a while since I&#8217;d searched for&nbsp;solutions.</p>
+<p>Turns out there is a web app called <a href="http://benweet.github.io/stackedit/">StackEdit</a> which provides a great Markdown writing environment, is able to sync to Dropbox or Google Drive (sweet) and is able to publish to Blogger. Alright, maybe one more chance, then. I spent some time revamping the old theme to match the design I&#8217;d put together for the static site (you&#8217;re probably looking at it now), using the same fonts and colors. I had also set out to be able to change the background every time I made a new post, so I made sure I&#8217;d be able to do that from now on as well. That&#8217;s why you&#8217;re currently looking at a summer-y &#8220;pelican&#8221; background. It&#8217;d be great if I could made the background post-dependent, but maybe that&#8217;s going too&nbsp;far.</p>
+<p>So I&#8217;m keeping things a bit longer with Blogger. As I said at the beginning, it offers some nice features, and this way I don&#8217;t have to introduce yet another commenting&nbsp;system.</p>
+<p>On the plus side, I&#8217;m now able to write and keep posts as Markdown (using StackEdit with Google Drive) and host at Blogger. The theme doesn&#8217;t look too bad (will need some further fine tuning) either. Still, if it turns out that I&#8217;d rather go to Pelican anyway (or maybe one of the services mentioned above), I now have a collection of Markdown posts at the&nbsp;ready.</p>
+<p>I realize this post didn&#8217;t really offer any information. I guess this was an exercise in keeping things the same while still putting in lots of work. Still, it was nice reading up about static blog engines, and I&#8217;m still pretty intrigued by these hip, new services (Blogger certainly feels like the old guy in the block). In addition, the refresh of the Blogger theme has been inspiring in trying to conjure up some new content, so the remainder of the year will see the arrival of some other posts as well &#8212; so long as this experiment goes right, this is a first test post after all. I should still go through the older posts to clean them up, but we&#8217;ll see what we can&nbsp;manage.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

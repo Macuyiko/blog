@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>And Now, Time for a Rant</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 08 November 2017, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2017/and-now-time-for-a-rant.html" rel="bookmark"
+			title="Permalink to And Now, Time for a Rant">And Now, Time for a&nbsp;Rant</a></div>
+<div class="article-subtitle">Everything about computing is horrible</div>		</header>
+	
+	    <p>I&#8217;ve been interested in computing since I was a kid. The ability to tinker with the internals of a machine, the brutalism of <span class="caps">DOS</span>, Windows 3.1 and Windows 95&#8217;s interfaces (those big grey buttons)&#8230; It was a great time for young persons to get started with <span class="caps">IT</span>, programming, and anything computer science. A great time to actually <em>create</em> something using a completely new medium, a digital&nbsp;canvas.</p>
+<p>Today, a lot of things have changed. Many for the better, as you could argue, but it seems to me that computing today is &#8220;just not the same&#8221; anymore. The web has come around. Everything has to be touch and haptic, 500ms animations all over the place, hiding away the complexities behind, but also the potential for discovery, learning, and true&nbsp;creativity.</p>
+<p>Over the past week or so, I&#8217;ve been jotting down a list of small annoyances. Not one of these is really a deal breaker on its own, but put together, it is clear &#8212; at least from my perspective &#8212; that a lot of things have changed. And I&#8217;m not the only one that thinks so (more on that&nbsp;later).</p>
+<h2>On Windows and&nbsp;Interfaces</h2>
+<ul>
+<li>I come home from a two week trip to find that my old Windows 10 laptop which is being used as a media centre machine has tripped all over itself. &#8220;Critical process died,&#8221; or something like that. Sure, &#8220;blue screens&#8221; on Windows 10 are not blue anymore and now show smileys and pretty <span class="caps">QR</span> codes you can scan to be redirected to a Google search with the first page being a ten minute long Youtube video with 8 minutes of intro song and fumbling around with Notepad&#8217;s font settings before presenting the quote-unquote &#8220;solution&#8221; (hey did you try running this Adware infested &#8220;cleaner&#8221;?). The strange thing is that this seems to happen more often when you keep machines unattended for a&nbsp;while.</li>
+<li>Windows 10 comes with an amazing update cycle and an approach to quality control best described as &#8220;let&#8217;s all be beta testers&#8221;. As of now, I have two laptops whose Wifi connection starts crapping out after a reasonable amount of uptime. A third laptop Wifi just softlocks after a while, and will even prevent the machine from restarting&nbsp;normally.</li>
+<li>That last machine still hasn&#8217;t received its &#8220;creators update,&#8221; by the way, presumably because it has some Bluetooth chip Microsoft just can&#8217;t figure out. Strange, as it has been working fine with the current &#8212; what is it, anniversary update? &#8212; builds. Did the folks in Redmond suddenly decide to completely overhaul the driver model in the creators update? It turns out that a manual initiate of the update doesn&#8217;t cause any issues, but doesn&#8217;t this defeat the purpose of automatic updates,&nbsp;then?</li>
+<li>Speaking of updates, I&#8217;ve had it happen more than once that Windows decided to update in the middle of the night (fine) while I still have an unsaved document or presentation open (not fine), which it&#8217;ll then forcibly close to do its thing. Come on. Even if you agree with the aggressive update style (which I can understand from a certain perspective), at least cancel a restart and present the user with a warning message when they wake up. Word&#8230; PowerPoint, these are your products, Microsoft. Or at least force the documents to save <em>somewhere</em>, even when autosaving is turned of. How hard is it to fix this what I assume to be a very common&nbsp;annoyance?</li>
+<li>Meanwhile, Windows tries to put more and more configuration settings in their new, &#8220;flat&#8221; interface, but no worries: with a few clicks more you can still get to good ole control panel. If you&#8217;re really lucky, you might encounter <a href="https://gbl08ma.com/windows-10-is-unfinished/">some icons that are still there from the 16 bit era</a>. It&#8217;s like putting five layers of wallpaper in your living room followed by three coats of paint (not unlike my own living room), but every time you miss a spot. Sure, I get that backwards compatibility is a thing, though&nbsp;still&#8230;</li>
+</ul>
+<p>Interfaces in general have become horrid. An interesting <a href="https://tttthreads.com/thread/927593460642615296">discussion on Twitter</a> has lots of people talking about this (funny that a separate website is needed to kind-of properly render out a list of tweets in a somewhat readable&nbsp;format):</p>
+<blockquote>
+<p>amber-screen library computer in 1998: type in two words and hit F3. search results appear instantly.
+now: type in two words, wait for an <span class="caps">AJAX</span> popup. get a throbber for five seconds. oops you pressed a key, your results are&nbsp;erased</p>
+</blockquote>
+<p>A lot of this comes from web-design-creep, but a lot of other things are to blame as well. In a way, I miss ugly, brutalist but completely focused and clear interfaces like&nbsp;this:</p>
+<p><img alt="A POS in DOS" src="/images/2017/brutalism1.png"></p>
+<p>Keyboard shortcuts only, true, though the focused field is clearly visible, with global menu items that clearly indicate where you&#8217;re going towards. Even Windows 3.1 was actually very powerful in this&nbsp;sense:</p>
+<p><img alt="Windows 3.1" src="/images/2017/brutalism2.png"></p>
+<p>Buttons are buttons. Simple as that. Look at their crisp outline and how they pop off the screen. Everything about this screams &#8220;you can click me and I will do&nbsp;something&#8221;.</p>
+<p>This went fine until Windows 98 came along, where you see the first evidence of the web&#8217;s tentacles getting inside the <span class="caps">OS</span>:</p>
+<p><img alt="Windows 98" src="/images/2017/brutalism3.png"></p>
+<p>What is this? Why does there need to be a cloud in my explorer window? Just because we can? To show that we can render 256 colors now. Buttons have become larger, though for what? Meanwhile, Active Desktop was a thing for a while that polluted the desktop with Internet page widgets. Even Vista tried to do this again with gadgets or whatever it was called. So many distractions, so many design&nbsp;inconsistencies.</p>
+<p>But at least, we lived in exciting new times&nbsp;then.</p>
+<p>Today, we&#8217;re surrounded with boring, flat interfaces that sacrifice usability in order to looks a clean, neutral, and uninspired as possible, and where any piece of text on the screen can turn out to be a &#8220;link&#8221; that can be clicked. Good luck, dear user! In a way, Windows 3.1 manages to look quite pretty and clear in written text, as <a href="this series of articles">https://hackernoon.com/win3mu-part-1-why-im-writing-a-16-bit-windows-emulator-2eae946c935d</a>, written by a chap who&#8217;s working on Windows 3.1, shows. I&#8217;d even tip my hat to <a href="https://dropbox.design/">Dropbox</a> for going with some fresh design ideas instead of the bog standard translucency-animations-whitespace combo. Speaking of whitespace: try switching your Gmail display mode from &#8220;comfortable&#8221; to &#8220;condensed&#8221;. The first certainly does not make me&nbsp;&#8220;comfortable&#8221;.</p>
+<p>It&#8217;s time that we start to rething interfaces. I find it strange to be looking at projects such as <a href="https://github.com/mabe02/lanterna">Lanterna</a> or <a href="https://github.com/yaronn/blessed-contrib">blessed-contrib</a> and go &#8220;wow, that looks neat!&#8221; I&#8217;m not calling for a return to 80x25 <a href="https://en.wikipedia.org/wiki/Code_page_437"><span class="caps">CP427</span></a> or <a href="https://en.wikipedia.org/wiki/IBM_3270">3270</a>, especially not after having worked with those in a mainframe environment, though there is a certain &#8220;once you get to know it, it actually works fantastic&#8221; vibe present in those, a sentiment which I&#8217;m sure is shared by e.g. vim users as&nbsp;well.</p>
+<h2>On Devices, Apple and&nbsp;Linux</h2>
+<ul>
+<li>I don&#8217;t want to single out Windows&#8230; Switch to the Apple ecosystem, you say? Overpriced boxes of underperforming hardware? Having to carry around six dongles is not &#8220;courage&#8221;. Neither is a touch bar, a unibrow, an exploding iPhone 8, an iOS 11 full of bugs (<a href="https://arstechnica.com/gadgets/2017/11/apples-fix-for-peculiar-ios-autocorrect-issue-may-come-as-soon-as-this-week/">what is this, even</a>), an App Store which can only be used after entering payment details, or not being able to install <span class="caps">VPN</span> apps whilst living in a nation which censors the Internet. (Edit: lest alone talking about the recent <a href="https://techcrunch.com/2018/02/15/iphone-text-bomb-ios-mac-crash-apple/">Unicode rendering bug</a>.)</li>
+<li>Not that Android is that much better, especially not every time I encounter an app that wants to make phone calls, send text messages, upload all of my data, access the mic and &#8220;draw over other apps.&#8221; All of this, just to check in for a&nbsp;flight?</li>
+<li>By the way, go to the developer options in Android and disable all animations for a minute. See how that feels? Amazing. I didn&#8217;t know my phone was so fast. (As an even more drastic alternative, try switching to a monochrome color scheme during the day&#8230; it&#8217;s actually quite&nbsp;refreshing.)</li>
+<li>Luckily there&#8217;s still Linux, our freedom-beacon in a sea of oppression, right? That is if you&#8217;re willing to put up with the hellspawn that is&nbsp;systemd.</li>
+<li>Also: good luck using your Linux laptop to give a presentation at some corp where they&#8217;re using some FuYouDianNoa brand of projectors which only work in some kind of devil&#8217;s 888x666 resolution. At least Windows has this part figured out. On Linux, you can choose between two options. First, you can disable your laptop screen and awkwardly turn your head 180 degrees around like you&#8217;re doing an owl imitation to see what&#8217;s on the projected screen whilst pressing down the <span class="caps">ALT</span> key and trying to drag-and-drop all those Windows which are still stuck in &#8220;dark screen land&#8221;. Of course, once you close your laptop, disconnect the <span class="caps">HDMI</span> cable and scramble to run out, you&#8217;ll have to restart the machine nine out of ten times later on because you forgot to reset the screen settings and Linux has ignored the fact that you&#8217;re back in your hotel room with no projector attached anymore. The second option involves duplicates your screen, but since laptop makers &#8212; in their infinite wisdom &#8212; think that 3200xWhatever screens on 15&#8221; displays were a good idea and projector makers agree on a solid 4:3, good luck seeing the left and right sides of the screen on your laptop &#8212; or on the projector, depending on the moon&#8217;s phase. Sure, xrandr can be set up in such a way that you have the perfect setup, complete with scaling going on, just like Windows, but be prepared to arrive half an hour upfront and apologize a lot to the person responsible to make sure &#8220;the screen works&#8221; (&#8220;normally our speakers don&#8217;t have any problem connecting&#8221;). No one can be bothered to come up with a proper <span class="caps">GUI</span> for this stuff, most likely because making &#8220;mobile first desktop environments&#8221; is&nbsp;cooler.</li>
+<li>And then there&#8217;s still PulseAudio, Wayland, Mir&#8230; all great technology, each with their own little traps to avoid. Meanwhile, it&#8217;s still trivial to write an X11 keylogger, copy-pasting still works in various, unexpected ways, and I&#8217;d never use Linux for a live audio show as you never know when the kernel decides that &#8220;sound is just not a priority for me right now, let&#8217;s start&nbsp;swapping&#8221;.</li>
+<li>But at least your machine will be &#8220;free and open&#8221;, right? Sure, except for this black box of microprocessor code that&#8217;s running inside your modern <span class="caps">CPU</span>. Intel&#8217;s Management Engine is a great example. To quote the <span class="caps">EFF</span>: &#8220;Since 2008, most of Intel’s chipsets have contained a tiny homunculus computer called the Management Engine (<span class="caps">ME</span>). The <span class="caps">ME</span> is a largely undocumented master controller for your <span class="caps">CPU</span>: it works with system firmware during boot and has direct access to system memory, the screen, keyboard, and network.&#8221; I&#8217;m laughing my back off every time I hear a big corporation talk about the need to disallow non-vetted software, take away admin rights and to lock down machines as well as possible. If it makes you feel better, I guess. (Edit: so when I wrote this, this was mere months before <a href="https://arstechnica.com/gadgets/2018/02/32-class-action-suits-filed-against-intel-over-spectre-and-meltdown-flaws/">Spectre and Meltdown</a>&#8230;&nbsp;Jesus!)</li>
+<li>No, to understand all of this and to be <em>fully secure</em>, you need to have studied <a href="https://www.marketwatch.com/story/equifax-ceo-hired-a-music-major-as-the-companys-chief-security-officer-2017-09-15">music</a>.</li>
+</ul>
+<p>I&#8217;m not done&nbsp;yet.</p>
+<ul>
+<li>All these &#8220;smart&#8221; tablets, phones, fridges and whatnot need to update a bajillion apps if you don&#8217;t use them for a few weeks and start to slow down after every <span class="caps">OS</span> update. If you&#8217;re lucky, you might even have a device which &#8220;smartly&#8221; sends your whole contact book to some state actor or &#8220;revenue partner&#8221;. Wireshark your own network and see in real-time how your personal data gets sends&nbsp;out.</li>
+<li>Luckily I&#8217;m virtually immune to the addicting lure of Facebook and friends, though I can&#8217;t help but feel bad about the effect they have on others. A &#8220;show of hands&#8221; of my 1st year students indicates that many consider themselves addicted to social media. Begging for likes on Instagram, taking selfies, and close-ups of food. Some of them even admit to sleeping with their phone under their pillow. Being connected 24/7 to the world might be a good thing, but having a normal conversation from time to time is nice as well. Isn&#8217;t it time we start teaching this to our next &#8220;digital&nbsp;generation?&#8221;</li>
+</ul>
+<h2>On&nbsp;Gaming</h2>
+<ul>
+<li>So you might wish to unwind with a game to forget all of the above. I&#8217;m asked to try the &#8220;Xbox Insider Hub&#8221; to beta test some game which crashes with some sort of &#8220;bad <span class="caps">HTTP</span> request&#8221; message.&nbsp;Perfect.</li>
+<li>As if we didn&#8217;t have enough &#8220;stores&#8221; already. Windows Store, Steam, <span class="caps">GOG</span> Galaxy, UPlay, Origin, Rockstar Social Club. Sure, I have enough <span class="caps">CPU</span> cycles to burn. Never before has my scrollbar in my task manager process list been so long. What is all of this stuff&nbsp;doing?</li>
+<li>The same goes for &#8220;sync&#8221; apps, by the way. Dropbox, OneDrive, Google Drive is Now Called Backup and Sync from Google but-still-ignores-syncing-some-random-files (a bug I can&#8217;t for the life of me not figure out how this is not a top priority to&nbsp;fix).</li>
+<li>If you do finally manage to get into a game, be prepared to cough up money for microtransactions, &#8220;cosmetic unlockables&#8221;, &#8220;loot boxes&#8221;, (edit: and now: &#8220;live services&#8221;) and all those other gamblind-inspired horrids that have come straight from the seventh hell that is mobile gaming to infest the rest of the gaming world. It&#8217;s a good sign that game companies are hiring such great persona&#8217;s as &#8220;behavioral economists&#8221; and &#8220;value-adding psychologists&#8221;, for sure. Just another five bucks here, another stolen credit card from mommy and daddy there&#8230; The wheel of fortune spins on. Will I reach this great new weapon? Ah no damn it, just passed it and ended up with another &#8220;Boring Regular Glock 201&#8221;. Well, I almost had it, right? No, you&#8217;re being played. Maybe spend another diamond to finish this building in five seconds instead of the normal two days waiting time for that game you&#8217;re playing on your&nbsp;phone?</li>
+</ul>
+<h2>On&nbsp;Programming</h2>
+<p>But at least programming is still a&nbsp;blast?</p>
+<ul>
+<li>Sure, compared to earlier times, we now live in a time where you can choose between three hundred different JavaScript frameworks, preferably one encumbered by patents, to ship apps with a whole web browser (preferably an outdated one to maximize the security risk) included just so your <span class="caps">100MB</span> app can show an ugly drop down list which looks even more out of place than the rest of your <span class="caps">OS</span>&#8217; widgets. Time for another redesign, I guess, perhaps now using Material&nbsp;Design?</li>
+<li>But no worries, we&#8217;ll just wrap it into a Docker container or this other new fancy &#8220;<span class="caps">IOT</span>-ready virtualization solution we&#8217;ve just found&#8221;, which totes takes care of all problems for us automagically. Did you also know this makes us 100% reproducable. Because all Dockerfiles containing an apt-get-from-some-repo-which-might-be-up-or-not is totally reproducible, our devops team said&nbsp;so.</li>
+<li>In the same vein, you can use the same &#8220;modern stack&#8221; to write reactive apps where we can pretend <span class="caps">HTTP</span> never happened and the best way to deal with the <span class="caps">DOM</span> is to re-engineer everything from the Windows 3.1 times, just so this animation can run at a &#8220;native 60 <span class="caps">FPS</span>&#8221;.</li>
+<li>Good luck setting all of this up on some <span class="caps">VPS</span> box these days. Dear God, the number of hoops you need to jump through just to get an e-mail server running! What the hell is <span class="caps">SPF</span> and <span class="caps">DKIM</span> keys? Why is Gmail ignored mails from my domain. Oh I get it, I should just cough up the five bucks per month to get Google Apps for Work set&nbsp;up.</li>
+<li>At least we don&#8217;t need to learn <span class="caps">SQL</span> any more and can just dump our unstructured data vomit into a NoSQL data lake with a Hadoop Hive Impala stack on top which is totally web scale and will allow us to do analytics (read: putting pie charts in reports) even more wrong even faster. Forget about <span class="caps">SQL</span> engines and just dump everything into some webscale-ready <span class="caps">JSON</span> store because our <span class="caps">10GB</span> worth of data is now &#8220;big&#8221;. Oh, what&#8217;s that, people are coming back from that? What&#8217;d ya&nbsp;know?</li>
+<li>Luckily, at least our kids have access to great and powerful devices now, giving everyone the opportunity to get started with programming &#8212; oh wait. Take the iPad, a great content consumption machine with absolutely no quick way to program anything yourself. Yes, &#8220;10 <span class="caps">PRINT</span> &#8220;<span class="caps">HELLO</span>&#8221; 20 <span class="caps">GOTO</span> 10&#8221; was not the best way to teach fundamentals, but at least it was literally one key stroke away and got people&nbsp;interested.</li>
+</ul>
+<h2>On <span class="caps">AI</span></h2>
+<p>Oh, and speaking of data&nbsp;vomit.</p>
+<ul>
+<li>Everyone has gone <span class="caps">AI</span> crazy. Again. This is my field of research so I&#8217;m probably part of the problem. Hadoop all the things, Spark everything, put an extra Kafka there. That&#8217;s so 2015, didn&#8217;t you realize. Now we need that deep learning and them chatbots for those quick wins and new revenue streams. Does <span class="caps">IBM</span> Watson have those yet? Turns out that 90% of all chatbot solutions are just regex, preferably with a diagram drawing <span class="caps">GUI</span> so you can hire three new people as &#8220;chatbot modelers&#8221;, but good luck explaining that to your exec or &#8220;chief technology officer&#8221;. If you&#8217;re lucky you might find some knowledge systems related stuff with forward inference. Perhaps even some Prolog running inside. The 80&#8217;s&nbsp;called.</li>
+<li>Sure, some things are impressive: Tensorflow, PyTorch, all that deep learning. I&#8217;m still waiting for a self driving car to explain post-crash why it made a mistake. But who needs explanations when faced with an all-knowning algorithm? And let&#8217;s not even go into detail regarding all the issues around bias we&#8217;re feeding into our black box predictive models. It&#8217;s self learning, didn&#8217;t you know? We removed nasty features like gender and sexual orientation and race, so we&#8217;re totally compliant. Right, until your fancy model figures out all those correlations that have been encrested in years of your data repositories to draw the same conclusions anyway. But as long as the predictions are correct, we don&#8217;t need to care about deeper societal issues,&nbsp;right?</li>
+</ul>
+<h2>Back to the&nbsp;Web</h2>
+<p>The web is dying as well. <a href="http://tttthis.com/rememberwebsites.php/">Does anyone remember websites</a> words it&nbsp;perfectly:</p>
+<blockquote>
+<p>Does anyone remember websites? These might be unfamiliar to anyone unexposed to the internet before 2005 or so, and may be all-but-forgotten for many others, obscured by the last 10 years of relentless internet development, but before mass social media platforms and amazing business opportunities on the internet, it was largely a collection of websites made by people who were interested in some subject enough to write about it and put it online. Does anyone remember when you stumbled on a new website written by some guy and read his first article, then clicked back to his homepage and saw he had a list of similar articles that looked like they&#8217;d be just as&nbsp;interesting.</p>
+</blockquote>
+<p>That was great. The web was fun back then, a treasure trove of badly formatted but interesting or fun, plain pages. A lot of things I&#8217;ve used and am still using today in my research (from <span class="caps">AI</span> to evolutionary algorithms to cellular automata) I&#8217;ve learned from pages like this (still remember days reading http://www.ai-junkie.com/ann/som/som1.html when I was about 16 years&nbsp;old!).</p>
+<p><a href="https://thenextweb.com/contributors/2017/11/01/the-web-began-dying-in-2014-heres-how/">Others</a> have said <a href="https://fabiofranchino.com/blog/is-the-web-dying/">this</a> as&nbsp;well.</p>
+<p>I&#8217;ve been watching some nostalgia tech channels on YouTube recently. Things like Lazy Game Reviews, <span class="caps">DF</span> Retro, and The 8-bit Guy. Seeing these machines of old not only reminds us (or me, at least) of how far we&#8217;ve come, but mainly how simple, honest, &#8220;straight-to-the-metal&#8221; these things&nbsp;were.</p>
+<p>I kind of miss that&nbsp;feeling.</p>
+<p>What has happened with &#8220;computing&#8221; as of today? Perhaps &#8212; most likely &#8212; all of this is due to me getting older, more busier, less easily impressed, or simply a case of nostalgia goggles firmly stuck on my face, but I can&#8217;t shake the feeling that computing today has lost a lot of its appeal, its &#8220;magic&#8221;, if you will, compared to the days of&nbsp;old.</p>
+<p>Today, we have an unfinished <span class="caps">OS</span> running on twenty devices, <span class="caps">DRM</span> schemes crippling our computing freedom, interfaces that are confusing and buggy, a web controlled by a few companies which are corrupt and manipulative, and full of Russian ads and propaganda spreaders and youth that is addicted to social&nbsp;media.</p>
+<p>I used to laugh (silently) at &#8220;dinosaurs&#8221;  I&#8217;d meet telling me about how all of this new stuff already existed in the eighties. I still laugh (silently), as I can still gleem in the fact that I at least try to keep up to date with all these new developments whereas they have given up and perhaps just want to emphasize their relevancy, but I&#8217;m feeling increasingly more sour as I start to wonder towards where, exactly, we&#8217;re trying to &#8220;evolve&#8221;&nbsp;to.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

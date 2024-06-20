@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - Articles by Seppe "Macuyiko" vanden Broucke</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 29 July 2007, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2007/simulating-limit-with-offsets-in-sql.html" rel="bookmark"
+				title="Permalink to Simulating LIMIT with offsets in SQL">Simulating <span class="caps">LIMIT</span> with offsets in <span class="caps">SQL</span></a></div>
+			</header>
+			<div class="article-summary">
+					<p>How can you do this (x is number of rows to fetch, y is offset)&nbsp;(Mysql):</p>
+<div class="highlight"><pre><span></span><code>SELECT * FROM my_table LIMIT x, y
+</code></pre></div>
+
+<p>or this (PostgreSQL)&nbsp;:</p>
+<div class="highlight"><pre><span></span><code>SELECT * FROM my_table LIMIT x OFFSET y
+</code></pre></div>
+
+<p>in a <span class="caps">DBMS</span> that doesn&#8217;t support <span class="caps">LIMIT</span> statements (take Oracle for&nbsp;example).</p>
+<p>In Oracle, you can use …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2007/simulating-limit-with-offsets-in-sql.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 01 May 2007, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2007/the-number.html" rel="bookmark"
+				title="Permalink to The Number">The&nbsp;Number</a></div>
+			</header>
+			<div class="article-summary">
+					<p>The Internet is going crazy about some random number (and it&#8217;s not&nbsp;23).</p>
+<p>Apparently, typing out an hexadecimal value will get you killed / deleted / censored / jailed / destroyed / ignored / access to <span class="caps">HD</span>-<span class="caps">DVD</span> content. It goes something like: <code>09 F9 11 02</code>. But it also has <code>9D 74 E3 5B …</code></p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2007/the-number.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 30 April 2007, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2007/feisty-upgrade-first-problem.html" rel="bookmark"
+				title="Permalink to Feisty Upgrade - First Problem">Feisty Upgrade - First&nbsp;Problem</a></div>
+			</header>
+			<div class="article-summary">
+					<p>We recently updated all our Ubuntu machines from Edgy to Feisty. Updating went smooth, apart from a few&nbsp;problems.</p>
+<p>The first problem was that X was freezing at random intervals. Xorg log mentioned nothing special, but the <span class="caps">GDM</span> log&nbsp;did:</p>
+<blockquote>
+<p>Error in I830WaitLpRing(), now is 7023360, start is 7021359
+pgetbl_ctl …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2007/feisty-upgrade-first-problem.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 30 April 2007, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2007/ubuntu-feisty-second-problem.html" rel="bookmark"
+				title="Permalink to Ubuntu Feisty - Second Problem">Ubuntu Feisty - Second&nbsp;Problem</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Another problem (on another machine) was that it refused booting the new&nbsp;kernel.</p>
+<p>Also: the live cd didn&#8217;t work either, with the same error. A lot of people have problems of this kind, and most of the times they get the following&nbsp;errors:</p>
+<div class="highlight"><pre><span></span><code>ata2 is slow to respond, please …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2007/ubuntu-feisty-second-problem.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 02 January 2007, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2007/gmail.html" rel="bookmark"
+				title="Permalink to Gmail">Gmail</a></div>
+			</header>
+			<div class="article-summary">
+					<p>What&#8217;s up with Google the last few days? First, a glitch was reported about users getting <a href="http://www.techcrunch.com/2006/12/28/gmail-disaster-reports-of-mass-email-deletions/">their mails deleted</a>. This glitch is now (luckily)&nbsp;fixed.</p>
+<p>Then that hack about your contact list getting stolen, try logging into Gmail and go to one of the following&nbsp;links:</p>
+<p><a href="http://docs.google.com/data/contacts?out=js&amp;show=ALL&amp;psort=Affinity&amp;callback=google&amp;max=99999">http://docs.google …</a></p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2007/gmail.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 26 October 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/finished.html" rel="bookmark"
+				title="Permalink to Finished">Finished</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Just updated to Edgy and installed Beryl following <a href="http://doc.gwos.org/index.php/BerylOnEdgy">these instructions</a>.</p>
+<p>Added these to my&nbsp;sources:</p>
+<div class="highlight"><pre><span></span><code><span class="k">deb</span><span class="w"> </span><span class="s">http://www.beerorkid.com/compiz</span><span class="w"> </span><span class="kp">edgy</span><span class="w"> </span><span class="kp">main-edgy</span>
+<span class="k">deb</span><span class="w"> </span><span class="s">http://media.blutkind.org/xgl/</span><span class="w"> </span><span class="kp">edgy</span><span class="w"> </span><span class="kp">main-edgy</span>
+<span class="k">deb</span><span class="w"> </span><span class="s">http://compiz-mirror.lupine.me.uk/</span><span class="w"> </span><span class="kp">edgy</span><span class="w"> </span><span class="kp">main-edgy</span>
+<span class="k">deb</span><span class="w"> </span><span class="s">http://ubuntu.compiz.net/</span><span class="w"> </span><span class="kp">edgy</span><span class="w"> </span><span class="kp">main-edgy</span>
+</code></pre></div>
+
+<p>Then:</p>
+<div class="highlight"><pre><span></span><code>sudo apt-get update …</code></pre></div>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/finished.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 25 October 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/oki-printers-in-ubuntu.html" rel="bookmark"
+				title="Permalink to Oki Printers In Ubuntu">Oki Printers In&nbsp;Ubuntu</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Just wanted to share this quick story: recently I had to install Oki C5700 drivers on an Ubuntu machine. A quick look at the web panel revealed that it was not supporting ipp (Cups). So you have to set it up as a Unix Printer (<span class="caps">LPR</span>).</p>
+<p>After that it seems …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/oki-printers-in-ubuntu.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 18 September 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/crappy-scanners-and-linux.html" rel="bookmark"
+				title="Permalink to Crappy Scanners And Linux">Crappy Scanners And&nbsp;Linux</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Recently we got a new <span class="caps">HP</span> Scanner. It&#8217;s a good, nice, and generally works without any&nbsp;complaints.</p>
+<p>The scanner I used before was a crappy scanner with a no-name brand nobody knows, picked up for almost nothing at some cheapskate-store (since I very rarely need to scan something). The …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/crappy-scanners-and-linux.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Mon 11 September 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/neverwinter-nights-on-my-ubuntu-laptop.html" rel="bookmark"
+				title="Permalink to Neverwinter Nights On My Ubuntu-Laptop">Neverwinter Nights On My&nbsp;Ubuntu-Laptop</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Today I finally decided to spend some time and try to install Neverwinter Nights on my laptop, since I absolutely still love that game. Of course: you could follow <a href="http://ubuntuforums.org/showthread.php?t=113259">this howto</a>, but since I don&#8217;t have <span class="caps">NWN</span> Platinum or Diamond, I had to follow other instructions. I didn&#8217;t …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/neverwinter-nights-on-my-ubuntu-laptop.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 29 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2006/linux-games.html" rel="bookmark"
+				title="Permalink to Linux Games">Linux&nbsp;Games</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I&#8217;ve been checking out some games for my Linux machine recently (that almost sounds like an oxymoron). I&#8217;m not going to go all whiny on you with a &#8220;Linux does have games!&#8221;-post, but will just review a few of them (the most popular&nbsp;ones).</p>
+<ul>
+<li><a href="http://projects.planetpenguin.de/racer/">Planet Penguin Racer …</a></li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2006/linux-games.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke10.html">&laquo; Prev</a>
+	Page 11 of 12	
+	<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke12.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

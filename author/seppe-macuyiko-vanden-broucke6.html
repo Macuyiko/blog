@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - Articles by Seppe "Macuyiko" vanden Broucke</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 01 January 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/games-ill-keep-an-eye-on-in-2013.html" rel="bookmark"
+				title="Permalink to Games I’ll Keep An Eye On In 2013">Games I&#8217;ll Keep An Eye On In&nbsp;2013</a></div>
+			</header>
+			<div class="article-summary">
+					<p>In the same spirit as <a href="http://blog.macuyiko.com/2012/02/games-ill-keep-eye-on-in-2012.html">last year</a>, this is a (preliminary) list of game I&#8217;m interested in, releasing in&nbsp;2013.</p>
+<p>First of all, let&#8217;s revisit 2012&#8230; Here are the games I was interested in last year, together with the outcome &#8212; at least according to&nbsp;me:</p>
+<ul>
+<li>Star Wars: The …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/games-ill-keep-an-eye-on-in-2013.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 22 May 2012, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2012/ubuntu-1204-fixed-channel-mon0-1.html" rel="bookmark"
+				title="Permalink to Ubuntu 12.04: “fixed channel mon0: -1”">Ubuntu 12.04: &#8220;fixed channel mon0:&nbsp;-1&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Still having problems in Ubuntu with the fixed channel being -1 when using <code>aircrack</code> and friends? Luckily, the solution does not require patching this time (as it <a href="////blog.macuyiko.com/post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html">used to</a>), as the following solution (obtained from <a href="http://ubuntuforums.org/showpost.php?p=10550806&amp;postcount=6">this forum post</a>) now works for me. The problem is basically that the channel can …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2012/ubuntu-1204-fixed-channel-mon0-1.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 13 May 2012, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2012/an-attempt-at-making-a-javascripthtml5-sliceit-clone-and-a-failed-attempt-at-a-genetic-algorithm-based-solver.html" rel="bookmark"
+				title="Permalink to An Attempt At Making A Javascript/HTML5 SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based Solver">An Attempt At Making A Javascript/<span class="caps">HTML5</span> SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based&nbsp;Solver</a></div>
+			</header>
+			<div class="article-summary">
+					<p>One of the niceties of owning a smartphone is the huge amount of apps available for download, many of which&nbsp;games.</p>
+<p>Some time ago, one of these games which was keeping me occupied was <a href="https://play.google.com/store/apps/details?id=com.com2us.sliceit&amp;hl=en">SliceIt!</a> from Com2uS. Don&#8217;t worry if you don&#8217;t know the game or haven&#8217;t …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2012/an-attempt-at-making-a-javascripthtml5-sliceit-clone-and-a-failed-attempt-at-a-genetic-algorithm-based-solver.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 24 March 2012, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2012/gibbeds-mass-effect-3-audio-extractor-iopathcombine-path1-cannot-be-null.html" rel="bookmark"
+				title="Permalink to Gibbed’s Mass Effect 3 Audio Extractor: “IO.Path.Combine path1 cannot be null”">Gibbed&#8217;s Mass Effect 3 Audio Extractor: &#8220;<span class="caps">IO</span>.Path.Combine path1 cannot be&nbsp;null&#8221;</a></div>
+			</header>
+			<div class="article-summary">
+					<p>I was trying to use Gibbed&#8217;s Mass Effect 3 Audio Extractor recently, but it failed&nbsp;with:</p>
+<blockquote>
+<p><span class="caps">IO</span>.Path.Combine path1 cannot be&nbsp;null</p>
+</blockquote>
+<p>To fix this, use <code>regedit</code> to go&nbsp;to</p>
+<ul>
+<li><code>HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\BioWare\Mass Effect 3</code> (on 64 bit&nbsp;machines)</li>
+<li><code>HKEY_LOCAL_MACHINE\SOFTWARE\BioWare\Mass Effect 3</code> (on …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2012/gibbeds-mass-effect-3-audio-extractor-iopathcombine-path1-cannot-be-null.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 28 February 2012, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2012/the-nvmcp64sys-blue-screen.html" rel="bookmark"
+				title="Permalink to The nvmcp64.sys Blue Screen">The nvmcp64.sys Blue&nbsp;Screen</a></div>
+			</header>
+			<div class="article-summary">
+					<p>This issue has been plaguing my Windows 7 installation since the beginning of time, or, well &#8212; the beginning of this particular Windows 7&nbsp;installation&#8230;</p>
+<p>Every once in a while, my computer would blue screen displaying a <code>DRIVER_IRQL_NOT_LESS_OR_EQUAL</code> error due to a certain <code>nvmcp64.sys</code>, often with any playing audio looping …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2012/the-nvmcp64sys-blue-screen.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 12 February 2012, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2012/games-ill-keep-an-eye-on-in-2012.html" rel="bookmark"
+				title="Permalink to Games I’ll Keep An Eye On In 2012">Games I&#8217;ll Keep An Eye On In&nbsp;2012</a></div>
+			</header>
+			<div class="article-summary">
+					<h3>Big-budget&nbsp;releases</h3>
+<p>In order of release date. Some release dates are an estimate. Unannounced games are not listed&nbsp;here.</p>
+<p><strong>January</strong></p>
+<p>- Star Wars: The Old&nbsp;Republic</p>
+<p><strong>February</strong></p>
+<ul>
+<li>Kingdoms of Amalur:&nbsp;Reckoning</li>
+<li>Binary&nbsp;Domain</li>
+<li><span class="caps">SSX</span></li>
+<li>Syndicate</li>
+<li>Jak and Daxter&nbsp;Collection</li>
+<li>The Darkness&nbsp;2</li>
+</ul>
+<p><strong>March</strong></p>
+<ul>
+<li>I am&nbsp;Alive</li>
+<li>Mass Effect&nbsp;3</li>
+<li>Diablo <span class="caps">III …</span></li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2012/games-ill-keep-an-eye-on-in-2012.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 18 December 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html" rel="bookmark"
+				title="Permalink to Oneiric / Linode Server Migration">Oneiric / Linode Server&nbsp;Migration</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Sigh&#8230; I&#8217;m sorry, Slicehost, but I&#8217;m leaving you. I&#8217;ve been a long (and very happy) Slicehost customer for the past few years. The service offered was perfect for anyone knowing their way around <span class="caps">SSH</span>, Linux administration and setting up a server &#8212; and all that for just 30 …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 10 December 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/rooting-kindle-fire.html" rel="bookmark"
+				title="Permalink to Rooting Kindle Fire">Rooting Kindle&nbsp;Fire</a></div>
+			</header>
+			<div class="article-summary">
+					<p>The following overview is just a reminder, mainly aimed at myself in the future, on how to root the kindle&nbsp;fire.</p>
+<p><strong>1. Install Android <span class="caps">SDK</span></strong></p>
+<ul>
+<li>Download from&nbsp;http://developer.android.com/sdk/index.html</li>
+<li>Update&nbsp;packages</li>
+</ul>
+<p><strong>2. In Kindle: &#8220;Allow Installation of Applications From Unknown&nbsp;Sources&#8221;</strong></p>
+<p><strong>3. Edit <code>android_winusb.inf …</code></strong></p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/rooting-kindle-fire.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 27 March 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/quick-fix-windows-7-service-pack-1-error-80073701.html" rel="bookmark"
+				title="Permalink to Quick Fix: Windows 7 Service Pack 1 Error 80073701">Quick Fix: Windows 7 Service Pack 1 Error&nbsp;80073701</a></div>
+			</header>
+			<div class="article-summary">
+					<p>If your Windows 7 service pack upgrade is failing with error code 80073701, you might be able to fix it with the following steps. I&#8217;ve had to search around quite a bit before resolving this error, mainly because I saw the first and second solutions listed below pop up …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/quick-fix-windows-7-service-pack-1-error-80073701.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 10 March 2011, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2011/running-a-ssh-honeypot-with-kippo-lets-catch-some-script-kiddies.html" rel="bookmark"
+				title="Permalink to Running A SSH Honeypot With Kippo: Let’s Catch Some Script Kiddies">Running A <span class="caps">SSH</span> Honeypot With Kippo: Let&#8217;s Catch Some Script&nbsp;Kiddies</a></div>
+			</header>
+			<div class="article-summary">
+					<h1>Introduction</h1>
+<p>While exploring <a href="http://www.fail2ban.org/">Fail2Ban</a> during one of my <a href="http://blog.macuyiko.com/2011/01/slowloris-and-mitigations-for-apache.html">previous posts</a>, it amazed me how many break-in attempts I received, trying to brute force passwords on the <span class="caps">SSH</span> daemon. To recap, Fail2Ban does&nbsp;this:</p>
+<blockquote>
+<p>Fail2ban scans log files like /var/log/pwdfail or /var/log/apache/error_log and bans <span class="caps">IP</span> that …</p></blockquote>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2011/running-a-ssh-honeypot-with-kippo-lets-catch-some-script-kiddies.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+		<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke5.html">&laquo; Prev</a>
+	Page 6 of 12	
+	<a href="//blog.macuyiko.com/author/seppe-macuyiko-vanden-broucke7.html">Next &raquo;</a>
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

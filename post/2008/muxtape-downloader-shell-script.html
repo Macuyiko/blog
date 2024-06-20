@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Muxtape Downloader Shell Script</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Thu 26 June 2008, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2008/muxtape-downloader-shell-script.html" rel="bookmark"
+			title="Permalink to Muxtape Downloader Shell Script">Muxtape Downloader Shell&nbsp;Script</a></div>
+		</header>
+	
+	    <p>I got to confess something: I love Muxtape! Did you know there is a <a href="http://userscripts.org/scripts/show/24382">userscript</a> which lets you download the songs? It&#8217;s not encouraged&nbsp;though&#8230;</p>
+<p>I&#8217;ve been trying to learn Shell Scripting. So I decided: why not make a Muxtape downloader. This is my first shell script (longer than a few lines). I&#8217;ve thrown together code I found at various site, and I find programming with bash&#8230; special. Currently: the script looks like&nbsp;this:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#Fetch URL</span>
+wget<span class="w"> </span>-O<span class="w"> </span>/tmp/muxtape_html.out<span class="w"> </span>http://<span class="nv">$1</span>.muxtape.com
+
+<span class="c1">#Fetch titles</span>
+sed<span class="w"> </span>-n<span class="w"> </span><span class="s1">&#39;/&lt;div class=&quot;name&quot;&gt;/,/&lt;\/div&gt;/p&#39;</span><span class="w"> </span>/tmp/muxtape_html.out<span class="w"> </span>&gt;<span class="w"> </span>/tmp/muxtape_titles.out
+<span class="nv">titles</span><span class="o">=</span><span class="sb">`</span>cat<span class="w"> </span>/tmp/muxtape_titles.out<span class="sb">`</span>
+<span class="nb">echo</span><span class="w"> </span><span class="si">${</span><span class="nv">titles</span><span class="p">//&lt;div</span><span class="se">\ </span><span class="nv">class</span><span class="p">=</span><span class="s2">&quot;\&quot;&gt;/} &gt; /tmp/muxtape_titles.out</span>
+<span class="s2">titles=`cat /tmp/muxtape_titles.out`</span>
+<span class="s2">echo </span><span class="si">${</span><span class="nv">titles</span><span class="p">//</span><span class="se">\ </span><span class="p">&lt;</span><span class="se">\/</span><span class="nv">div</span><span class="p">&gt;/;</span><span class="si">}</span><span class="s2"> &gt; /tmp/muxtape_titles.out</span>
+
+<span class="s2">#Fetch kettle</span>
+<span class="s2">egrep -o &quot;</span><span class="nv">Kettle</span><span class="p">.*</span><span class="s2">&quot; /tmp/muxtape_html.out &gt; /tmp/muxtape_links1.out</span>
+<span class="s2">sed -e &#39;s,Kettle(,,&#39; /tmp/muxtape_links1.out &gt; /tmp/muxtape_links2.out</span>
+<span class="s2">sed -e &#39;s,);,,&#39; /tmp/muxtape_links2.out &gt; /tmp/muxtape_links.out</span>
+<span class="s2">cat /tmp/muxtape_links.out | tr -d &#39;[&#39; &gt; /tmp/muxtape_links.out</span>
+<span class="s2">cat /tmp/muxtape_links.out | tr -d &#39;]&#39; &gt; /tmp/muxtape_links.out</span>
+<span class="s2">cat /tmp/muxtape_links.out | tr -d &quot;</span><span class="s1">&#39;&quot; &gt; /tmp/muxtape_links.out</span>
+
+<span class="s1">#Make arrays</span>
+<span class="s1">titles=`cat /tmp/muxtape_titles.out`</span>
+<span class="s1">IFS=&quot;;&quot;</span>
+<span class="s1">titlesa=($titles)</span>
+<span class="s1">foo=`cat /tmp/muxtape_links.out`</span>
+<span class="s1">IFS=&quot;,&quot;</span>
+<span class="s1">bar=($foo)</span>
+<span class="s1">compar=$(( ${#bar[@]}/2 ))</span>
+
+<span class="s1">#Get songs</span>
+<span class="s1">for (( i = 0 ; i &lt; ${#bar[@]} ; i++ )) do</span>
+<span class="s1">  if [ $i -lt $compar ]</span>
+<span class="s1">  then</span>
+<span class="s1">    k=&#39;</span><span class="nv">http</span><span class="p">://muxtape.s3.amazonaws.com/songs/</span><span class="err">&#39;</span>
+<span class="p">    a=</span><span class="si">${</span><span class="nv">bar</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="si">}</span>
+<span class="p">    b=</span><span class="si">${</span><span class="nv">k</span><span class="si">}</span><span class="nv">$a</span>
+<span class="p">    q=</span><span class="s2">&quot;?&quot;</span>
+<span class="p">    k=</span><span class="si">${</span><span class="nv">b</span><span class="si">}</span><span class="nv">$q</span>
+<span class="p">    e=</span><span class="si">${</span><span class="nv">bar</span><span class="p">[</span><span class="nv">$i</span><span class="p">+</span><span class="si">${#</span><span class="nv">bar</span><span class="p">[@]</span><span class="si">}</span><span class="p">/2]</span><span class="si">}</span>
+<span class="p">    z=</span><span class="si">${</span><span class="nv">k</span><span class="si">}</span><span class="nv">$e</span>
+<span class="p">    echo </span><span class="si">${</span><span class="nv">titlesa</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="si">}</span>
+<span class="p">    wget -O </span><span class="si">${</span><span class="nv">titlesa</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span><span class="si">}</span><span class="p">.mp3 </span><span class="nv">$z</span>
+<span class="p">  fi</span>
+<span class="p">done</span>
+</code></pre></div></td></tr></table></div>
+
+<p>Yuck! But it works, save it in <code>script.sh</code>, make it executable and then <code>./script.sh muxtape_username</code>.</p>
+<p>This will save all mp3s. It took me an hour to figure this out, and I&#8217;m sure lots of you could do this much better. Still, it was cool to build&#8230; but in Perl or <span class="caps">PHP</span> I could&#8217;ve done this much quicker and cleaner. Oh and by the way: don&#8217;t abuse this&#8230; Muxtape are friendly&nbsp;people.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

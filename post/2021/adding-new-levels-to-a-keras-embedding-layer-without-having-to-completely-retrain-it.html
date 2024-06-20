@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Adding New Levels to a Keras Embedding Layer Without Having to Completely Retrain It</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 14 June 2021, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2021/adding-new-levels-to-a-keras-embedding-layer-without-having-to-completely-retrain-it.html" rel="bookmark"
+			title="Permalink to Adding New Levels to a Keras Embedding Layer Without Having to Completely Retrain It">Adding New Levels to a Keras Embedding Layer Without Having to Completely Retrain&nbsp;It</a></div>
+		</header>
+	
+	    <p>A friend of mine recently asked whether there was an easy way to introduce new levels (i.e. items) to an embedding layer in Keras and only training the embedding layer for those new levels, i.e. keeping the weights for the existing indices&nbsp;fixed.</p>
+<p>Note that this is not necessarily a good idea: the presence of new levels typically indicates that your model is due for a full maintenance retraining. The context in which we were discussing this originally was in a singular value decomposition setup of users and items (as it common in a recommender system setting, for instance). The question was whether we could keep the item embedding space for existing items fixed when introducing new items. Note that here too, this is suboptimal (assuming new items are being rated by existing users <sup id="fnref:fn1"><a class="footnote-ref" href="#fn:fn1">1</a></sup>), especially so when we also want to user embeddings to stay&nbsp;fixed.</p>
+<p>Let us approach the problem using an easier setting. We will assume we have a data set X with every instance Xi = c with c ∈ 0..C with C our initial number of levels. We will train a model using an embedding layer to M(X) → y ∈ [0, 1] i.e. a binary classification model. We will then introduce a data set X&#8217; with every instance X&#8217;i = c&#8217; with c&#8217; ∈ C+1..C&#8217; and see how we can retrain our embedding&nbsp;layer.</p>
+<p>First of all we need some&nbsp;imports:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tensorflow</span> <span class="kn">import</span> <span class="n">keras</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.layers</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">,</span> <span class="n">Reshape</span><span class="p">,</span> <span class="n">Multiply</span><span class="p">,</span> <span class="n">Add</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras.regularizers</span> <span class="kn">import</span> <span class="n">l2</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pylab</span> <span class="kn">import</span> <span class="n">cm</span>
+</code></pre></div>
+
+<p>We will also construct a toy data set to work on. How this is created is not that important, but we split it up into an X and X&#8217; as defined above (as well as the two&nbsp;combined):</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># cat_idx_rs and y are provided</span>
+
+<span class="n">X_init</span><span class="p">,</span> <span class="n">y_init</span> <span class="o">=</span> <span class="n">cat_idx_rs</span><span class="p">[</span><span class="n">cat_idx_rs</span><span class="o">&lt;</span><span class="mi">80</span><span class="p">],</span>  <span class="n">y</span><span class="p">[</span><span class="n">cat_idx_rs</span><span class="o">&lt;</span><span class="mi">80</span><span class="p">]</span>
+<span class="n">X_new</span><span class="p">,</span>  <span class="n">y_new</span>  <span class="o">=</span> <span class="n">cat_idx_rs</span><span class="p">[</span><span class="n">cat_idx_rs</span><span class="o">&gt;=</span><span class="mi">80</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">cat_idx_rs</span><span class="o">&gt;=</span><span class="mi">80</span><span class="p">]</span>
+
+<span class="n">X_together</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">X_init</span><span class="p">,</span> <span class="n">X_new</span><span class="p">])</span>
+<span class="n">y_together</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">y_init</span><span class="p">,</span> <span class="n">y_new</span><span class="p">])</span>
+
+<span class="n">num_categories_init</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X_init</span><span class="p">))</span>     <span class="c1"># 80</span>
+<span class="n">num_categories_all</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">X_together</span><span class="p">))</span> <span class="c1"># 100</span>
+</code></pre></div>
+
+<p>Note that <code>X_init</code> contains the levels indexed 0 up to 80 <sup id="fnref:fn2"><a class="footnote-ref" href="#fn:fn2">2</a></sup>, <code>X_new</code> contains levels indexed 80 up to&nbsp;100.</p>
+<h2>Initial&nbsp;Model</h2>
+<p>So here is what an initial model would look like, trained on <code>X_init</code> and <code>y_init</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">EmbeddingModel</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span> <span class="n">vector_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">reg</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">l2</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span>
+
+  <span class="n">input_cat</span> <span class="o">=</span> <span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_cat&#39;</span><span class="p">)</span>
+
+  <span class="n">i</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span> <span class="n">vector_dim</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">,</span>
+                <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span> <span class="n">embeddings_initializer</span><span class="o">=</span><span class="s1">&#39;random_normal&#39;</span><span class="p">)(</span><span class="n">input_cat</span><span class="p">)</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">i</span><span class="p">)</span>
+
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">K</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))(</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">o</span><span class="p">)</span>
+
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_cat</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">o</span><span class="p">)</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;rmsprop&#39;</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">EmbeddingModel</span><span class="p">(</span><span class="n">num_categories_init</span><span class="p">)</span>
+
+<span class="c1"># fit_with_lr is a simple helper function</span>
+
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X_init</span><span class="p">,</span> <span class="n">y_init</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># 89/89 [======] - 1s 4ms/step - loss: 0.6593 - accuracy: 0.6934 - val_loss: 0.6324 - val_accuracy: 0.7339</span>
+<span class="c1"># 89/89 [======] - 0s 2ms/step - loss: 0.6008 - accuracy: 0.7404 - val_loss: 0.5810 - val_accuracy: 0.7397</span>
+</code></pre></div>
+
+<p>We use an extremely simple prediction setup here where we just sum the embedding weights and push them through a sigmoid function to get our prediction. We could also have used a Dense layer obviously but is not necessary for the scope of this&nbsp;discussion.</p>
+<p>In any case, we get a good accuracy baseline. The figure below shows the probability distribution of the model on <code>X_init</code> (obviously, we&#8217;d normally use a test set) and &#8212; more interestingly &#8212; the embeddings for the 80&nbsp;levels.</p>
+<p><img alt="Probability Distribution and Embeddings of Initial Model" src="/images/2021/embedding_1.png"></p>
+<p>The colours give an indication of the true class labels and is calculated as the number of positive instances with the corresponding class label divided over the total number of instances with the corresponding class label. Grey is 50%, darker red more closer to 100%, darker blue closer to 0%. Note that blue is in the negative quadrant as this will result in a &lt;0.5 probability output when pushed through the sigmoid&nbsp;function.</p>
+<p>We will now take a look at three different ways how we can update this model to include embeddings for the 20 additional categories of <code>X_new</code> without retraining the existing&nbsp;ones.</p>
+<h2>Updated Model Using Two Embedding&nbsp;Layers</h2>
+<p>A first method is shown by the code&nbsp;below:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">EmbeddingModelIsNew</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span> <span class="n">previous_embedding_weights</span><span class="p">,</span> <span class="n">vector_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">reg</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">l2</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span>
+
+  <span class="n">num_previous_categories</span> <span class="o">=</span> <span class="n">previous_embedding_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">num_new_categories</span> <span class="o">=</span> <span class="n">num_categories</span> <span class="o">-</span> <span class="n">num_previous_categories</span>
+  <span class="n">num_max_categories</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">num_previous_categories</span><span class="p">,</span> <span class="n">num_new_categories</span><span class="p">)</span>
+
+  <span class="n">input_cat</span> <span class="o">=</span> <span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_cat&#39;</span><span class="p">)</span>
+
+  <span class="n">input_cat_clamped</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">K</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">num_previous_categories</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> 
+                                                 <span class="n">x</span> <span class="o">-</span> <span class="n">num_max_categories</span><span class="p">,</span> 
+                                                 <span class="n">x</span><span class="p">))(</span><span class="n">input_cat</span><span class="p">)</span>
+  <span class="n">input_cat_clamped</span> <span class="o">=</span> <span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">input_cat_clamped</span><span class="p">)</span>
+
+  <span class="n">input_new</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">K</span><span class="o">.</span><span class="n">switch</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">less_equal</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">num_previous_categories</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> 
+                                         <span class="n">K</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> 
+                                         <span class="n">K</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)))(</span><span class="n">input_cat</span><span class="p">)</span>
+  <span class="n">input_new</span> <span class="o">=</span> <span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">input_new</span><span class="p">)</span>
+
+  <span class="n">i_old</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">num_previous_categories</span><span class="p">,</span> 
+                    <span class="n">vector_dim</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_cat_old&#39;</span><span class="p">,</span>
+                    <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span> <span class="n">embeddings_initializer</span><span class="o">=</span><span class="s1">&#39;random_normal&#39;</span><span class="p">)(</span><span class="n">input_cat_clamped</span><span class="p">)</span>
+  <span class="n">i_old</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">i_old</span><span class="p">)</span>
+
+  <span class="n">i_new</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">num_max_categories</span><span class="p">,</span> 
+                    <span class="n">vector_dim</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_cat_new&#39;</span><span class="p">,</span>
+                    <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span> <span class="n">embeddings_initializer</span><span class="o">=</span><span class="s1">&#39;random_normal&#39;</span><span class="p">)(</span><span class="n">input_cat_clamped</span><span class="p">)</span>
+  <span class="n">i_new</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">i_new</span><span class="p">)</span>
+
+  <span class="n">i_old</span> <span class="o">=</span> <span class="n">Multiply</span><span class="p">()([</span><span class="mi">1</span><span class="o">-</span><span class="n">input_new</span><span class="p">,</span> <span class="n">i_old</span><span class="p">])</span>
+  <span class="n">i_new</span> <span class="o">=</span> <span class="n">Multiply</span><span class="p">()([</span><span class="n">input_new</span><span class="p">,</span> <span class="n">i_new</span><span class="p">])</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">Add</span><span class="p">()([</span><span class="n">i_old</span><span class="p">,</span> <span class="n">i_new</span><span class="p">])</span>
+
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">K</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))(</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">o</span><span class="p">)</span>
+
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_cat</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">o</span><span class="p">)</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;rmsprop&#39;</span><span class="p">)</span>
+
+  <span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat_old&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">set_weights</span><span class="p">(</span><span class="n">previous_embedding_weights</span><span class="p">)</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat_old&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">trainable</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="n">new_model</span> <span class="o">=</span> <span class="n">EmbeddingModelIsNew</span><span class="p">(</span><span class="n">num_categories_all</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_weights</span><span class="p">())</span>
+
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Here, we do the following: we construct a new model with two embedding layers, one with the same number of categories as the initial model (80 in our case) and one with its categories set equal to the maximum of the old and new number of categories. Since both embedding layers assume the indexes to start at 0, we use a <code>switch</code> statement to subtract the maximum of the old and new number of categories in case the index exceeds the old number of levels. I.e. we will remap levels 80 to 100 → 0 to 20. So why don&#8217;t we use 20 categories in <code>i_new</code>? Well, since levels 20 to 80 might also still occur, and even though we won&#8217;t do anything with the embeddings created for these, we still need to include them. Next, since we now get two embeddings for each index, but only one is valid, we multiply with an additional binary input indicating whether the index is a new one or not, again derived by using a <code>switch</code> statement. Finally, we copy over the existing weights and set one embedding layer to be&nbsp;non-trainable.</p>
+<p>So, in this situation: the old embedding layer will have 80 vectors, the new one will have max(80, 20) = 80 weights as well. The incoming indices 0-100 will be remapped to 0-80 so none of the embedding layers error out. Indices 0-20 are shared and can refer to either new or old indices, given by <code>input_new</code>, which will multiply one of the embeddings with 0 to cancel it out. Finally, since the old embedding layer won&#8217;t be retrained anyway, we can train using new indices only. We can however still make predictions on the complete data set (<code>X_together</code>) and indeed verify that the original embeddings didn&#8217;t&nbsp;change:</p>
+<p><img alt="Probability Distribution and Embeddings of Updated Model" src="/images/2021/embedding_2.png"></p>
+<p>As an aside, you might wonder what would happen if we would introduce more new indices than we had old ones, e.g. assume that <code>X_new</code> had 100 new indices from 80-180: the old layer would still contain 80 vectors, and the new one would now have max(80, 100) = 100 weights. The incoming indices 0-180 would be remapped to 0-80 so again none of the embeddings would error&nbsp;out.</p>
+<p>So this approach works and has the benefit that you can get it working using relatively basic Keras knowledge only, but is somewhat unwieldy. Especially the fact that the new embedding layer has more weights than we actually need is a&nbsp;pity.</p>
+<h2>Updated Model Using Custom Keras&nbsp;Class</h2>
+<p>Obviously, a more easier way is simply by extending the existing Embedding&nbsp;class:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">tensorflow.compat.v2</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">math_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.ops</span> <span class="kn">import</span> <span class="n">embedding_ops</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.keras</span> <span class="kn">import</span> <span class="n">backend</span> <span class="k">as</span> <span class="n">K</span>
+<span class="kn">from</span> <span class="nn">tensorflow.python.keras.utils</span> <span class="kn">import</span> <span class="n">tf_utils</span>
+
+<span class="k">class</span> <span class="nc">ExtendingEmbedding</span><span class="p">(</span><span class="n">Embedding</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">input_dim_existing</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ExtendingEmbedding</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">input_dim_existing</span> <span class="o">=</span> <span class="n">input_dim_existing</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">input_dim_new</span> <span class="o">=</span> <span class="n">input_dim</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dim_existing</span>
+
+  <span class="nd">@tf_utils</span><span class="o">.</span><span class="n">shape_type_conversion</span>
+  <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim_existing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">),</span>
+        <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_initializer</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embeddings_existing&#39;</span><span class="p">,</span>
+        <span class="n">regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_regularizer</span><span class="p">,</span>
+        <span class="n">constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_constraint</span><span class="p">,</span>
+        <span class="n">experimental_autocast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">trainable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_weight</span><span class="p">(</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span><span class="p">),</span>
+        <span class="n">initializer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_initializer</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embeddings_new&#39;</span><span class="p">,</span>
+        <span class="n">regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_regularizer</span><span class="p">,</span>
+        <span class="n">constraint</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_constraint</span><span class="p">,</span>
+        <span class="n">experimental_autocast</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">built</span> <span class="o">=</span> <span class="kc">True</span>
+
+  <span class="k">def</span> <span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="s1">&#39;int32&#39;</span> <span class="ow">and</span> <span class="n">dtype</span> <span class="o">!=</span> <span class="s1">&#39;int64&#39;</span><span class="p">:</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="n">math_ops</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s1">&#39;int32&#39;</span><span class="p">)</span>
+    <span class="n">emb</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_existing</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_new</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">embedding_ops</span><span class="o">.</span><span class="n">embedding_lookup_v2</span><span class="p">(</span><span class="n">emb</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype_policy</span><span class="o">.</span><span class="n">compute_dtype</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype_policy</span><span class="o">.</span><span class="n">variable_dtype</span><span class="p">:</span>
+      <span class="n">out</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype_policy</span><span class="o">.</span><span class="n">compute_dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+</code></pre></div>
+
+<p>Again, this is perhaps a bit more cumbersome than we&#8217;d want it to be since we need two <code>add_weight</code> calls here. (A better name would be <code>add_weight_tensor</code> since we&#8217;re adding a <code>shape</code> of weights, but anyway.) One to hold the existing weights (set to non-trainable), and another one to provide room for the new levels. This would be easier if Keras would allow to set a part of a weights tensor to be non-trainable, but it makes sense that this is not feasible (most likely, it wouldn&#8217;t work well with vectorized operations on the <span class="caps">GPU</span>).</p>
+<p>In any case we can now directly use this class as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">EmbeddingModelCustom</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span> <span class="n">previous_embedding_weights</span><span class="p">,</span> <span class="n">vector_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reg</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">reg</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span> <span class="n">reg</span> <span class="o">=</span> <span class="n">l2</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span>
+
+  <span class="n">num_previous_categories</span> <span class="o">=</span> <span class="n">previous_embedding_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">num_new_categories</span> <span class="o">=</span> <span class="n">num_categories</span> <span class="o">-</span> <span class="n">num_previous_categories</span>
+
+  <span class="n">input_cat</span> <span class="o">=</span> <span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_cat&#39;</span><span class="p">)</span>
+
+  <span class="n">i</span> <span class="o">=</span> <span class="n">ExtendingEmbedding</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span> <span class="n">vector_dim</span><span class="p">,</span> 
+                         <span class="n">input_dim_existing</span><span class="o">=</span><span class="n">num_previous_categories</span><span class="p">,</span>
+                         <span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">,</span>
+                         <span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span> <span class="n">embeddings_initializer</span><span class="o">=</span><span class="s1">&#39;random_normal&#39;</span><span class="p">)(</span><span class="n">input_cat</span><span class="p">)</span>
+  <span class="n">i</span> <span class="o">=</span> <span class="n">Flatten</span><span class="p">()(</span><span class="n">i</span><span class="p">)</span>
+
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">K</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))(</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">o</span> <span class="o">=</span> <span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">o</span><span class="p">)</span>
+
+  <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_cat</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">o</span><span class="p">)</span>
+  <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;rmsprop&#39;</span><span class="p">)</span>
+
+  <span class="n">K</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">embeddings_existing</span><span class="p">,</span> <span class="n">previous_embedding_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+  <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="n">new_model</span> <span class="o">=</span> <span class="n">EmbeddingModelCustom</span><span class="p">(</span><span class="n">num_categories_all</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_weights</span><span class="p">())</span>
+
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_new</span><span class="p">,</span> <span class="n">y_new</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Again we only need to train on the new instances here as the existing weights won&#8217;t be retrained anyway. (Remark for the observant reader: in case other learnable parameters would be present such as a Dense layer, you might want to mix-in existing instances as well given that you allow those parameters to stay&nbsp;trainable.)</p>
+<p>And then we get this&nbsp;result:</p>
+<p><img alt="Probability Distribution and Embeddings of Updated Model" src="/images/2021/embedding_3.png"></p>
+<h2>Updated Model Using Custom Keras&nbsp;Constraint</h2>
+<p>A third approach consists of using a Keras constraint to lock some of the weights in place whilst still keeping a full expanded embedding layer trainable. First, we define our&nbsp;constraint:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">tensorflow.keras.constraints</span> <span class="kn">import</span> <span class="n">Constraint</span>
+
+<span class="k">class</span> <span class="nc">FixWeights</span><span class="p">(</span><span class="n">Constraint</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">w</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span>
+</code></pre></div>
+
+<p>And again can use this as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">def</span><span class="w"> </span><span class="n">EmbeddingModelConstrained</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span><span class="w"> </span><span class="n">previous_embedding_weights</span><span class="p">,</span><span class="w"> </span><span class="n">vector_dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">reg</span><span class="o">=</span><span class="n">False</span><span class="p">):</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="n">reg</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">False</span><span class="p">:</span><span class="w"> </span><span class="n">reg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l2</span><span class="p">(</span><span class="mf">0.000001</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">num_previous_categories</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">previous_embedding_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="w">  </span><span class="n">num_new_categories</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_categories</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">num_previous_categories</span>
+
+<span class="w">  </span><span class="n">input_cat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Input</span><span class="p">((</span><span class="mi">1</span><span class="p">,),</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;input_cat&#39;</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">constraint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FixWeights</span><span class="p">(</span><span class="n">previous_embedding_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="w">  </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_categories</span><span class="p">,</span><span class="w"> </span><span class="n">vector_dim</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">embeddings_constraint</span><span class="o">=</span><span class="n">constraint</span><span class="p">,</span>
+<span class="w">                </span><span class="n">input_length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">embeddings_regularizer</span><span class="o">=</span><span class="n">reg</span><span class="p">,</span><span class="w"> </span><span class="n">embeddings_initializer</span><span class="o">=</span><span class="s1">&#39;random_normal&#39;</span><span class="p">)(</span><span class="n">input_cat</span><span class="p">)</span>
+<span class="w">  </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Flatten</span><span class="p">()(</span><span class="n">i</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">o</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Lambda</span><span class="p">(</span><span class="n">lambda</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="n">K</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)))(</span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="n">o</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,))(</span><span class="n">o</span><span class="p">)</span>
+
+<span class="w">  </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Model</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">input_cat</span><span class="p">,</span><span class="w"> </span><span class="n">outputs</span><span class="o">=</span><span class="n">o</span><span class="p">)</span>
+<span class="w">  </span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;binary_crossentropy&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;rmsprop&#39;</span><span class="p">)</span>
+
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">model</span>
+
+<span class="n">new_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EmbeddingModelConstrained</span><span class="p">(</span><span class="n">num_categories_all</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">get_layer</span><span class="p">(</span><span class="s1">&#39;embedding_cat&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get_weights</span><span class="p">())</span>
+
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span><span class="w"> </span><span class="n">X_new</span><span class="p">,</span><span class="w"> </span><span class="n">y_new</span><span class="p">,</span><span class="w"> </span><span class="n">lr</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span><span class="w"> </span><span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span><span class="w"> </span><span class="n">X_new</span><span class="p">,</span><span class="w"> </span><span class="n">y_new</span><span class="p">,</span><span class="w"> </span><span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="w"> </span><span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p>By the way, now comes the point at which is becomes clear why I have added in a very slight L2 regularization. If kept to <code>None</code>, using a constraint on an Embedding layer bugs out with: <code>Cannot use a constraint function on a sparse variable.</code>. TensorFlow is <a href="https://github.com/tensorflow/tensorflow/issues/33755">aware of the issue</a>, with some people suggesting to use the constraint as a normal layer operation instead, as&nbsp;in:</p>
+<div class="highlight"><pre><span></span><code><span class="n">emb</span> <span class="o">=</span> <span class="n">Embedding</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;embedding_name&#39;</span><span class="p">)</span>
+<span class="n">norm_layer</span> <span class="o">=</span> <span class="n">UnitNorm</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">norm_embedding</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">emb</span><span class="p">(</span><span class="n">embedding_id_input</span><span class="p">))</span>
+</code></pre></div>
+
+<p>Err&#8230; that might work for a UnitNorm constraint (and I&#8217;m not sure, even), but definitely didn&#8217;t for <code>FixWeights</code>, so I doubt that this usage is correct. Strangely enough, setting a regularizer bypasses the issue and we get our&nbsp;result:</p>
+<p><img alt="Probability Distribution and Embeddings of Updated Model" src="/images/2021/embedding_4.png"></p>
+<h2>Full&nbsp;Retraining</h2>
+<p>So there you have it: three different ways on how to iteratively update an embedding layer. Just for fun, we can also compare the results above with the result a fully retrained model would give&nbsp;us:</p>
+<div class="highlight"><pre><span></span><code><span class="n">new_model</span> <span class="o">=</span> <span class="n">EmbeddingModel</span><span class="p">(</span><span class="n">num_categories_all</span><span class="p">)</span>
+
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_together</span><span class="p">,</span> <span class="n">y_together</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">fit_with_lr</span><span class="p">(</span><span class="n">new_model</span><span class="p">,</span> <span class="n">X_together</span><span class="p">,</span> <span class="n">y_together</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="Probability Distribution and Embeddings of Fully Retrained Model" src="/images/2021/embedding_5.png"></p>
+<p>We can also take a look at how the embeddings jump around from one the original model to the new one using all&nbsp;indices:</p>
+<p><img alt="Embeddings of Initial versus Fully Retrained Model" src="/images/2021/embedding_6.png"></p>
+<p>The green dots show the embedding for the initial model, and the orange dots for the new one. Lines connect embeddings for the same index (if included in both models). Even although the embedding is relatively stable here, this is of course mainly due to the way how we used it here (addition and&nbsp;sigmoid).</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:fn1">
+<p>If new items would be rated by new users only, the task would be trivial as one could simply train a new separate embedding on these.&#160;<a class="footnote-backref" href="#fnref:fn1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fn2">
+<p>Zero is included as we won&#8217;t use zero-masking.&#160;<a class="footnote-backref" href="#fnref:fn2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

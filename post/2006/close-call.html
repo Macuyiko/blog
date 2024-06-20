@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Close Call</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 22 August 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/close-call.html" rel="bookmark"
+			title="Permalink to Close Call">Close&nbsp;Call</a></div>
+		</header>
+	
+	    <p>Latest Ubuntu xorg-core update breaks X, oh&nbsp;boy&#8230;</p>
+<p>If you are already in trouble just want some general info: head over to <a href="http://ubuntuforums.org/showthread.php?t=241254">this thread</a>. The package itself has been fixed (already). Be sure to download the point 4 and not the point 3&nbsp;release.</p>
+<p>So what&#8217;s this all about? There was a main Dapper update which crashed X for a lot of people. These people (some of them) then became mad and started complaining about Ubuntu, X, or Linux in&nbsp;general.</p>
+<p>I too would like to comment on some of these&nbsp;aspects:</p>
+<ul>
+<li>Yes, something was wrong. Luckily I didn&#8217;t install the broken update (didn&#8217;t get an update notification in time,&nbsp;phew).</li>
+<li>Some people use the &#8220;you didn&#8217;t pay for Ubuntu so you have no reason to blame them if something goes wrong&#8221; argument. I don&#8217;t agree with this. It is the goal of Ubuntu and Linux in general to provide a stable and better alternative. Maybe you don&#8217;t pay for Ubuntu, but in order to introduce Linux into the desktop and enterprice environment for heavy daily use, it should strive for maximum control, security and stability. This situation would have been unacceptable for corporations who do pay for these products, thus: it is better to avoid&nbsp;it.</li>
+<li>This is no reason, however, to start complaining. It&#8217;s situations like this that really show of the power of the developers and the community. There was a fix up in the forums almost immediatly. And the package has been fixed&nbsp;already.</li>
+<li>Of course it&#8217;s difficult to search forums when you have to do it from the command line. So it never hurts to have Lynx or equivalent installed. And look at it this way: what if there was no cli? At least in Linux you always have a working bare environment in which you can fix&nbsp;things.</li>
+</ul>
+<p>Just my two cents. Let&#8217;s hope this does not happen&nbsp;again.</p>
+<p>As a matter of fact, I was just working on my post regarding my <span class="caps">AIGLX</span>/Compiz experience when this turned up; I will publish it&nbsp;soon.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

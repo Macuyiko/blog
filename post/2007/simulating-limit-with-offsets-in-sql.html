@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Simulating LIMIT with offsets in SQL</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 29 July 2007, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2007/simulating-limit-with-offsets-in-sql.html" rel="bookmark"
+			title="Permalink to Simulating LIMIT with offsets in SQL">Simulating <span class="caps">LIMIT</span> with offsets in <span class="caps">SQL</span></a></div>
+		</header>
+	
+	    <p>How can you do this (x is number of rows to fetch, y is offset)&nbsp;(Mysql):</p>
+<div class="highlight"><pre><span></span><code>SELECT * FROM my_table LIMIT x, y
+</code></pre></div>
+
+<p>or this (PostgreSQL)&nbsp;:</p>
+<div class="highlight"><pre><span></span><code>SELECT * FROM my_table LIMIT x OFFSET y
+</code></pre></div>
+
+<p>in a <span class="caps">DBMS</span> that doesn&#8217;t support <span class="caps">LIMIT</span> statements (take Oracle for&nbsp;example).</p>
+<p>In Oracle, you can use <span class="caps">ROWNUM</span>, which holds the current row&nbsp;number:</p>
+<div class="highlight"><pre><span></span><code>SELECT <span class="gs">* FROM</span>
+<span class="gs">  (SELECT ROWNUM limit, *</span> FROM my_table ORDER BY order_field)
+WHERE limit BETWEEN x AND y
+</code></pre></div>
+
+<p>In <span class="caps">SQL</span> Server (&gt;2005), you can use a similar trick, using the ROW_NUMBER&nbsp;function:</p>
+<div class="highlight"><pre><span></span><code>WITH ordered AS (
+  SELECT ROW_NUMBER() OVER (ORDER BY order_field) AS limit, <span class="gs">*</span>
+<span class="gs">  FROM my_table)</span>
+<span class="gs">SELECT *</span>
+FROM ordered
+WHERE limit BETWEEN x AND y
+</code></pre></div>
+
+<p>When using another database (Access for example), you can use <span class="caps">TOP</span> when&nbsp;available:</p>
+<div class="highlight"><pre><span></span><code>SELECT <span class="gs">* FROM</span>
+<span class="gs">  (SELECT TOP x *</span> FROM
+  (SELECT TOP x+y * FROM my_table ORDER BY order_field)
+AS innerT
+ORDER BY order_field DESC) AS outerT
+ORDER BY order_field
+</code></pre></div>
+
+<p>Or, another&nbsp;option:</p>
+<div class="highlight"><pre><span></span><code>SELECT TOP x <span class="gs">* FROM my_table</span>
+<span class="gs">WHERE order_field NOT IN</span>
+<span class="gs">(SELECT TOP y *</span> FROM my_table ORDER BY order_field)
+</code></pre></div>
+
+<p>Some databases don&#8217;t allow <span class="caps">TOP</span> in subselects, so we have to use yet another&nbsp;method:</p>
+<div class="highlight"><pre><span></span><code>SELECT <span class="gs">* FROM my_table outerT</span>
+<span class="gs">WHERE</span>
+<span class="gs">(SELECT COUNT(*</span>)
+FROM my_table innerT
+WHERE innerT.order_field order_field)
+BETWEEN y+1 AND x+y
+ORDER BY outerT.order_field ASC;
+</code></pre></div>
+
+<p>Should that fail too, you can always&nbsp;do:</p>
+<div class="highlight"><pre><span></span><code>SELECT TOP x * FROM my_table WHERE order_field &gt; z
+</code></pre></div>
+
+<p>With z the last fetched order_field value from the previous&nbsp;page.</p>
+<p>You can also find a handy article on the <span class="caps">IBM</span> site describing how you can <a href="http://www-1.ibm.com/support/docview.wss?rs=64&amp;uid=swg27005359">simulate row numbers</a>.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

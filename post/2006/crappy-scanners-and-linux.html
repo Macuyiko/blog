@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Crappy Scanners And Linux</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Mon 18 September 2006, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2006/crappy-scanners-and-linux.html" rel="bookmark"
+			title="Permalink to Crappy Scanners And Linux">Crappy Scanners And&nbsp;Linux</a></div>
+		</header>
+	
+	    <p>Recently we got a new <span class="caps">HP</span> Scanner. It&#8217;s a good, nice, and generally works without any&nbsp;complaints.</p>
+<p>The scanner I used before was a crappy scanner with a no-name brand nobody knows, picked up for almost nothing at some cheapskate-store (since I very rarely need to scan something). The installation of the drivers for the thing was always a pain, including copying files around, right clicking .inf files, reciting incantations and whatnot&#8230; And then hoping that it wouldn&#8217;t throw a general &#8220;<span class="caps">TWAIN</span> error&#8221; at&nbsp;me.</p>
+<p>Seriously, what is that anyway? People who know something about this whole <span class="caps">TWAIN</span> thing know it&#8217;s a pain. According to Wikipedia, it stands for <strong>T</strong>echnology (or Toolkit or Thing) <strong>W</strong>ithout <strong>A</strong>n (or Any) <strong>I</strong>ntelligent (or Important or Interesting) <strong>N</strong>ame, which is just cheesy. Hell, I even think that Microsoft&#8217;s new <span class="caps">WIA</span> (or: Windows Imaging Acquisition) is&nbsp;better.</p>
+<p>Anyway: a few weeks ago, my Windows machine gave up scanning, maybe it had something to do with the fact that I was running Windows x64, I don&#8217;t know. Reinstalling drivers: no dice. Moving files around: no dice. Installing drivers for other scanners (one can try): no dice. Unplugging the damn thing and throwing it out of the window&#8230; err&#8230; no&nbsp;dice.</p>
+<p>Until now. I was thinking: &#8220;Hey look, there&#8217;s that stupid old scanner, maybe this will work on Linux&#8230;&#8221; So I promised myself that I would spent a few minutes (not more) trying to get this to work, before dumping it&nbsp;completely.</p>
+<p>I connect the scanner to a free <span class="caps">USB</span> port&#8230; nothing happens. No worries, after fiddling around I find out about <code>xsane</code> (hey, go easy on me, I&#8217;m still a bit of a Linux noob), so I try that, and get a nice bunch of error messages&#8230;&nbsp;perfect.</p>
+<div class="highlight"><pre><span></span><code>Failed to open device &#39;artec_eplus48u:libusb:001:002&#39;: invalid argument
+</code></pre></div>
+
+<p>Really? So my crappy brand scanner is actually an Artec. Fine, after searching a bit on Google I find the following suggestions, export&nbsp;this:</p>
+<p>export&nbsp;SANE_DEBUG_ARTEC_EPLUS48U=9</p>
+<p>And then run again, we now get some more&nbsp;information:</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">artec_eplus48u</span><span class="o">]</span><span class="w"> </span><span class="k">Try</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">open</span><span class="w"> </span><span class="n">firmware</span><span class="w"> </span><span class="k">file</span><span class="err">:</span><span class="w"> </span><span class="ss">&quot;/usr/share/sane/artec_eplus48u/Artec48.usb&quot;</span>
+
+<span class="o">[</span><span class="n">artec_eplus48u</span><span class="o">]</span><span class="w"> </span><span class="n">Cannot</span><span class="w"> </span><span class="k">open</span><span class="w"> </span><span class="n">firmware</span><span class="w"> </span><span class="k">file</span><span class="w"> </span><span class="ss">&quot;/usr/share/sane/artec_eplus48u/1200.usb&quot;</span>
+
+<span class="o">[</span><span class="n">artec_eplus48u</span><span class="o">]</span><span class="w"> </span><span class="n">download_firmware_file</span><span class="w"> </span><span class="n">failed</span>
+</code></pre></div>
+
+<p>Apparently, .usb is a Windows driver, so good luck getting it. Luckily, the drivers where still on my other machine, so I do a search for every .usb I can find. <code>Artec48.usb</code> gets found and copied over to the directory <code>xsane</code> suggests: <code>/usr/share/sane/artec_eplus48</code> (had to create&nbsp;it).</p>
+<p>I tried again&#8230; And it frickin&#8217; works! What a piece of&nbsp;cake.</p>
+<p>If you happen to have the same problem, and want the <code>Artec48.usb</code> driver, you may drop me a&nbsp;note.</p>
+<p>I&#8217;m happy, now this scanner still can be a little bit of use. This is what I like about Linux: if you have a problem: continue fiddling and trying without giving up. In the end it&#8217;ll work out and you&#8217;ll have learned a lot of things (which is&nbsp;great).</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

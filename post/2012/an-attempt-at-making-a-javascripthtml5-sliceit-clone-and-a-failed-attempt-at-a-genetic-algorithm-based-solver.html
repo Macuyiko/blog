@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>An Attempt At Making A Javascript/HTML5 SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based Solver</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 13 May 2012, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2012/an-attempt-at-making-a-javascripthtml5-sliceit-clone-and-a-failed-attempt-at-a-genetic-algorithm-based-solver.html" rel="bookmark"
+			title="Permalink to An Attempt At Making A Javascript/HTML5 SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based Solver">An Attempt At Making A Javascript/<span class="caps">HTML5</span> SliceIt! Clone, And A (Failed) Attempt At A Genetic Algorithm Based&nbsp;Solver</a></div>
+		</header>
+	
+	    <p>One of the niceties of owning a smartphone is the huge amount of apps available for download, many of which&nbsp;games.</p>
+<p>Some time ago, one of these games which was keeping me occupied was <a href="https://play.google.com/store/apps/details?id=com.com2us.sliceit&amp;hl=en">SliceIt!</a> from Com2uS. Don&#8217;t worry if you don&#8217;t know the game or haven&#8217;t played it, I&#8217;ll quickly explain it&nbsp;below.</p>
+<h3>The&nbsp;Game</h3>
+<p>SliceIt! is presented in a cute crayon-looking&nbsp;style:</p>
+<p><img alt="" src="http://2.bp.blogspot.com/-zSqnCJJ-sfM/T653to_HcCI/AAAAAAAAUio/k_KAzrHU430/s1600/sliceit01.png"></p>
+<p>A typical SliceIt! level. Players draw lines (as shown here) to split a given shape into equally sized&nbsp;areas.</p>
+<p>The goal of the game is to draw a number of lines to divide (&#8220;slice&#8221;) the given area into a number of pieces. Both the number of lines and required pieces are fixed and given beforehand. You have to use all the strokes given, and have to match exactly the number of needed pieces. No more, no less. The final requirement of the game is that the resulting pieces need to have about the same area. While their form may differ, their area (size) has to match. This means for example that if the goal is to get four pieces, all these four pieces need to have a size around 25% (100%/4) of the original area. Pieces don&#8217;t have to be of exactly the same size. If their areas differ slightly, the level is still won. This allows for levels which have straightforward but not-quite-perfect solutions and perfect but hard-to-find solutions as&nbsp;well.</p>
+<h3>The&nbsp;Idea</h3>
+<p>So far, so good. After playing the game for a while, I encountered the following&nbsp;level:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/-4NkoKGfPQeM/T66FDAhSHYI/AAAAAAAAUi4/TonZ8ZOOD0A/s200/sliceit02.png"></p>
+<p>Another SliceIt level (goal: 5 strokes, 10&nbsp;areas),</p>
+<p>This level introduces another gameplay concept: blocked areas. Drawing lines which crosses these areas is forbidden, so this solution won&#8217;t&nbsp;work:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/-HIIFUpg4wEk/T66FFMoOdVI/AAAAAAAAUjE/0GXX28R_7Ww/s200/sliceit03.png"></p>
+<p>This solution would use 5 lines to form 10 equal areas, but the red areas forbids the player to draw the final&nbsp;line.</p>
+<p>After fiddling for a bit, we find the following acceptable&nbsp;solution:</p>
+<p><img alt="A solution" src="http://4.bp.blogspot.com/-4-j4IJOIRH4/T66FCYBdrMI/AAAAAAAAUi0/tiyCrSrAnBk/s200/sliceit04.png"></p>
+<p>While messing around with this, a thought popped into my head: could a genetic algorithm be used to solve a SliceIt! puzzle? At first sight, this seems like a good idea. The game itself is pretty easy. A chromosome representation can easily be established (since we know the list of strokes beforehand, so a population member can be represented simply as an array of&nbsp;coordinate-pairs:</p>
+<div class="highlight"><pre><span></span><code>[
+   ((l1x1,l1y1), (l1x2,l1y2)),
+   ((l2x1,l2y1), (l2x2,l2y2)),
+   ((l3x1,l3y1), (l3x2,l3y2)),
+   ((l4x1,l4y1), (l4x2,l4y2)),
+   ((l5x1,l5y1), (l5x2,l5y2))
+]
+</code></pre></div>
+
+<p>And finally, the solutions can be easily checked (just compare areas with a known&nbsp;goal).</p>
+<p>And so I set out to test this theory as a weekend&nbsp;project.</p>
+<p>While lines, areas, points and polygons can all be expressed and compared mathematically, I wanted to create a graphical representation of the game as well. Moreover, I wanted to build a playable version, before implementing a genetic algorithm. Finally, I wanted to do this with <span class="caps">HTML5</span> (canvas) and Javascript, as I&#8217;ve been pretty jealous of all these other cool genetic algorithm implementations available on the&nbsp;web:</p>
+<ul>
+<li>Shortest path:  <a href="http://tomokas.com/apps/pathfinding-using-a-genetic-algorithm-html5-canvas-javascript">http://tomokas.com/apps/pathfinding-using-a-genetic-algorithm-html5-canvas-javascript</a></li>
+<li>Eater&#8217;s world:  <a href="http://math.hws.edu/eck/jsdemo/ga-info.html">http://math.hws.edu/eck/jsdemo/ga-info.html</a>, demo at  <a href="http://math.hws.edu/eck/jsdemo/jsGeneticAlgorithm.html">http://math.hws.edu/eck/jsdemo/jsGeneticAlgorithm.html</a></li>
+<li>Genetic hello world:  <a href="http://www.puremango.co.uk/2010/12/genetic-algorithm-for-hello-world/">http://www.puremango.co.uk/2010/12/genetic-algorithm-for-hello-world/</a></li>
+<li>Function optimization:  <a href="http://icefox.github.com/javascript_genetic_algorithm/">http://icefox.github.com/javascript_genetic_algorithm/</a></li>
+<li>Javascript Mona Lisa:  <a href="http://blog.nihilogic.dk/2009/01/genetic-mona-lisa.html">http://blog.nihilogic.dk/2009/01/genetic-mona-lisa.html</a></li>
+</ul>
+<p>I didn&#8217;t want go completely overboard, though. I only wanted to implement to most basic puzzles found in the game, as described above. Later levels add all sorts of crazy stuff (like bouncy edges and so on). Still, the game allows for some constructs which are pretty&nbsp;challenging:</p>
+<ol>
+<li>Levels are created by defining a number of polygons. A level can be build out of multiple&nbsp;shapes.</li>
+<li>These polygons can both be convex and&nbsp;concave.</li>
+<li>The polygons can contain holes as well (not sure if there are levels like this in the&nbsp;game).</li>
+<li>Polygons can be added to a level which denote &#8220;forbidden areas&#8221;, though which no lines may be&nbsp;drawn.</li>
+</ol>
+<p>Feature number three is the most challenging one. To solve this, you have to first create a polygon defining the outermost shape, and then additional polygons to define the holes. The area of the obtained shape is then calculated by subtracting the areas of all holes from the areas of all the outer shapes. While I was planning to implement this add first, I dropped it, mainly out of laziness, and because much of the logic in the game would&#8217;ve become quite harder when this aspect would be&nbsp;included.</p>
+<h3>The&nbsp;Implementation</h3>
+<p>The code turned out the be pretty complex. I created multiple Javascript object types, either handling game logic, or representing geometrical concepts. This means that types were made&nbsp;for:</p>
+<ul>
+<li>A point: constructed out of two numbers (x and y&nbsp;coordinates).</li>
+<li>A line: constructed out of two points (point one and&nbsp;two).</li>
+<li>A polygon: constructed out of an array of lines (the&nbsp;edges).</li>
+<li>A rectangle: constructed out of two points (upper left and lower right&nbsp;corner).</li>
+</ul>
+<p>The rectangle type should actually have been based upon the polygon type (a rectangle is just a special type of polygon). Similarly, in hindsight, the polygon object should have been defined as an array of points, instead of lines. For lines, methods to get the length and intersects with other lines were added. For polygons and rectangles, methods to get the area of the shape were added as well. I had to refresh my memory on geometry a&nbsp;bit:</p>
+<ul>
+<li>For intersects:  <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/">http://local.wasp.uwa.edu.au/~pbourke/geometry/lineline2d/</a>.</li>
+<li>For area (and centroid):  <a href="http://en.wikipedia.org/wiki/Polygon#Area_and_centroid">http://en.wikipedia.org/wiki/Polygon#Area_and_centroid</a>, I used the shoelace/surveyor method (<a href="http://en.wikipedia.org/wiki/Shoelace_formula">http://en.wikipedia.org/wiki/Shoelace_formula</a>).</li>
+</ul>
+<p>For the game logic, I created the following&nbsp;types:</p>
+<ul>
+<li>The surface: attached to a canvas element. Handles Javascript events (mouseup,&nbsp;mousemove&#8230;).</li>
+<li>The drawer: contains methods to draw various things using a surface. These contain methods for drawing the level, the forbidden rectangles, and a cutting line when a player drags the&nbsp;mouse.</li>
+<li>The level: contains level data, such as the number of allowed strokes and required pieces. The definition of the polygons making up the level, and the list of rectangles defining the forbidden&nbsp;areas.</li>
+</ul>
+<p>The level object type also contains some methods for handling the harder game logic. E.g., methods which take a line, and figure out how the current list of level polygons should be&nbsp;cut.</p>
+<p>The way levels are cut after drawing a line works like this. First, compare the drawn line with all the edges defined by all the polygons to get a list of intersects. Then, some basic checking is performed to figure out if the line is valid. Finally, if the line is valid, polygons are split up, and a list of new polygons is&nbsp;created.</p>
+<p>An example can help here. The following figure shows how a line &#8220;splits&#8221; a single convex&nbsp;polygon:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/-T4VnRr2ZgFI/T6_TxhMpVTI/AAAAAAAAUlA/Q93xwFLfMTs/s1600/sliceit10.png"></p>
+<p>When a new line is drawn, the procedure is repeated for each polygon&nbsp;&#8220;crossed&#8221;:</p>
+<p><img alt="" src="http://4.bp.blogspot.com/-RcAuGVhNBCs/T6_TyGTt56I/AAAAAAAAUlE/Zjcr5qgPjTM/s1600/sliceit11.png"></p>
+<p>The basic check mentioned above to see if a line is valid is thus implemented in a very simple manner: check if the number of intersect points is even. For convex polygons, this is all we have to do, since each line drawn through a convex polygon will always create two other convex polygons. When dealing with concave polygons, things can get a bit&nbsp;harder:</p>
+<p><img alt="" src="http://1.bp.blogspot.com/-0GHO9lZPMZw/T6_Tyv_6t5I/AAAAAAAAUlQ/y38LhQLu_9w/s1600/sliceit12.png"></p>
+<p>To solve this problem, we should either adapt our method in order to &#8220;clip&#8221; the drawn line with the given polygon. Instead of doing so, I opted to work with convex levels&nbsp;only.</p>
+<p>As a side note, you might be tempted to think that the following adaptation of the &#8220;line validity&#8221; check could work as well, i.e.: find the intersect points, and check if &#8212; for each polygon p containing an intersect point &#8212; that p has two intersect points (one entry and one exit). This prevents the line in the example above from being drawn (there are four intersects for the single given polygon). This also restricts the number of possibilities to splice a polygon with a given stroke (which might be the desired behavior). Still, it should be noted that this doesn&#8217;t work either, since it can&#8217;t be guaranteed that the two intersect indeed &#8220;enter&#8221; and &#8220;exit&#8221; the polygon in the right&nbsp;order:</p>
+<p><img alt="" src="http://3.bp.blogspot.com/-R-2g_AKmU7E/T6_bOb2P_tI/AAAAAAAAUlg/7QzJIhU5I6A/s1600/sliceit13.png"></p>
+<p>So convex-only levels for now. If someone wants to hack in support for complex polygons (concave and/or holes): links to the code will be posted at the&nbsp;end.</p>
+<p>The last thing which was added were methods to check if a level is solved correctly.To avoid that the player has to have ultra-precise eye-hand coordination, very small polygons (e.g. less than one percent of the original area of the level) created by drawn lines are disregarded when checking the areas and number of goal areas. Now that the game was playable, I converted the level which was giving me difficulties to coordinates, and started working on the genetic&nbsp;algorithm.</p>
+<h3>The Genetic&nbsp;Algorithm</h3>
+<p>To implement the  <a href="http://blog.macuyiko.com/2009/01/modern-genetic-and-other-algorithms_06.html">genetic algorithm</a>, I used the &#8220;Mona Lisa&#8221;-painting genetic algorithm by <a href="http://www.nihilogic.dk/labs/evolving-images/">Nihilogic</a> as a starting point. This algorithm implements a simple tournament-based genetic algorithm. As said earlier, each population member can be represented as a fixed size array of points denoting the position of the&nbsp;lines.</p>
+<p>Crossover is easy as well, as we can just take one half of the array defined by parent number one, and combine it with the second half of the array defined by parent number two. I say &#8220;half&#8221;, but it&#8217;s not necessary to split the two arrays neatly in half; the crossover point can be randomly&nbsp;chosen.</p>
+<p>Mutation works similarly. When the decision is made to mutate a member of the population, each point is randomly moved to a new&nbsp;position.</p>
+<h3>The&nbsp;Result</h3>
+<p>The algorithm and Canvas/<span class="caps">JS</span> implementation of SliceIt! can be tested <a href="http://static.macuyiko.com/files/sliceit/">here</a>. If you run the genetic algorithm (click &#8220;Evolve&#8221;), you&#8217;ll notice that, although sometimes a valid solution is found, the algorithm has a tendency to get stuck in a local optimum (e.g. where only four of the required five lines are drawn). The reason for this is something we haven&#8217;t yet talked about: the fitness&nbsp;function.</p>
+<p>As with many applications of evolutionary computing, the definition of fitness function is certainly a hard task in this case. The main issue is that three variables have to be incorporated when evaluating a&nbsp;solution:</p>
+<ul>
+<li>The sizes of the areas&nbsp;created.</li>
+<li>The number of areas&nbsp;created.</li>
+<li>The number of valid lines&nbsp;drawn.</li>
+</ul>
+<p>The first point is quite simple, just compute sum of the the (squared) differences between each area and the optimal target area. For example, if a level has an area size of 1000, and 10 areas have to be created, then we compute the fitness&nbsp;as:</p>
+<p><img alt="" src="http://2.bp.blogspot.com/-A0BUx4SGLaw/T7ADk0HqSyI/AAAAAAAAUl4/DuJVUPV_-NE/s1600/slice21.png"></p>
+<p>Using this function alone, however, often leads to the algorithm getting stuck in local optima. Therefore, we need to punish for missing lines/areas as well. The problem is finding a function which drives the algorithm towards adding/moving a line when it is invalid, while still remaining able to &#8220;escape&#8221; local optima by making a line or the number of areas temporarily&nbsp;invalid.</p>
+<p>I&#8217;ve tried different fitness functions, but none of them seem to be particularly efficient (feel free to modify the code in &#8220;Candidate.prototype.calcFitness&#8221;, I&#8217;ve left the code&nbsp;uncompressed).</p>
+<h3>The Retry (Using the Watchmaker&nbsp;library)</h3>
+<p>As an extra exercise, I rewrote a <a href="https://github.com/Macuyiko/sliceit-genetic-java">very basic version of the algorithm using Java</a>. To implement the genetic algorithm, I opted to give the excellent, thorough <a href="http://watchmaker.uncommons.org/">Watchmaker library</a> a&nbsp;go.</p>
+<p>Just for fun, I recorded a timelapse of some of my&nbsp;coding:</p>
+<iframe allowfullscreen="" frameborder="0" height="315" src="http://www.youtube.com/embed/t39UaG9JZlg" width="560"></iframe>
+
+<p>This version works a bit better, mainly since there are no &#8220;forbidden areas&#8221; and the mutation operators are a bit more fine-tuned. See the suggestions below for more ideas if you want to try this experiment&nbsp;yourself.</p>
+<h3>Conclusions and&nbsp;Suggestions</h3>
+<p>Despite fact that the result works less perfect than expected, this still was a fun weekend-project. This project was a good exercise emphasizing the importance of a good fitness function when dealing with genetic&nbsp;algorithms.</p>
+<p>Working with Javascript and Canvas in this manner was also quite new for me. While I&#8217;ve had plenty of experience applying Javascript in a normal web/<span class="caps">DOM</span> context, dealing with geometry is something else entirely. Writing object oriented code in Javascript as done here was also something which required some getting used to. In hindsight, the code could have been made a lot&nbsp;cleaner.</p>
+<p>Programming a project like this one is somewhat easier in Java. The Watchmaker library especially seems like an amazingly engineered piece of software; I&#8217;ll certainly revisit it&nbsp;later.</p>
+<p>People who want to try this project for themselves or who want to extend my code are certainly free to do so. (The Javascript version can be found  <a href="http://static.macuyiko.com/files/sliceit/">here</a> &#8212; just view the source of the web page. The Java version is on <a href="https://github.com/Macuyiko/sliceit-genetic-java">github</a>.) Some&nbsp;suggestions:</p>
+<ul>
+<li>Try implementing complex polygons (i.e. concave polygons or polygons with holes in a robust manner). This is something I&#8217;d like to come back to later, as the current implementation bugs&nbsp;me.</li>
+<li>For the <em>initial construction</em> of the population in the genetic algorithm, several techniques can be used. The one I use here just randomly draws lines, with no regard if they&#8217;re valid of not. An alternative technique could opt to only start from valid lines (by requiring that lines stay outside the given starting shapes, for&nbsp;example).</li>
+<li>For the <em>mutation operators</em>, I just move the points of lines to new random locations. The Java version is a bit smarter and moves points slightly to a neighboring position. Additionally, another &#8220;mutator&#8221; (with a lower mutation chance) is added which completely creates a new solution. Try making the algorithm &#8220;smarter&#8221; in this&nbsp;manner.</li>
+<li>The current version has no regard for symmetry, while human players will often prefer symmetric solutions. Try to find a way to determine and score this&nbsp;aspect.</li>
+<li>Finally, try coming up with better-performing fitness functions. Just using the squared sum of differences might work, provided you leave enough freedom to search for non-local solutions (e.g. high population size, enough chance for mutations). The way crossover (offspring generation) is performed doesn&#8217;t seem to matter much, given the simple solution&nbsp;structure.</li>
+<li>Changing the population members&#8217; format could work as well, e.g. allow members to contain more lines than the goal number (n) given, but only evaluate the first valid n lines. This allows members to &#8220;carry&#8221; with them some genetic variety for more&nbsp;generations.</li>
+</ul>
+<p>The links, once&nbsp;more:</p>
+<ul>
+<li><strong>Javascript version:</strong> <a href="http://static.macuyiko.com/files/sliceit/">http://static.macuyiko.com/files/sliceit/</a></li>
+<li><strong>Java source:</strong> <a href="https://github.com/Macuyiko/sliceit-genetic-java">https://github.com/Macuyiko/sliceit-genetic-java</a></li>
+<li><strong>Java binary (jar):</strong> <a href="https://github.com/Macuyiko/sliceit-genetic-java/blob/master/deploy/rungeneticsliceit.jar?raw=true">https://github.com/Macuyiko/sliceit-genetic-java/blob/master/deploy/rungeneticsliceit.jar?raw=true</a></li>
+</ul>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

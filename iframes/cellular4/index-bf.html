@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js?"></script>
+    <script src="cellular-bf.js"></script>
+    <script>
+        const pixelsPerSquare = 8;
+        const gridWidth = 80;
+        const gridHeight = 50;
+
+        var world = new World(gridWidth, gridHeight);
+        var game = new Game(world, pixelsPerSquare);
+
+        setup = () => game.setup();
+        draw = () => game.draw();
+        keyPressed = () => {
+            game.keyPressed();
+            return false;
+        }
+        mouseDragged = () => game.mouseDragged();
+        mousePressed = () => game.mousePressed();
+        mouseReleased = () => game.mouseReleased();
+    </script>
+
+</head>
+
+<body>
+</body>
+
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Revisiting Discovery of Interaction Effects</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Sun 03 January 2021, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2021/revisiting-discovery-of-interaction-effects.html" rel="bookmark"
+			title="Permalink to Revisiting Discovery of Interaction Effects">Revisiting Discovery of Interaction&nbsp;Effects</a></div>
+		</header>
+	
+	    <p><a href="////blog.macuyiko.com/post/2019/discovering-interaction-effects-in-ensemble-models.html">In 2019</a>, I wrote on the topic of discovering which features interact in a model agnostic manner, using an approach from a <a href="https://arxiv.org/pdf/0811.1679.pdf">paper by Friedman and Popescu</a> entitled Predictive Learning Via Rule Ensembles. I wanted to revisit the topic briefly and expand on it somewhat, given that scikit-learn has progressed a bit since&nbsp;then.</p>
+<h2>On Permutation Feature Importance, Partial Dependence, and Individual Conditional Expectation&nbsp;Plots</h2>
+<p>First the good news: scikit-learn has added support both for <a href="https://scikit-learn.org/stable/modules/permutation_importance.html">permutation based feature importance</a> (and should now be your go-to approach instead of the <code>feature_importances_</code> attribute) as well as support for <a href="https://scikit-learn.org/stable/modules/partial_dependence.html">partial dependence plots</a>. <span class="caps">ICE</span> plots are also supported through the <code>kind</code> parameter.</p>
+<p>Since <code>plot_partial_dependence</code> supports two-way interactions as well, this by itself already removes having to depend on lots of other libraries (though I still like <a href="https://github.com/parrt/random-forest-importances"><code>rfpimp</code></a> for their more explicit handling of feature&nbsp;correlation).</p>
+<h2>Revisiting Friedman&#8217;s&nbsp;H-statistic</h2>
+<p>Recall that we had defined two versions of the H-statistic in the previous&nbsp;post:</p>
+<ul>
+<li>H2(jk) to measure whether features j and k interact. For this, partial dependence results need to be calculated for j and k separately, and j and k together. The <em>second-order&nbsp;measure</em></li>
+<li>H2(j) to measure if a feature j interacts with any other feature. This can hence be regarded as a <em>first-order measure</em> guiding the second-order measures to&nbsp;check</li>
+</ul>
+<p>And that we had implemented these as&nbsp;follows:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Second order measure: are selectedfeatures interacting?</span>
+<span class="k">def</span> <span class="nf">compute_h_val</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">selectedfeatures</span><span class="p">):</span>
+    <span class="n">numer_els</span> <span class="o">=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">denom_els</span> <span class="o">=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">subfeatures</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">numer_els</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">subfeatures</span><span class="p">)]</span>
+        <span class="n">sign</span> <span class="o">*=</span> <span class="o">-</span><span class="mf">1.0</span>
+    <span class="n">numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numer_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">denom_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span>
+
+<span class="c1"># First order measure: is selectedfeature interacting with any other subset in allfeatures?</span>
+<span class="k">def</span> <span class="nf">compute_h_val_any</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">allfeatures</span><span class="p">,</span> <span class="n">selectedfeature</span><span class="p">):</span>
+    <span class="n">otherfeatures</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allfeatures</span><span class="p">)</span>
+    <span class="n">otherfeatures</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">selectedfeature</span><span class="p">)</span>
+    <span class="n">denom_els</span> <span class="o">=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">allfeatures</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">numer_els</span> <span class="o">=</span> <span class="n">denom_els</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">numer_els</span> <span class="o">-=</span> <span class="n">f_vals</span><span class="p">[(</span><span class="n">selectedfeature</span><span class="p">,)]</span>
+    <span class="n">numer_els</span> <span class="o">-=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">otherfeatures</span><span class="p">)]</span>
+    <span class="n">numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numer_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">denom_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span>
+</code></pre></div>
+
+<div style="padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 2px; background-color: #eee;">
+<p><strong>Side&nbsp;note</strong></p>
+<p>The second order measure function is based on the <a href="https://github.com/ralphhaygood/sklearn-gbmi/blob/master/sklearn_gbmi/sklearn_gbmi.py#L207">implementation in sklearn-gbmi</a>, but looking at it now I am not 100% convinced its interpretation of the measure is correct. First, it returns `np.nan` in case it turns out to be higher than one (which technically, can actually happen, so I have amended this in the code above). Second, it flips the sign around for every group size, though the original paper states&nbsp;that:</p>
+<p><blockquote>This quantity tests for the presence of a joint three-variable interaction [&#8230;] by measuring the fraction of variance of H(jkl) not explained by the lower order interaction effects among these variables. Analogous statistics testing for even higher order interactions can be derived, if desired.</blockquote></p>
+<p>Based on which I&#8217;d probably use the following&nbsp;instead:</p>
+
+
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_h_val</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">selectedfeatures</span><span class="p">):</span>
+    <span class="n">numer_els</span> <span class="o">=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">denom_els</span> <span class="o">=</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">subfeatures</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">selectedfeatures</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">selectedfeatures</span> <span class="o">-</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">+</span><span class="mi">1</span>
+            <span class="n">numer_els</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">subfeatures</span><span class="p">)]</span>
+    <span class="n">numer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numer_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">denom_els</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numer</span><span class="o">/</span><span class="n">denom</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+<p>I&#8217;m leaving it as is since we&#8217;re not going to explore four-way and higher interactions (for two and three-way interactions, both give the same result), but I am open to hear what the correct interpretation would look&nbsp;like.</p></div>
+
+<p>Both of these need a calculated set of <code>f_vals</code>: partial dependence values, which basically boils down to centered predictions of our predictive model for all possible subsets of features predicted over the same data set, either based on the original train/test data set itself, or a synthetic one constructed over a&nbsp;grid.</p>
+<p>We&#8217;ll investigate three different implementations on how we can obtain these F values. I&#8217;ll use the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html">California Housing</a> data set and train a straightforward random forest regressor <sup id="fnref:fn1"><a class="footnote-ref" href="#fn:fn1">1</a></sup>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">fetch_california_housing</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">as_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">mean_absolute_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="c1"># 0.11915306683139575</span>
+</code></pre></div>
+
+<p>Our model is (as expected) doing well enough for the purpose of the example, and we can also plot the feature importance rankings using both the old (impurity) and new (permutation)&nbsp;approach:</p>
+<div class="highlight"><pre><span></span><code><span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">model</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="n">imp</span> <span class="o">=</span> <span class="n">permutation_importance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n_repeats</span><span class="o">=</span><span class="mi">10</span><span class="p">)[</span><span class="s1">&#39;importances_mean&#39;</span><span class="p">]</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">imp</span><span class="p">,</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="Scatterplot of the predictions, and feature importance rankings" src="/images/2021/fint1.png"></p>
+<p>Note that this already highlights that permutation-based importance gives a less biased&nbsp;view.</p>
+<p>Nevertheless, our focus is on discovery of interacting features. With the tools at our disposal, one would normally do so&nbsp;by:</p>
+<ul>
+<li>Inspecting univariate partial dependence plots for important features. Flatter (regions) in the plot might indicate that an interaction is going&nbsp;on</li>
+<li>Inspecting bivariate partial dependence&nbsp;plots</li>
+<li>Inspecting <span class="caps">ICE</span>&nbsp;plots</li>
+</ul>
+<p>For example, taking a look at the <span class="caps">ICE</span> plot for&nbsp;HouseAge:</p>
+<p><img alt="ICE plot for HouseAge" src="/images/2021/fint2.png"></p>
+<p>Shows that there is more going on than the univariate partial dependency would suggest. Bringing in another variable shows the following bivariate partial dependence&nbsp;plot:</p>
+<div class="highlight"><pre><span></span><code><span class="n">plot_partial_dependence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="p">[(</span>
+    <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;HouseAge&#39;</span><span class="p">),</span> 
+    <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;AveRooms&#39;</span><span class="p">)</span>
+<span class="p">)])</span>
+</code></pre></div>
+
+<p><img alt="PD plot for HouseAge and AveRooms" src="/images/2021/fint3.png"></p>
+<p>Indeed, on average the price increases for older houses, but we do see that it is strongly dependent on the AveRooms variable as well (e.g. for HouseAge between 30-40, the prediction ceteris paribus stays relatively flat, but not when taking into account the AveRooms&nbsp;feature).</p>
+<p>For most uses cases, this is in fact quite sufficient to inspect models reasonably well. Still, let us now consider the H-measure <sup id="fnref:fn2"><a class="footnote-ref" href="#fn:fn2">2</a></sup>.</p>
+<h3>Using <code>pdpbox</code></h3>
+<p>In the <a href="////blog.macuyiko.com/post/2019/discovering-interaction-effects-in-ensemble-models.html">previous post</a>, recall that we had modified <code>pdpbox</code> to calculate partial dependence values (our F values) for higher-order interactions. This still works with newer versions of <code>pdpbox</code>, and supports both using a given data set as well as a grid-based synthetic one, but sadly breaks down for non-toy data sets with more features as iterating over all possible feature set combinations becomes too computationally&nbsp;expensive.</p>
+<p>We can, however, limit ourselves to applying the second-order test on a chosen subset of&nbsp;features:</p>
+<div class="highlight"><pre><span></span><code><span class="n">feats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;HouseAge&#39;</span><span class="p">]</span>
+
+<span class="n">f_vals</span> <span class="o">=</span> <span class="n">compute_f_vals_pdpbox</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">feats</span><span class="p">)</span>
+
+<span class="n">subsets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">h_vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feats</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">h_val</span> <span class="o">=</span> <span class="n">compute_h_val</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+        <span class="n">subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; x &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span>
+        <span class="n">h_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_val</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h_vals</span><span class="p">)),</span> <span class="n">h_vals</span><span class="p">,</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">subsets</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="Second-order H-measure results for a subset of features with pdpbox" src="/images/2021/fint4.png"></p>
+<p>The reason for this is due to the fact that creating a synthetic data set over N features and m values per feature leads to m^N instances being created. Strangely enough, however, the implementation remains slow when using the given data set itself instead, as&nbsp;in:</p>
+<div class="highlight"><pre><span></span><code><span class="n">f_vals</span> <span class="o">=</span> <span class="n">compute_f_vals</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">use_data_grid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The reason for this is most likely due to <code>pdpbox</code><span class="quo">&#8216;</span> internals (I suspect because of its tendency to calculate individual <span class="caps">ICE</span>-style dependencies and averaging those rather than a true <span class="caps">PD</span>&nbsp;approach).</p>
+<h3>Using <code>scikit-learn</code></h3>
+<p>Since scikit-learn now supports partial dependence plots directly, we actually do no need to use <code>pdpbox</code> any longer. Note that <code>plot_partial_dependence</code> can only handle two-way interactions, but the <code>partial_dependence</code> function does in fact work with higher-order&nbsp;groups:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">center</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span> <span class="k">return</span> <span class="n">arr</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cartesian_product</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">):</span>
+    <span class="n">la</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">result_type</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">)</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">la</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ix_</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">)):</span>
+        <span class="n">arr</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">return</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">la</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">compute_f_vals_sklearn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">grid_resolution</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_pd_to_df</span><span class="p">(</span><span class="n">pde</span><span class="p">,</span> <span class="n">feature_names</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cartesian_product</span><span class="p">(</span><span class="o">*</span><span class="n">pde</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">rename</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">feature_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">feature_names</span><span class="p">))}</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">rename</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;preds&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pde</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="k">def</span> <span class="nf">_get_feat_idxs</span><span class="p">(</span><span class="n">feats</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feats</span><span class="p">)]</span>
+
+    <span class="n">f_vals</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">feats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># Calculate partial dependencies for full feature set</span>
+    <span class="n">pd_full</span> <span class="o">=</span> <span class="n">partial_dependence</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">_get_feat_idxs</span><span class="p">(</span><span class="n">feats</span><span class="p">),</span> 
+        <span class="n">grid_resolution</span><span class="o">=</span><span class="n">grid_resolution</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Establish the grid</span>
+    <span class="n">df_full</span> <span class="o">=</span> <span class="n">_pd_to_df</span><span class="p">(</span><span class="n">pd_full</span><span class="p">,</span> <span class="n">feats</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">df_full</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;preds&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Store</span>
+    <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">feats</span><span class="p">)]</span> <span class="o">=</span> <span class="n">center</span><span class="p">(</span><span class="n">df_full</span><span class="o">.</span><span class="n">preds</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Calculate partial dependencies for [1..SFL-1]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feats</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">pd_part</span> <span class="o">=</span> <span class="n">partial_dependence</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">_get_feat_idxs</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span>
+                <span class="n">grid_resolution</span><span class="o">=</span><span class="n">grid_resolution</span>
+            <span class="p">)</span>
+            <span class="n">df_part</span> <span class="o">=</span> <span class="n">_pd_to_df</span><span class="p">(</span><span class="n">pd_part</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+            <span class="n">joined</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">df_part</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+            <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">subset</span><span class="p">)]</span> <span class="o">=</span> <span class="n">center</span><span class="p">(</span><span class="n">joined</span><span class="o">.</span><span class="n">preds</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f_vals</span>
+</code></pre></div>
+
+<p>There are a couple of drawbacks here as well, the first one being that I&#8217;m taking a memory-hungry cartesian product of the results of <code>partial_dependence</code>, just so I can stick to the same synthetic grid and use <code>pd.merge</code>.</p>
+<p>As such, we are limited to a second-order H-measure with a limited subset of features here as well. Trying to work around the cartesian product doesn&#8217;t even help a lot, as <code>partial_dependence</code> itself will run out of memory when trying to execute it on all&nbsp;features:</p>
+<div class="highlight"><pre><span></span><code><span class="n">partial_dependence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])))])</span>
+</code></pre></div>
+
+<p>Note that you can lower the <code>grid_resolution</code> parameter (the default is a high 100), but in the end we&#8217;re still dealing with m^N instances being created. As a second drawback, the scikit-learn implementation does not support passing in your own custom&nbsp;grid.</p>
+<p>Still, we can apply it for a limited sets of&nbsp;features:</p>
+<div class="highlight"><pre><span></span><code><span class="n">feats</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;Longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;HouseAge&#39;</span><span class="p">]</span>
+
+<span class="n">f_vals</span> <span class="o">=</span> <span class="n">compute_f_vals_sklearn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">feats</span><span class="p">)</span>
+
+<span class="n">subsets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">h_vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feats</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">h_val</span> <span class="o">=</span> <span class="n">compute_h_val</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+        <span class="n">subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; x &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span>
+        <span class="n">h_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_val</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h_vals</span><span class="p">)),</span> <span class="n">h_vals</span><span class="p">,</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">subsets</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="Second-order H-measure results for a subset of features with scikit-learn" src="/images/2021/fint5.png"></p>
+<p>The results are more or less comparable to the ones obtained using <code>pdpbox</code> (probably even a bit better as the default grid resolution of scikit-learn is higher by&nbsp;default).</p>
+<p>Also, at least this approach is (barely) fast enough to brute force our way through all possible two and three-way interactions and rank them on their second-order H-measure (when using a lower grid&nbsp;resolution).</p>
+<h3>Manually</h3>
+<p>Finally, we can of course also calculate partial dependencies ourselves and stick to a given data set instead of creating synthetic&nbsp;examples.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_f_vals_manual</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_partial_dependence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="p">):</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">P</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">feats</span><span class="p">:</span> <span class="k">continue</span>
+            <span class="n">P</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">f</span><span class="p">])</span>
+        <span class="c1"># Assumes a regressor here, use return model.predict_proba(P)[:,1] for binary classification</span>
+        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+
+    <span class="n">f_vals</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">feats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># Calculate partial dependencies for full feature set</span>
+    <span class="n">full_preds</span> <span class="o">=</span> <span class="n">_partial_dependence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="p">)</span>
+    <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">feats</span><span class="p">)]</span> <span class="o">=</span> <span class="n">center</span><span class="p">(</span><span class="n">full_preds</span><span class="p">)</span>
+
+    <span class="c1"># Calculate partial dependencies for [1..SFL-1]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">feats</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+            <span class="n">pd_part</span> <span class="o">=</span> <span class="n">_partial_dependence</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+            <span class="n">f_vals</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">subset</span><span class="p">)]</span> <span class="o">=</span> <span class="n">center</span><span class="p">(</span><span class="n">pd_part</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">f_vals</span>
+</code></pre></div>
+
+<p><img alt="Second-order H-measure results for a subset of features, manual calculation" src="/images/2021/fint6.png"></p>
+<p>It does make the results less precise, but this is fast and good enough for general&nbsp;exploration.</p>
+<p>We can now perform our first order&nbsp;test:</p>
+<div class="highlight"><pre><span></span><code><span class="n">subsets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">h_vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">feats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="n">f_vals</span> <span class="o">=</span> <span class="n">compute_f_vals_manual</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">feats</span><span class="o">=</span><span class="n">feats</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">feats</span><span class="p">:</span>
+    <span class="n">h_val</span> <span class="o">=</span> <span class="n">compute_h_val_any</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">feats</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+    <span class="n">subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
+    <span class="n">h_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_val</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">h_vals</span><span class="p">)),</span> <span class="n">h_vals</span><span class="p">,</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">subsets</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="First-order H-measure results" src="/images/2021/fint7.png"></p>
+<p>We can also show the top ten second order&nbsp;results:</p>
+<div class="highlight"><pre><span></span><code><span class="n">subsets</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">h_vals</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">feats</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">h_val</span> <span class="o">=</span> <span class="n">compute_h_val</span><span class="p">(</span><span class="n">f_vals</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+        <span class="n">subsets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39; x &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subset</span><span class="p">))</span>
+        <span class="n">h_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">h_val</span><span class="p">)</span>
+
+<span class="n">subsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">subsets</span><span class="p">);</span> <span class="n">h_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h_vals</span><span class="p">);</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">h_vals</span><span class="p">[</span><span class="n">h_vals</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">k</span><span class="p">]],</span> <span class="n">tick_label</span><span class="o">=</span><span class="n">subsets</span><span class="p">[</span><span class="n">h_vals</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">k</span><span class="p">]])</span>
+</code></pre></div>
+
+<p><img alt="Top ten second order H-measure results" src="/images/2021/fint8.png"></p>
+<h2>Conclusion</h2>
+<p>As Christoph Molnar <a href="https://christophm.github.io/interpretable-ml-book/interaction.html">discusses in his interpretable <span class="caps">ML</span> book</a>, the Friedman H-statistic is not&nbsp;perfect:</p>
+<ul>
+<li>It takes a long time to compute. Lower grid resolutions or sampling the data set can&nbsp;help</li>
+<li>It estimates marginal distributions, which have a certain variance and can vary from run to&nbsp;run</li>
+<li>It is unclear whether an interaction is significantly greater than 0, a model agnostic test is unavailable (an open research&nbsp;question)</li>
+<li>The interaction statistic works under the assumption that we can shuffle features independently. If the features correlate strongly, the assumption is violated and we integrate over feature combinations that are very unlikely in reality. This problem shows up for a lot of interpretability techniques,&nbsp;however</li>
+<li>The statistic is 0 if there is no interaction at all and 1 if all of the variance of the partial dependence of a combination of features is explained by the sum of the partial dependence functions. However, the H-statistic can also be larger than 1, which is more difficult to&nbsp;interpret</li>
+</ul>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:fn1">
+<p>I&#8217;m taking a shortcut here by not bothering to create a train and test split. It doesn&#8217;t really matter for the sake of this example, but obviously don&#8217;t do so in a real-life setup.&#160;<a class="footnote-backref" href="#fnref:fn1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:fn2">
+<p>A side note on permutation importance, note that this by default works in a univariate feature-by-feature manner (also in scikit-learn), and hence assesses the importance of a feature with its interactions it is involved in (as permuting a feature breaks its interaction effects). One could technically implement a permutation based feature importance that works on groups of variables as well (either permuting them together or independently), which would be an interesting alternative to discover interaction effects. Perhaps that&#8217;s a topic for another time.&#160;<a class="footnote-backref" href="#fnref:fn2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

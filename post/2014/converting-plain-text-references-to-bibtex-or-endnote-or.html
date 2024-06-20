@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Converting Plain Text References To BibTeX (or Endnote, or…)</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Wed 26 February 2014, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2014/converting-plain-text-references-to-bibtex-or-endnote-or.html" rel="bookmark"
+			title="Permalink to Converting Plain Text References To BibTeX (or Endnote, or…)">Converting Plain Text References To BibTeX (or Endnote,&nbsp;or&#8230;)</a></div>
+		</header>
+	
+	    <p><strong>Update:</strong> <a href="////blog.macuyiko.com/post/2016/converting-plain-text-references-to-bibtex-updated.html">new post and source code here</a>.</p>
+<p>So last weekend, I&#8217;d almost finished editing a Word manuscript draft to submit to a particular journal, except for one final item on the todo list: converting the existing list of references (inserted and formatted as a plain text list) to another&nbsp;style.</p>
+<p>I planned on using Word&#8217;s built-in reference manager to add all 40+ references to the bibliography, but even in Word&#8217;s latest incarnation, the &#8220;Here are 20 text boxes squished together, have fun!&#8221;-interface remains a pain to&nbsp;use.</p>
+<p>So then, switching to BibTeX first. This involves hunting down BibTeX entries for all references, putting them in a tool like <a href="http://jabref.sourceforge.net/">Jabref</a>, and then exporting the list to a &#8212; properly formatted &#8212; plain text list, which can be pasted back into&nbsp;Word.</p>
+<p>After doing this for three or so reference entries, feelings of boredom and frustration welled up inside me, and my mind drifted off pondering the greater questions of&nbsp;life&#8230;</p>
+<blockquote>
+<p>Are we alone in the universe?
+&#8230;
+Is there a god?
+&#8230;
+Why can&#8217;t I convert a list of plain text references to a BibTeX list&nbsp;automatically?</p>
+</blockquote>
+<p>The latter questions really isn&#8217;t that ridiculous. With sources like <span class="caps">DBLP</span> and Web of Science allowing plain text search, it shouldn&#8217;t be too hard to automagically get this task done,&nbsp;right?</p>
+<p>So I had a look at Endnote. Quote <a href="http://kbportal.thomson.com/display/2/searchDirect/index.aspx?searchstring=TS_ENIMPORTFAQ8&amp;searchtype=8&amp;searchby=referenceword&amp;Catid=&amp;SubCatid=&amp;att=&amp;remotesite=&amp;search=">this page</a>:</p>
+<blockquote>
+<p>EndNote: Cannot import bibliography not created with EndNote
+Unfortunately, EndNote was not designed to import information in a bibliography format. EndNote can import text files that are in a tagged data format, as well as tab-delimited files that are in the exact right format.
+Some customers have had success at converting an existing text file into a tagged data file that can be imported into EndNote, however the process is difficult and may take more time than finding another source for the references, or even copying and pasting the text into new references by hand. More information on preparing text files for importing can be found in the &#8220;Importing Reference Data&#8221; section of the Help&nbsp;File.</p>
+</blockquote>
+<p>That&#8217;s just great. One of these &#8220;some customers&#8221; can be found at <a href="http://deborahfitchett.blogspot.be/2011/02/converting-plaintext-bibliography-to.html">this blog</a>&#8230; Ten steps, including a bunch of arcane editing and Linux commands&#8230; There has to be a better way. If Mendeley can parse information from a <span class="caps">PDF</span> (not perfect, but still), a plain text reference list should be convertable to a BibTeX entry,&nbsp;right?</p>
+<p>So instead of spending two hours creating a BibTeX file manually, I spent two days coming up with some automatic&nbsp;way.</p>
+<h2>Hour 1: Finding a&nbsp;Source</h2>
+<p>The first hour of this experiment was spent finding a literature corpus source where I&#8217;d be able to download a structured reference file from. Web of Science looks like a good candidate, but their website is hellish to parse, requires juggling with cookies and viewstates, and going through my university&#8217;s proxy to gain access, something I&#8217;ve all experimented with in the past and didn&#8217;t want to go through&nbsp;again.</p>
+<p>Next possibility: Google Scholar. A few test runs with some edited queries came up with the right articles alright, and Google Scholar allows to export Endnote, BibTeX and other files. Even though the quality of the entry is not always perfect, this seemed like a good starting&nbsp;point.</p>
+<h2>Hours 2-3: Finding an <span class="caps">API</span></h2>
+<p>First issue: Google Scholar does not provide an <span class="caps">API</span>. Luckily, there&#8217;s <code>scholar.py</code> on <a href="https://github.com/ckreibich/scholar.py">GitHub</a> which seems to be working fine (as long as you don&#8217;t hammer Google&#8217;s servers too&nbsp;much):</p>
+<div class="highlight"><pre><span></span><code>macuyiko$ python scholar.py -c 3 --author &quot;vanden broucke&quot; --txt &quot;artificial&quot;
+            ID PktWS3Llix8J
+         Title Improved artificial negative event generation to enhance process event logs
+           URL http://link.springer.com/chapter/10.1007/978-3-642-31095-9_17
+     Citations 4
+      Versions 5
+Citations list http://scholar.google.com/scholar?cites=2273162715991526206&amp;as_sdt=2005&amp;sciodt=1,5&amp;hl=en&amp;num=3
+ Versions list http://scholar.google.com/scholar?cluster=2273162715991526206&amp;hl=en&amp;num=3&amp;as_sdt=1,5
+      Cite URL http://scholar.google.com/scholar?q=info:PktWS3Llix8J:scholar.google.com/&amp;output=cite&amp;scirp=0&amp;hl=en
+  Related list http://scholar.google.com/scholar?q=related:PktWS3Llix8J:scholar.google.com/&amp;hl=en&amp;num=3&amp;as_sdt=1,5
+          Year 2012
+
+            ID 1_9CU_-bcNEJ
+         Title An Improved Process Event Log Artificial Negative Event Generator
+           URL http://papers.ssrn.com/sol3/papers.cfm?abstract_id=2165204
+     Citations 0
+      Versions 0
+Citations list None
+ Versions list None
+      Cite URL http://scholar.google.com/scholar?q=info:1_9CU_-bcNEJ:scholar.google.com/&amp;output=cite&amp;scirp=0&amp;hl=en
+  Related list None
+          Year 2012
+
+            ID EE_4eP8NmncJ
+         Title Third International Business Process Intelligence Challenge (BPIC&#39;13): Volvo IT Belgium VINST
+           URL http://ceur-ws.org/Vol-1052/paper3.pdf
+     Citations 0
+      Versions 0
+Citations list None
+ Versions list None
+      Cite URL http://scholar.google.com/scholar?q=info:EE_4eP8NmncJ:scholar.google.com/&amp;output=cite&amp;scirp=0&amp;hl=en
+  Related list http://scholar.google.com/scholar?q=related:EE_4eP8NmncJ:scholar.google.com/&amp;hl=en&amp;num=3&amp;as_sdt=1,5
+          Year None
+</code></pre></div>
+
+<h2>Hours 4-5: Getting Citation&nbsp;Results</h2>
+<p>Second issue, <code>scholar.py</code> does not provide support to retrieve citation entries from Google Scholar (i.e. what you see when you click the &#8220;Cite&#8221; link under an&nbsp;article).</p>
+<p>Getting this information is a little bit tricky, because we first have to retrieve the Google Scholar <span class="caps">ID</span> for the article, and then perform a second <span class="caps">HTTP</span> request using a unique token in the <span class="caps">URL</span>. I&#8217;ve modified <code>scholar.py</code> to look as follows (now also using the <code>requests</code> library instead of the whole <code>urllib</code> soup:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">  1</span>
+<span class="normal">  2</span>
+<span class="normal">  3</span>
+<span class="normal">  4</span>
+<span class="normal">  5</span>
+<span class="normal">  6</span>
+<span class="normal">  7</span>
+<span class="normal">  8</span>
+<span class="normal">  9</span>
+<span class="normal"> 10</span>
+<span class="normal"> 11</span>
+<span class="normal"> 12</span>
+<span class="normal"> 13</span>
+<span class="normal"> 14</span>
+<span class="normal"> 15</span>
+<span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span>
+<span class="normal">423</span>
+<span class="normal">424</span>
+<span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="ch">#! /usr/bin/env python</span>
+<span class="c1"># Copyright 2010--2013 Christian Kreibich. All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are</span>
+<span class="c1"># met:</span>
+<span class="c1">#</span>
+<span class="c1">#   1. Redistributions of source code must retain the above copyright</span>
+<span class="c1">#      notice, this list of conditions and the following disclaimer.</span>
+<span class="c1">#</span>
+<span class="c1">#   2. Redistributions in binary form must reproduce the above</span>
+<span class="c1">#      copyright notice, this list of conditions and the following</span>
+<span class="c1">#      disclaimer in the documentation and/or other materials provided</span>
+<span class="c1">#      with the distribution.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED</span>
+<span class="c1"># WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span>
+<span class="c1"># DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY DIRECT,</span>
+<span class="c1"># INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</span>
+<span class="c1"># (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR</span>
+<span class="c1"># SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</span>
+<span class="c1"># HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,</span>
+<span class="c1"># STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING</span>
+<span class="c1"># IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="kn">import</span> <span class="nn">optparse</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">codecs</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">urllib</span> <span class="kn">import</span> <span class="n">quote</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="c1"># Import BeautifulSoup -- try 4 first, fall back to older</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">BeautifulSoup</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;We need BeautifulSoup, sorry...&#39;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Support unicode in both Python 2 and 3. In Python 3, unicode is str.</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="n">unicode</span> <span class="o">=</span> <span class="nb">str</span> <span class="c1"># pylint: disable-msg=W0622</span>
+    <span class="n">encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span> <span class="c1"># pylint: disable-msg=C0103</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">encode</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="c1"># pylint: disable-msg=C0103</span>
+
+<span class="k">class</span> <span class="nc">CookieJar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">COOKIE_JAR</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">class</span> <span class="nc">Article</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span>            <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">,</span>              <span class="mi">0</span><span class="p">],</span>
+                      <span class="s1">&#39;title&#39;</span><span class="p">:</span>         <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span>           <span class="mi">1</span><span class="p">],</span>
+                      <span class="s1">&#39;url&#39;</span><span class="p">:</span>           <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;URL&#39;</span><span class="p">,</span>             <span class="mi">2</span><span class="p">],</span>
+                      <span class="s1">&#39;num_citations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span>    <span class="s1">&#39;Citations&#39;</span><span class="p">,</span>       <span class="mi">3</span><span class="p">],</span>
+                      <span class="s1">&#39;num_versions&#39;</span><span class="p">:</span>  <span class="p">[</span><span class="mi">0</span><span class="p">,</span>    <span class="s1">&#39;Versions&#39;</span><span class="p">,</span>        <span class="mi">4</span><span class="p">],</span>
+                      <span class="s1">&#39;url_citations&#39;</span><span class="p">:</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Citations list&#39;</span><span class="p">,</span>  <span class="mi">5</span><span class="p">],</span>
+                      <span class="s1">&#39;url_versions&#39;</span><span class="p">:</span>  <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Versions list&#39;</span><span class="p">,</span>   <span class="mi">6</span><span class="p">],</span>
+                      <span class="s1">&#39;url_cite&#39;</span><span class="p">:</span>      <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Cite URL&#39;</span><span class="p">,</span>        <span class="mi">7</span><span class="p">],</span>
+                      <span class="s1">&#39;url_related&#39;</span><span class="p">:</span>   <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Related list&#39;</span><span class="p">,</span>    <span class="mi">8</span><span class="p">],</span>
+                      <span class="s1">&#39;year&#39;</span><span class="p">:</span>          <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Year&#39;</span><span class="p">,</span>            <span class="mi">9</span><span class="p">]}</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">as_txt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get items sorted in specified order:</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">item</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="c1"># Find largest label length:</span>
+        <span class="n">max_label_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%%%d</span><span class="s1">s </span><span class="si">%%</span><span class="s1">s&#39;</span> <span class="o">%</span> <span class="n">max_label_len</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">fmt</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">as_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+        <span class="c1"># Get keys sorted in specified order:</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> \
+                <span class="nb">sorted</span><span class="p">([(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">())],</span>
+                       <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">))</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ScholarParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">SCHOLAR_SITE</span> <span class="o">=</span> <span class="s1">&#39;http://scholar.google.com&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">site</span> <span class="o">=</span> <span class="n">site</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCHOLAR_SITE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">year_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(?:20|19)\d</span><span class="si">{2}</span><span class="s1">\b&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">art</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In this base class, the callback does nothing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method initiates parsing of HTML content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">div</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="n">ScholarParser</span><span class="o">.</span><span class="n">_tag_checker</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_article</span><span class="p">(</span><span class="n">div</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">div</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">div</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;div&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_rt&#39;</span><span class="p">)</span> <span class="ow">and</span> \
+                    <span class="n">tag</span><span class="o">.</span><span class="n">h3</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">h3</span><span class="o">.</span><span class="n">a</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">h3</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">h3</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;font&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tag2</span> <span class="ow">in</span> <span class="n">tag</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag2</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">tag2</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;span&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag2</span><span class="p">,</span> <span class="s1">&#39;gs_fl&#39;</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_parse_links</span><span class="p">(</span><span class="n">tag2</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_article</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">span</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;a&#39;</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar?cites&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Cited by&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;num_citations&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_as_int</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_citations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar?cluster&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;All &#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;num_versions&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_as_int</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_versions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">klass</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This predicate function checks whether a BeatifulSoup Tag instance</span>
+<span class="sd">        has a class attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="c1"># BeautifulSoup 3 can return e.g. &#39;gs_md_wp gs_ttss&#39;,</span>
+            <span class="c1"># so split -- conveniently produces a list in any case</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">klass</span> <span class="ow">in</span> <span class="n">res</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_tag_checker</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;div&#39;</span> <span class="ow">and</span> <span class="n">ScholarParser</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_r&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_as_int</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_path2url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;http://&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">path</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">path</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">site</span> <span class="o">+</span> <span class="n">path</span>
+
+
+<span class="k">class</span> <span class="nc">ScholarParser120201</span><span class="p">(</span><span class="n">ScholarParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">div</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">div</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;h3&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_rt&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;div&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_a&#39;</span><span class="p">):</span>
+                <span class="n">year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;div&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_fl&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_links</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_article</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ScholarParser120726</span><span class="p">(</span><span class="n">ScholarParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_parse_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">div</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">div</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;div&#39;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_has_class</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;gs_ri&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="s1">&#39;href&#39;</span><span class="p">])</span>
+
+                <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gs_a&#39;</span><span class="p">}):</span>
+                    <span class="n">year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">year_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gs_a&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">year</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gs_fl&#39;</span><span class="p">}):</span>
+                    <span class="n">ltag</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;class&#39;</span><span class="p">:</span> <span class="s1">&#39;gs_fl&#39;</span><span class="p">})</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_parse_links</span><span class="p">(</span><span class="n">ltag</span><span class="p">)</span>
+
+                    <span class="n">id_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;gs_ocit\(event,</span><span class="se">\&#39;</span><span class="s1">(.*?)</span><span class="se">\&#39;</span><span class="s1">,&#39;</span><span class="p">)</span>
+                    <span class="nb">id</span> <span class="o">=</span> <span class="n">id_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ltag</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_cite&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="s1">&#39;/scholar?q=info:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:scholar.google.com/&amp;output=cite&amp;scirp=0&amp;hl=en&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handle_article</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_parse_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">span</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;a&#39;</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar?q=related&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_related&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar?cites&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Cited by&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;num_citations&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_as_int</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_citations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar?cluster&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;All &#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;num_versions&#39;</span><span class="p">]</span> <span class="o">=</span> \
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_as_int</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;url_versions&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">CiteParser</span><span class="p">(</span><span class="n">ScholarParser</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">site</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">site</span> <span class="o">=</span> <span class="n">site</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCHOLAR_SITE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method initiates parsing of HTML content.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_citt&quot;</span><span class="p">}))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse_export</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;gs_citi&quot;</span><span class="p">}))</span>
+
+    <span class="k">def</span> <span class="nf">_parse_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">div</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">div</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;tr&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;th&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span>
+
+    <span class="k">def</span> <span class="nf">_parse_export</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">div</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">div</span><span class="o">.</span><span class="n">findAll</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s1">&#39;a&#39;</span> <span class="ow">or</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;/scholar&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Import into&#39;</span><span class="p">):</span>
+                    <span class="n">n</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">export</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path2url</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">ScholarQuerier</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">SCHOLAR_URL</span> <span class="o">=</span> <span class="s1">&#39;http://scholar.google.be/scholar?hl=en&amp;q=</span><span class="si">%(query)s</span><span class="s1">+author:</span><span class="si">%(author)s</span><span class="s1">&amp;btnG=Search&amp;as_subj=eng&amp;as_sdt=1,5&amp;as_ylo=&amp;as_vis=0&#39;</span>
+    <span class="n">NOAUTH_URL</span> <span class="o">=</span> <span class="s1">&#39;http://scholar.google.be/scholar?hl=en&amp;q=</span><span class="si">%(query)s</span><span class="s1">&amp;btnG=Search&amp;as_subj=eng&amp;as_std=1,5&amp;as_ylo=&amp;as_vis=0&#39;</span>
+    <span class="n">USER_AGENT</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36&#39;</span>
+
+    <span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">ScholarParser120726</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querier</span><span class="p">):</span>
+            <span class="n">ScholarParser120726</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">querier</span> <span class="o">=</span> <span class="n">querier</span>
+
+        <span class="k">def</span> <span class="nf">handle_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">art</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">querier</span><span class="o">.</span><span class="n">add_article</span><span class="p">(</span><span class="n">art</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">scholar_url</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">articles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+        <span class="c1"># Clip to 100, as Google doesn&#39;t support more anyway</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">author</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scholar_url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">NOAUTH_URL</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scholar_url</span> <span class="o">=</span> <span class="n">scholar_url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">SCHOLAR_URL</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scholar_url</span> <span class="o">+=</span> <span class="s1">&#39;&amp;num=</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
+
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">search</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_articles</span><span class="p">()</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scholar_url</span> <span class="o">%</span> <span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">quote</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="n">search</span><span class="p">)),</span> <span class="s1">&#39;author&#39;</span><span class="p">:</span> <span class="n">quote</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">author</span><span class="p">)}</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">USER_AGENT</span><span class="p">},</span> <span class="n">cookies</span><span class="o">=</span><span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span><span class="p">)</span>
+        <span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">cookies</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span> <span class="s2">&quot;*** Google is throttling&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
+        <span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">art</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">articles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">art</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clear_articles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">articles</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">class</span> <span class="nc">CiteQuerier</span><span class="p">(</span><span class="n">ScholarQuerier</span><span class="p">):</span>
+    <span class="n">CITE_URL</span> <span class="o">=</span> <span class="s1">&#39;http://scholar.google.com/scholar?q=info:</span><span class="si">%(id)s</span><span class="s1">:scholar.google.com/&amp;output=cite&amp;scirp=0&amp;hl=en&#39;</span>
+
+    <span class="k">class</span> <span class="nc">Parser</span><span class="p">(</span><span class="n">CiteParser</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">querier</span><span class="p">):</span>
+            <span class="n">CiteParser</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">querier</span> <span class="o">=</span> <span class="n">querier</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parser</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">query</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url_cite</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CITE_URL</span> <span class="o">%</span> <span class="p">{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">quote</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">))}</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_cite</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">USER_AGENT</span><span class="p">},</span> <span class="n">cookies</span><span class="o">=</span><span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span><span class="p">)</span>
+        <span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">cookies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cite</span><span class="p">(</span><span class="nb">id</span><span class="p">):</span>
+    <span class="n">querier</span> <span class="o">=</span> <span class="n">CiteQuerier</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">querier</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">export</span><span class="p">[</span><span class="s1">&#39;EndNote&#39;</span><span class="p">],</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">querier</span><span class="o">.</span><span class="n">USER_AGENT</span><span class="p">},</span> <span class="n">cookies</span><span class="o">=</span><span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span><span class="p">)</span>
+    <span class="n">myFile</span> <span class="o">=</span> <span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;end.enw&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">articles</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <span class="n">querier</span> <span class="o">=</span> <span class="n">ScholarQuerier</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">querier</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">articles</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">articles</span><span class="p">[:</span><span class="n">count</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">articles</span>
+
+<span class="k">def</span> <span class="nf">txt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <span class="n">querier</span> <span class="o">=</span> <span class="n">ScholarQuerier</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">querier</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">articles</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">articles</span><span class="p">[:</span><span class="n">count</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">art</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------&#39;</span> <span class="o">+</span> <span class="s1">&#39;Article #&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="s1">&#39;------------&#39;</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">art</span><span class="o">.</span><span class="n">as_txt</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">articles</span>
+
+<span class="k">def</span> <span class="nf">csv</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;|&#39;</span><span class="p">):</span>
+    <span class="n">querier</span> <span class="o">=</span> <span class="n">ScholarQuerier</span><span class="p">(</span><span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">querier</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+    <span class="n">articles</span> <span class="o">=</span> <span class="n">querier</span><span class="o">.</span><span class="n">articles</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">articles</span><span class="p">[:</span><span class="n">count</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">art</span> <span class="ow">in</span> <span class="n">articles</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">art</span><span class="o">.</span><span class="n">as_csv</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">articles</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;scholar.py [options] &lt;query string&gt;</span>
+<span class="s2">A command-line interface to Google Scholar.</span>
+
+<span class="s2">Example: scholar.py -c 1 --txt --author einstein quantum&quot;&quot;&quot;</span>
+
+    <span class="n">fmt</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">IndentedHelpFormatter</span><span class="p">(</span><span class="n">max_help_position</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span> <span class="n">formatter</span><span class="o">=</span><span class="n">fmt</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-a&#39;</span><span class="p">,</span> <span class="s1">&#39;--author&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Author name&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;--csv&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Print article data in CSV form (separator is &quot;|&quot;)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;--csv-header&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Like --csv, but print header with column names&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;--txt&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Print article data in text format&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;--cite&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Cite article&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--count&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Maximum number of results&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Show help if we have neither keyword search nor author name</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">options</span><span class="o">.</span><span class="n">author</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">csv</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">csv</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">csv_header</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">csv</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">txt</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">txt</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">author</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">options</span><span class="o">.</span><span class="n">cite</span><span class="p">:</span>
+        <span class="n">cite</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">cite</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">cite</span><span class="p">:</span>
+        <span class="n">cite</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">cite</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="mi">0</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</code></pre></div></td></tr></table></div>
+
+<p>So now, we are able to get&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="s s-Atom">macuyiko$</span> <span class="s s-Atom">python</span> <span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">py</span> <span class="o">-</span><span class="s s-Atom">c</span> <span class="mi">1</span> <span class="s s-Atom">--cite</span> <span class="mi">1</span> <span class="s s-Atom">--author</span> <span class="s2">&quot;vanden broucke&quot;</span> <span class="s s-Atom">--txt</span> <span class="s2">&quot;artificial&quot;</span> <span class="s s-Atom">&amp;&amp;</span> <span class="s s-Atom">cat</span> <span class="s s-Atom">end</span><span class="p">.</span><span class="s s-Atom">enw</span>
+<span class="s s-Atom">------------</span><span class="nv">Article</span> <span class="s s-Atom">#</span><span class="mi">1</span><span class="o">:-</span><span class="s s-Atom">-----------</span>
+            <span class="nv">ID</span> <span class="nv">PktWS3Llix8J</span>
+         <span class="nv">Title</span> <span class="nv">Improved</span> <span class="s s-Atom">artificial</span> <span class="s s-Atom">negative</span> <span class="s s-Atom">event</span> <span class="s s-Atom">generation</span> <span class="s s-Atom">to</span> <span class="s s-Atom">enhance</span> <span class="s s-Atom">process</span> <span class="s s-Atom">event</span> <span class="s s-Atom">logs</span>
+           <span class="nv">URL</span> <span class="s s-Atom">http</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">link</span><span class="p">.</span><span class="s s-Atom">springer</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">chapter</span><span class="o">/</span><span class="mf">10.1007</span><span class="o">/</span><span class="mi">978</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="mi">642</span><span class="o">-</span><span class="mi">31095</span><span class="o">-</span><span class="mi">9</span><span class="k">_</span><span class="mi">17</span>
+     <span class="nv">Citations</span> <span class="mi">4</span>
+      <span class="nv">Versions</span> <span class="mi">5</span>
+<span class="nv">Citations</span> <span class="s s-Atom">list</span> <span class="s s-Atom">http</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">scholar</span><span class="nb">?</span><span class="s s-Atom">cites</span><span class="o">=</span><span class="mi">2273162715991526206</span><span class="s s-Atom">&amp;as_sdt</span><span class="o">=</span><span class="mi">2005</span><span class="s s-Atom">&amp;sciodt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="s s-Atom">&amp;hl</span><span class="o">=</span><span class="s s-Atom">en&amp;num</span><span class="o">=</span><span class="mi">1</span>
+ <span class="nv">Versions</span> <span class="s s-Atom">list</span> <span class="s s-Atom">http</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">scholar</span><span class="nb">?</span><span class="s s-Atom">cluster</span><span class="o">=</span><span class="mi">2273162715991526206</span><span class="s s-Atom">&amp;hl</span><span class="o">=</span><span class="s s-Atom">en&amp;num</span><span class="o">=</span><span class="mi">1</span><span class="s s-Atom">&amp;as_sdt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span>
+      <span class="nv">Cite</span> <span class="nv">URL</span> <span class="s s-Atom">http</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">scholar</span><span class="nb">?</span><span class="s s-Atom">q</span><span class="o">=</span><span class="s s-Atom">info</span><span class="p">:</span><span class="nv">PktWS3Llix8J</span><span class="o">:</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com/&amp;output</span><span class="o">=</span><span class="s s-Atom">cite&amp;scirp</span><span class="o">=</span><span class="mi">0</span><span class="s s-Atom">&amp;hl</span><span class="o">=</span><span class="s s-Atom">en</span>
+  <span class="nv">Related</span> <span class="s s-Atom">list</span> <span class="s s-Atom">http</span><span class="p">:</span><span class="o">//</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com</span><span class="o">/</span><span class="s s-Atom">scholar</span><span class="nb">?</span><span class="s s-Atom">q</span><span class="o">=</span><span class="s s-Atom">related</span><span class="p">:</span><span class="nv">PktWS3Llix8J</span><span class="o">:</span><span class="s s-Atom">scholar</span><span class="p">.</span><span class="s s-Atom">google</span><span class="p">.</span><span class="s s-Atom">com/&amp;hl</span><span class="o">=</span><span class="s s-Atom">en&amp;num</span><span class="o">=</span><span class="mi">1</span><span class="s s-Atom">&amp;as_sdt</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span>
+          <span class="nv">Year</span> <span class="mi">2012</span>
+
+<span class="c1">%0 Conference Proceedings</span>
+<span class="c1">%T Improved artificial negative event generation to enhance process event logs</span>
+<span class="c1">%A vanden Broucke, Seppe KLM</span>
+<span class="c1">%A De Weerdt, Jochen</span>
+<span class="c1">%A Baesens, Bart</span>
+<span class="c1">%A Vanthienen, Jan</span>
+<span class="c1">%B Advanced Information Systems Engineering</span>
+<span class="c1">%P 254-269</span>
+<span class="c1">%@ 364231094X</span>
+<span class="c1">%D 2012</span>
+<span class="c1">%I Springer</span>
+</code></pre></div>
+
+<h2>Hours 6-11: Wasting Time with Google&#8217;s&nbsp;Appengine</h2>
+<p>Almost done. The final part which remains is to automate iterating through the plain references list, finding a way to extract a good search query for each entry, and getting out the Endnote (or BibTeX from Google&nbsp;Scholar).</p>
+<p>In an impulse, I decided to try to whip up a Google Appengine page to provide this great service to the world. After creating a basic <code>index.html</code> with some jQuery on top off it I created a quick <code>Flask</code> app with the &#8220;magic&#8221; part looking something like this (disclaimer: not really that&nbsp;magical):</p>
+<div class="highlight"><pre><span></span><code><span class="nv">@app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/guess&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">methods</span><span class="o">=[</span><span class="n">&#39;POST&#39;</span><span class="o">]</span><span class="p">)</span>
+<span class="n">def</span><span class="w"> </span><span class="n">guess</span><span class="p">()</span><span class="err">:</span>
+<span class="w">    </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="p">.</span><span class="n">ascii_lowercase</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &#39;</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">form</span><span class="o">[</span><span class="n">&#39;t&#39;</span><span class="o">]</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="nf">lower</span><span class="p">()</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">.</span><span class="k">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">f</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">.</span><span class="k">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nf">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+<span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="k">Use</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">Google</span><span class="w"> </span><span class="n">Scholar</span><span class="w"> </span><span class="k">search</span><span class="w"> </span><span class="n">query</span>
+</code></pre></div>
+
+<p>Really simple: convert to lowercase, leave only text and spaces, filter out all words smaller then three characters. This approached seemed to work well in initial&nbsp;tests.</p>
+<p>What didn&#8217;t work well, however, was getting <code>scholar.py</code> to work on Google Appengine. The library works fine, but Google Scholar is very picky towards handling requests coming from Google Appengine, due to reasons which are actually pretty&nbsp;obvious.</p>
+<h2>Hour 12: Let&#8217;s Just Finish&nbsp;This</h2>
+<p>After contemplating whether I should host this on my own server, I just decided to move on and built a quick and dirty script to do the work, as the likelihood of me getting popular/rich/famous/insert-attribute-here by a service like this one is small anyway, especially since Google&#8217;s banhammer would strike&nbsp;quickly.</p>
+<p>So the final &#8220;convertor&#8221; script looks like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scholar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">string</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">codecs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+
+<span class="n">references</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;&quot;Bang-Jensen, J., &amp; Gutin, G. (2010) Diagraphs: theory, algorithms and applications. Springer-Verlag.</span>
+<span class="s2">Chandy, K., &amp; Schulte, W. (2010) Event Processing - Designing IT Systems for Agile Companies, McGraw-Hill.</span>
+<span class="s2">&lt;OTHER REFERENCES&gt;&quot;&quot;&quot;</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_query</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reference</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">f</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">l</span><span class="p">)</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">q</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">make_query_year</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reference</span>
+<span class="w">    </span><span class="n">id_re</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d\d\d\d)&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">id_re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="w">    </span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;(&#39;</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">f</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">q</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">l</span><span class="p">)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">year</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">&#39;(&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">q</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">q</span>
+
+<span class="n">myFile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">codecs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;bibliography.bib&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="k">for</span><span class="w"> </span><span class="n">reference</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">references</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="n">reference</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reference</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="w">    </span><span class="nb">print</span><span class="w"> </span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">---------------------------------------------------------&quot;</span>
+<span class="w">    </span><span class="nb">print</span><span class="w"> </span><span class="s2">&quot;Doing reference:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">reference</span>
+<span class="w">    </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">string</span><span class="o">.</span><span class="n">ascii_lowercase</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; &#39;</span>
+
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_query</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+<span class="w">    </span><span class="nb">print</span><span class="w"> </span><span class="s2">&quot;Query used:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">q</span>
+<span class="w">    </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scholar</span><span class="o">.</span><span class="n">articles</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_query_year</span><span class="p">(</span><span class="n">reference</span><span class="p">)</span>
+<span class="w">        </span><span class="nb">print</span><span class="w"> </span><span class="s2">&quot;Trying again with:&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">q</span>
+<span class="w">        </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scholar</span><span class="o">.</span><span class="n">articles</span><span class="p">(</span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+
+<span class="w">    </span><span class="nb">print</span><span class="w"> </span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">as_txt</span><span class="p">(),</span><span class="w"> </span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<span class="w">    </span><span class="n">querier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scholar</span><span class="o">.</span><span class="n">CiteQuerier</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+<span class="w">    </span><span class="n">req</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">querier</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">export</span><span class="p">[</span><span class="s1">&#39;BibTeX&#39;</span><span class="p">],</span><span class="w"> </span><span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span><span class="w"> </span><span class="n">querier</span><span class="o">.</span><span class="n">USER_AGENT</span><span class="p">},</span><span class="w"> </span><span class="n">cookies</span><span class="o">=</span><span class="n">scholar</span><span class="o">.</span><span class="n">CookieJar</span><span class="o">.</span><span class="n">COOKIE_JAR</span><span class="p">)</span>
+<span class="w">    </span><span class="n">myFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="si">%%</span><span class="s1">% &#39;</span><span class="o">+</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;  &#39;</span><span class="o">+</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;title&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="w">    </span><span class="n">myFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">myFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Note that I had to include two querying strategies: <code>make_query</code> and <code>make_query_year</code>. The latter combines the year with the title but leaves out authors, this is to retrieve some problematic articles where the author name was formatted differently in Google Scholar than in my list. A hacky approach which could be improved, but it gets the point&nbsp;across.</p>
+<p>Anyway, running this script returns a BibTeX list like&nbsp;this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">macuyiko</span>$<span class="w"> </span><span class="nb">cat</span><span class="w"> </span><span class="o">./</span><span class="n">bibliography</span><span class="p">.</span><span class="n">bib</span>
+
+<span class="c">%%% mr4JHn2auF8J  Theory, algorithms and applications</span>
+<span class="p">@</span><span class="n">article</span><span class="p">{</span><span class="n">bang2007theory</span><span class="p">,</span>
+<span class="w">  </span><span class="nb">title</span><span class="p">={</span><span class="n">Theory</span><span class="p">,</span><span class="w"> </span><span class="n">algorithms</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">applications</span><span class="p">},</span>
+<span class="w">  </span><span class="n">author</span><span class="p">={</span><span class="n">Bang</span><span class="o">-</span><span class="n">Jensen</span><span class="p">,</span><span class="w"> </span><span class="n">J</span><span class="p">{</span><span class="o">\</span><span class="n">o</span><span class="p">}</span><span class="n">rgen</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Gutin</span><span class="p">,</span><span class="w"> </span><span class="n">Gregory</span><span class="p">},</span>
+<span class="w">  </span><span class="n">journal</span><span class="p">={</span><span class="n">Springer</span><span class="w"> </span><span class="n">Monographs</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">Mathematics</span><span class="p">,</span><span class="w"> </span><span class="n">Springer</span><span class="o">-</span><span class="n">Verlag</span><span class="w"> </span><span class="n">London</span><span class="w"> </span><span class="n">Ltd</span><span class="p">.,</span><span class="w"> </span><span class="n">London</span><span class="p">},</span>
+<span class="w">  </span><span class="nb">year</span><span class="p">={</span><span class="mi">2007</span><span class="p">},</span>
+<span class="w">  </span><span class="n">publisher</span><span class="p">={</span><span class="n">Springer</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c">%%% Odfz1prcWxEJ  Event Processing: Designing IT Systems for Agile Companies</span>
+<span class="p">@</span><span class="n">book</span><span class="p">{</span><span class="n">chandy2009event</span><span class="p">,</span>
+<span class="w">  </span><span class="nb">title</span><span class="p">={</span><span class="n">Event</span><span class="w"> </span><span class="n">Processing</span><span class="p">:</span><span class="w"> </span><span class="n">Designing</span><span class="w"> </span><span class="n">IT</span><span class="w"> </span><span class="n">Systems</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">Agile</span><span class="w"> </span><span class="n">Companies</span><span class="p">},</span>
+<span class="w">  </span><span class="n">author</span><span class="p">={</span><span class="n">Chandy</span><span class="p">,</span><span class="w"> </span><span class="n">K</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Schulte</span><span class="p">,</span><span class="w"> </span><span class="n">W</span><span class="p">},</span>
+<span class="w">  </span><span class="nb">year</span><span class="p">={</span><span class="mi">2009</span><span class="p">},</span>
+<span class="w">  </span><span class="n">publisher</span><span class="p">={</span><span class="n">McGraw</span><span class="o">-</span><span class="n">Hill</span><span class="p">,</span><span class="w"> </span><span class="n">Inc</span><span class="p">.}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Which is sufficient to import in a reference manager and edit/correct the remaining issues without much&nbsp;hassle.</p>
+<h2>By the&nbsp;Way&#8230;</h2>
+<p>I realize I might be an idiot and there might exist some free or expensive reference management software providing this functionality already. If you know about such magnificent tool, feel free to point this out in the comments or <a href="http://www.twitter.com/macuyiko">on Twitter</a> (both the software name, not the fact that I&#8217;m an idiot,&nbsp;please).</p>
+<p>Anyway, I hope this proves to be useful to anyone encountering the same problem. Also, fellow researchers, can we agree on the fact that the functionality offered by reference management software and scholarly websites is still pretty much utter crap? We live in the future, this should not be painful&nbsp;anymore.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

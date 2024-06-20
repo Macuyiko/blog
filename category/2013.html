@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>Bed Against The Wall - 2013 category</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div class="large-9 columns">
+        
+		<article>
+			<header>
+				<div class="article-info">Sun 20 October 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/note-to-self-setting-up-vnc-desktop-for-remote-user.html" rel="bookmark"
+				title="Permalink to Note To Self: Setting Up VNC Desktop For Remote User">Note To Self: Setting Up <span class="caps">VNC</span> Desktop For Remote&nbsp;User</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Another one of these things I always end up forgetting: setting up a Linux (in this case: Ubuntu) server so that users can login using a <span class="caps">VNC</span> client and get a (slim)&nbsp;desktop.</p>
+<p>First thing you need to do is make sure you have a <span class="caps">VNC</span> server (<code>tightvncserver</code>), desktop apps …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/note-to-self-setting-up-vnc-desktop-for-remote-user.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Wed 31 July 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/pelican-switch-follow-up.html" rel="bookmark"
+				title="Permalink to Pelican Switch Follow-Up">Pelican Switch&nbsp;Follow-Up</a></div>
+<div class="article-subtitle">Blogger wasn't working out after all...</div>			</header>
+			<div class="article-summary">
+					<p>Phew, all internal links on the blog should work fine now. There are a bunch left which link to the <em>old</em> Blogger pages, but that&#8217;s fine I guess; I&#8217;ll fix these as they&nbsp;come.</p>
+<p>I promised to <a href="////blog.macuyiko.com/post/2013/i-did-switch-to-pelican.html">follow-up</a> with some more details, so here&nbsp;goes&#8230;</p>
+<p>Quickly after writing …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/pelican-switch-follow-up.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 11 July 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/i-did-switch-to-pelican.html" rel="bookmark"
+				title="Permalink to I Did Switch to Pelican">I Did Switch to&nbsp;Pelican</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Just a quick heads up to let you know that this blog will look a bit different &#8212; once&nbsp;again!</p>
+<p>Although indicated <a href="////blog.macuyiko.com/post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html">otherwise</a> about a week ago, I&#8217;ve nevertheless decided to move away from Blogger and migrate to&nbsp;Pelican.</p>
+<p>I&#8217;ll make sure to go into the details in a …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/i-did-switch-to-pelican.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Sat 29 June 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/a-bukkit-jython-console-plugin-for-minecraft.html" rel="bookmark"
+				title="Permalink to A Bukkit Jython Console Plugin for Minecraft">A Bukkit Jython Console Plugin for&nbsp;Minecraft</a></div>
+<div class="article-subtitle">A Python interpreter for a Bukkit Minecraft server</div>			</header>
+			<div class="article-summary">
+					<h3>Summary and&nbsp;Changes</h3>
+<p>This post describes how you can create a Python interpreter for a Bukkit Minecraft server, providing access to the full internal <span class="caps">API</span>. Commands are issued on a separate console window and do not require players or server administrators to be running the game&nbsp;itself.</p>
+<p>Following list provides …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/a-bukkit-jython-console-plugin-for-minecraft.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 20 June 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html" rel="bookmark"
+				title="Permalink to I Almost Switched to Pelican, a Static Blog Engine">I Almost Switched to Pelican, a Static Blog&nbsp;Engine</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Visitors familiar with my blog will notice a pretty big change when viewing this post. The blog&#8217;s been due for a redesign for some time now, so a few days ago I finally went through with&nbsp;it.</p>
+<p>The redesign took more time than expected, since I spent quite a …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/i-almost-switched-to-pelican-a-static-blog-engine.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Thu 20 June 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/raring-digital-ocean-server-setup.html" rel="bookmark"
+				title="Permalink to Raring / Digital Ocean Server Setup">Raring / Digital Ocean Server&nbsp;Setup</a></div>
+			</header>
+			<div class="article-summary">
+					<p>Two years after having moved to Linode, coming <a href="////blog.macuyiko.com/post/2011/oneiric-linode-server-migration.html">from Slicehost</a>, it seems that a new competitor is once again at the horizon, namely <a href="https://www.digitalocean.com">Digital Ocean</a>.</p>
+<p>I&#8217;d heard good things about them already, especially on Hacker News, praising their competitive pricing and clean dashboard. However, being newcomers to the field …</p>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/raring-digital-ocean-server-setup.html">Read more</a></p>
+			</div>
+		</article>
+
+        
+		<article>
+			<header>
+				<div class="article-info">Tue 01 January 2013, by Seppe "Macuyiko" vanden Broucke</div>
+				<div class="article-title"><a href="//blog.macuyiko.com/post/2013/games-ill-keep-an-eye-on-in-2013.html" rel="bookmark"
+				title="Permalink to Games I’ll Keep An Eye On In 2013">Games I&#8217;ll Keep An Eye On In&nbsp;2013</a></div>
+			</header>
+			<div class="article-summary">
+					<p>In the same spirit as <a href="http://blog.macuyiko.com/2012/02/games-ill-keep-eye-on-in-2012.html">last year</a>, this is a (preliminary) list of game I&#8217;m interested in, releasing in&nbsp;2013.</p>
+<p>First of all, let&#8217;s revisit 2012&#8230; Here are the games I was interested in last year, together with the outcome &#8212; at least according to&nbsp;me:</p>
+<ul>
+<li>Star Wars: The …</li></ul>
+				<p>&rarr; <a href="//blog.macuyiko.com/post/2013/games-ill-keep-an-eye-on-in-2013.html">Read more</a></p>
+			</div>
+		</article>
+
+<div class="pagination-centered">
+
+<h6 class="subheader">
+	&laquo; Prev
+	Page 1 of 1	
+	Next &raquo;
+</h6>
+
+</div>
+</div>
+
+ 
+<aside class="large-3 columns">
+	<div style="text-align: center;">
+		<img src="/images/avatar.jpg" width="100" class="avatar" />
+	</div>
+
+	<div class="sidebar-title">Site</div>
+	<ul class="side-nav">
+		<li><a href="//blog.macuyiko.com/">Home</a></li>
+		<li><a href="//blog.macuyiko.com/archives.html">Archives</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/atom.xml" rel="alternate">Atom feed</a></li>
+		<li><a href="//blog.macuyiko.com/feeds/rss.xml" rel="alternate">RSS feed</a></li>
+	</ul>
+	
+	
+	
+	<div class="sidebar-title">Social</div>
+	<ul class="side-nav">
+		<li><a href="http://twitter.com/macuyiko">Twitter</a></li>
+		<li><a href="http://seppe.net">Personal Site</a></li>
+		<li><a href="http://www.linkedin.com/profile/view?id=26422505">LinkedIn</a></li>
+		<li><a href="mailto:macuyiko@gmail.com">E-mail</a></li>
+		<li><a href="http://macuyiko.tumblr.com/">Tumblr</a></li>
+	</ul>
+	
+	<div class="sidebar-title">Search</div>
+	<div style="text-align: center; margin-top: 4px;">
+		<form method="get" action="//www.google.com/search">
+			<input type="text" name="q" style="float: left; max-width: 140px;" maxlength="255" value="" />
+			<input type="submit" value="Go" />
+			<input type="hidden" name="sitesearch" value="blog.macuyiko.com" />
+		</form>
+	</div>
+	
+</aside>
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+
+	<title>The nvmcp64.sys Blue Screen</title>
+
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/normalize.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/foundation.min.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/style.css" />
+	<link rel="stylesheet" href="//blog.macuyiko.com/theme/css/pygments.css" />
+	<script src="//blog.macuyiko.com/theme/js/jquery-3.4.1.min.js"></script>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css?family=Bitter:400,700|Source+Code+Pro&display=swap" rel="stylesheet">
+
+
+	<script type="text/javascript">
+		var waitForFinalEvent = (function () {
+			var timers = {};
+			return function (callback, ms, uniqueId) {
+				if (!uniqueId) uniqueId = "_";
+				if (timers[uniqueId]) clearTimeout(timers[uniqueId]);
+				timers[uniqueId] = setTimeout(callback, ms);
+			};
+		})();
+		var insertCaptions = function () {
+			$('#articlecontainer .caption').remove();
+			var width = $(window).width();
+			var onmobile = width < 1400; //>
+			var capclass = onmobile ? 'caption-below' : 'caption-aside';
+			$.each($('#articlecontainer img'), function (index, value) {
+				if ($(value).attr('alt') != undefined) {
+					var elem = $('<div class="caption ' + capclass + '">' + $(value).attr('alt') + '</div>');
+					if (onmobile) elem.insertAfter(value);
+					else elem.insertBefore(value);
+				}
+			});
+		};
+		$(function () {
+			$(window).resize(function () {
+				waitForFinalEvent(function () {
+					insertCaptions();
+				}, 500, "window.resize");
+			});
+			insertCaptions();
+		});
+	</script>
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-60406-11']);
+		_gaq.push(['_trackPageview']);
+
+		(function () {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+
+	<nav>
+		<div class="top-bar large-12 columns">
+			<h1><a href="//blog.macuyiko.com/">Bed Against The Wall</a></h1>
+		</div>
+	</nav>
+
+
+	<div class="row contentwrapper">
+		<div class="row">
+<div id="articlecontainer" class="large-9 columns large-centered">
+	<article>
+		<header>
+			<div class="article-info">Tue 28 February 2012, by Seppe "Macuyiko" vanden Broucke</div>
+			<div class="article-title"><a href="//blog.macuyiko.com/post/2012/the-nvmcp64sys-blue-screen.html" rel="bookmark"
+			title="Permalink to The nvmcp64.sys Blue Screen">The nvmcp64.sys Blue&nbsp;Screen</a></div>
+		</header>
+	
+	    <p>This issue has been plaguing my Windows 7 installation since the beginning of time, or, well &#8212; the beginning of this particular Windows 7&nbsp;installation&#8230;</p>
+<p>Every once in a while, my computer would blue screen displaying a <code>DRIVER_IRQL_NOT_LESS_OR_EQUAL</code> error due to a certain <code>nvmcp64.sys</code>, often with any playing audio looping the same fragment over and over again until I would grudgingly press the reset&nbsp;button.</p>
+<p><code>DRIVER_IRQL_NOT_LESS_OR_EQUAL</code> is one of those typical cryptic &#8220;<span class="caps">STOP</span> errors&#8221; that actually tell you almost nothing. The only reasonable thing to deduce is that it&#8217;s probably a driver acting up, or some hardware gone bad. Searching around on forums quickly leads one to downloading Memtest86 to check if your <span class="caps">RAM</span> has gone bad, or to advice telling you that you should try removing your graphics card/audio card/memory/hard drives/and every other peripheral imaginable one by one, trying every possible combination of hardware until your computer boots up again or you die from boredom &#8212; whichever comes first. Meh. Checking your memory is a good idea once in a while, but once your memory has been working for a year, chances are it will remain working perfectly until you build or buy your next&nbsp;machine.</p>
+<p>Another thing you could do (especially if you&#8217;ve seen your fair share of blue screens) is to take a look at the  dump files Windows creates when it crashes (look in <code>C:\Windows\Minidump\</code>). Since we won&#8217;t do that here, I won&#8217;t go over <a href="http://support.microsoft.com/kb/315263">the</a> <a href="http://www.networkworld.com/news/2005/041105-windows-crash.html">details</a> on how to analyse these dumps. The reason why we won&#8217;t explore the dump is because we already have a clear idea about which process, library, or - in this case - driver is causing the problem: <code>nvmcp64.sys</code>. So what is <code>nvmcp64.sys</code> exactly?</p>
+<p>The prefix &#8220;<code>nv</code>&#8221; leads us to a plausible candidate: Nvidia! You might think that updating your graphics drivers are in order (another advice so commonly encountered), but you would be wrong, since the driver in this case is related to the nForce (Nvidia&#8217;s bus architecture to handle <span class="caps">IDE</span>, <span class="caps">RAID</span>, networking and audio) chipset found on the motherboard. While searching around, some sites will advice you to disable your <span class="caps">RAID</span> controller or some such, which would again be incorrect, since <code>nvmcp64.sys</code><span class="quo">&#8216;</span> job is also&#8230; to handle&nbsp;audio.</p>
+<p><strong>The solution</strong> is in fact pretty simple. Uninstall the Nvidia audio driver and go to Realtek&#8217;s website to download a <a href="http://www.realtek.com.tw/downloads/downloadsCheck.aspx?Langid=1&amp;PNid=23&amp;PFid=23&amp;Level=4&amp;Conn=3&amp;DownTypeID=3&amp;GetDown=false#AC">general <span class="caps">AC</span>&#8216;97 audio driver</a> (an audio standard used by virtually any motherboard manufacturer, now replaced by Realtek&#8217;s High Definition Audio standard). Realtek warns you that their general purpose drivers &#8220;may not offer the customizations made by your system/motherboard manufacturer&#8221;, which is&nbsp;acceptable.</p>
+<p>After doing this, audio now works fine, and the blue screens are completely gone. I&#8217;ve indeed lost some customizations/features offered by Nvidia (such as the record what you hear functionality), but these can be replaced by other software tools and were not really used that much by me anyway. Audio itself plays fine, without causing blue screens any&nbsp;longer.</p>
+	</article>
+</div>
+
+		</div>
+
+		<footer class="row">
+			<div class="large-12 columns">
+				<hr />
+				<div class="row">
+					<p>Bed Against The Wall by Seppe "Macuyiko" vanden Broucke<br>
+						Unless mentioned otherwise, this work is licensed under a <a
+							href="http://creativecommons.org/licenses/by-sa/2.0/be/" rel="license">Creative Commons
+							Attribution-Share Alike 2.0 Belgium License</a>.<br>
+						Static blog engine powered by <a href="http://getpelican.com">Pelican</a>.</p>
+				</div>
+			</div>
+		</footer>
+	</div>
